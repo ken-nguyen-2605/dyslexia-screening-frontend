@@ -1,6 +1,8 @@
 # DyslexiaDetect
 
-A modern web application for dyslexia screening built with React, TypeScript, and Tailwind CSS. This project provides an accessible and user-friendly interface for early detection and assessment of dyslexia symptoms.
+DyslexiaDetect is a modern web application designed to provide early screening for dyslexia through engaging, gamified tests. Built with React, TypeScript, and Tailwind CSS, the platform offers an accessible and user-friendly interface to support users of all ages.
+
+The screening process consists of three interactive test categories - audio, visual, and language - combined with user information to deliver a comprehensive dyslexia assessment.
 
 ## 🚀 Features
 
@@ -24,13 +26,8 @@ A modern web application for dyslexia screening built with React, TypeScript, an
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── Header.tsx      # Navigation header
-│   ├── Footer.tsx      # Site footer
-│   └── Layout.tsx      # Main layout wrapper
+├── components/         # Reusable UI components
 ├── pages/              # Page components
-│   ├── Home.tsx        # Home page
-│   └── About.tsx       # About page
 ├── hooks/              # Custom React hooks
 ├── utils/              # Utility functions
 ├── assets/             # Static assets
@@ -44,7 +41,7 @@ src/
 ### Prerequisites
 
 -   Node.js (version 18 or higher)
--   npm or yarn package manager
+-   npm package manager
 
 ### Installation
 
@@ -69,83 +66,24 @@ npm run dev
 
 4. Open your browser and navigate to `http://localhost:5173`
 
-## 📜 Available Scripts
+## 💡 Working with `main`
 
--   `npm run dev` - Start the development server
--   `npm run build` - Build the project for production
--   `npm run preview` - Preview the production build locally
--   `npm run lint` - Run ESLint to check code quality
+To keep our codebase stable and encourage collaboration, please **use Pull Requests (PRs) instead of pushing directly to the `main` branch**.
 
-## 🏗️ Building for Production
+**Workflow:**
+1. Create a new branch based on `main`.
+2. Open a Pull Request describing your changes.
+3. A team member (code owner) will review and approve your PR.
+4. Once approved, your changes can be merged into `main`.
 
-To create a production build:
-
-```bash
-npm run build
-```
-
-The built files will be in the `dist` directory, ready to be deployed to any static hosting service.
-
-## 🧪 Development
-
-### Code Quality
-
-This project uses ESLint with TypeScript-specific rules to maintain code quality. The configuration includes:
-
--   Strict TypeScript checking
--   React-specific linting rules
--   Modern JavaScript best practices
-
-### Styling
-
-The project uses Tailwind CSS for styling with a utility-first approach. The configuration is optimized for:
-
--   Responsive design
--   Accessibility
--   Modern CSS features
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+_This approach helps us review and improve each other's work before it goes live._
 
 ## 📝 License
 
 This project is developed by a group of students in HCMUT (Ho Chi Minh City University of Technology).
 
-## 🔧 Configuration
-
-### ESLint Configuration
-
-For production applications, consider updating the ESLint configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-	globalIgnores(["dist"]),
-	{
-		files: ["**/*.{ts,tsx}"],
-		extends: [
-			...tseslint.configs.recommendedTypeChecked,
-			...tseslint.configs.strictTypeChecked,
-			...tseslint.configs.stylisticTypeChecked,
-		],
-		languageOptions: {
-			parserOptions: {
-				project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-				tsconfigRootDir: import.meta.dirname,
-			},
-		},
-	},
-]);
-```
-
 ## 📞 Support
 
 For questions, issues, or contributions, please contact the development team at HCMUT.
 
----
-
-Built with ❤️ by HCMUT Students
+Built with ❤️ by HCMUT students
