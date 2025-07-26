@@ -1,10 +1,10 @@
-import type React from "react";
-
-const Footer: React.FC = () => {
+const Footer = () => {
 	return (
-		<footer className="bg-blue-500 text-white p-4 text-center">
-			<p>&copy; 2025 HCMUT</p>
-		</footer>
+		<footer className="bg-teal-500 text-white py-4 mt-8">
+  <div className="container mx-auto px-6 text-center text-sm">
+    © {new Date().getFullYear()} HCMUT
+  </div>
+</footer>
 	);
 };
 
