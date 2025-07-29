@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import authService from "../services/authService";
 
 const RegisterForm = () => {
   const [name, setName] = useState("");
@@ -8,7 +9,7 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name || !email || !password || !confirmPassword) {
@@ -22,26 +23,23 @@ const RegisterForm = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/v1/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
+      // This will throw if registering fails (non-2xx error)
+      const data = await authService.register({
+        name,
+        email,
+        password,
       });
-
-      if (response.ok) {
-        alert("Registration successful! Please log in.");
-        navigate("/login");
-      } else {
-        const err = await response.json();
-        alert(`Registration failed: ${err.message || "Unknown Error"}`);
+      if (data) {
+      navigate("/login");
       }
-    } catch (error) {
-      console.error("Registration failed:", error);
-      alert("An error occurred during registration.");
+      
+    } catch (error: any) {
+      // Attempt to show API-provided error messages, fallback to generic
+      let message = "An error occurred during registration.";
+      if (error?.response?.data?.message) {
+        message = error.response.data.message;
+      }
+      alert(`Registration failed: ${message}`);
     }
   };
 
