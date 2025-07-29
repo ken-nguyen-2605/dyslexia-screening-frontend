@@ -9,7 +9,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-// import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";
+import HumanFeaturesForm from "./pages/HumanFeaturesForm";
+import AuditoryTestLayout from "./pages/AuditoryTestLayout";
+import AuditoryTestStepsDispatcher from "./components/AuditoryTestStepsDispatcher";
 
 function App() {
 	return (
@@ -26,10 +29,32 @@ function App() {
 						{/* Protected Routes */}
 						<Route element={<ProtectedRoute />}>
 							<Route path="me" element={<Profile />} />
-							{/* <Route path="dashboard" element={<Dashboard />} /> */}
-						</Route>
+							<Route path="dashboard" element={<Dashboard />} />
+							<Route
+								path="human"
+								element={<HumanFeaturesForm />}
+							/>
 
-						{/* A catch-all route for 404 Not Found pages */}
+							{/* -------- Auditory Test Layout -------- */}
+							<Route
+								path="test/auditory"
+								element={<AuditoryTestLayout />}
+							>
+								<Route
+									path="instruction"
+									element={<AuditoryTestStepsDispatcher />}
+								/>
+								<Route
+									path=":type/:cardQuantity"
+									element={<AuditoryTestStepsDispatcher />}
+								/>
+								<Route
+									path="rating"
+									element={<AuditoryTestStepsDispatcher />}
+								/>
+							</Route>
+						</Route>
+						{/* 404 */}
 						<Route path="*" element={<NotFound />} />
 					</Route>
 				</Routes>
