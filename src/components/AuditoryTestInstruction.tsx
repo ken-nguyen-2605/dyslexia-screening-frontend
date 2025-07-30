@@ -1,23 +1,56 @@
-import { useState } from "react";
-// import { AiOutlineSound } from "react-icons/ai"; // for the ear icon, or use your own SVG
-
+import { useRef, useState } from "react";
+import soundFile from "../assets/auditoryTest/AuditoryInstruction.mp3";
 interface AuditoryTestInstructionProps {
   onStartTest: () => void;
 }
 
 const AuditoryTestInstruction = ({ onStartTest }: AuditoryTestInstructionProps) => {
   const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handlePlayAudio = () => {
+    // Stop & cleanup previous audio if exists
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+
     setPlaying(true);
-    // Play your audio/instruction here!
-    setTimeout(() => setPlaying(false), 2000); // demo duration
+    const audio = new Audio(soundFile);
+    audioRef.current = audio;
+
+    audio.play();
+
+    audio.onended = () => {
+      setPlaying(false);
+      audioRef.current = null;
+    };
+    audio.onerror = () => {
+      setPlaying(false);
+      audioRef.current = null;
+      alert("Error playing audio. Please try again.");
+    };
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // If audio is playing, stop it
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+      setPlaying(false);
+    }
+
+    onStartTest();
+  };
+  
   return (
     <form
       className="flex flex-col bg-white border border-gray-100 p-8 rounded-2xl items-center space-y-4 shadow-lg max-w-md w-full mx-auto mt-10"
-      onSubmit={e => { e.preventDefault(); onStartTest(); }}
+      onSubmit={handleSubmit}
     >
       <h2 className="text-2xl text-teal-600 font-bold text-center mb-1">
         Audio Test Instruction

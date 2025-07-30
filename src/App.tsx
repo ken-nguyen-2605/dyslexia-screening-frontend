@@ -12,7 +12,9 @@ import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
-import AuditoryTestStepsDispatcher from "./components/AuditoryTestStepsDispatcher";
+import TestDispatcher from "./components/TestDispatcher";
+// import VisualTestLayout from "./pages/VisualTestLayout";
+// import LanguageTestLayout from "./pages/LanguageTestLayout";
 
 function App() {
 	return (
@@ -28,31 +30,67 @@ function App() {
 
 						{/* Protected Routes */}
 						<Route element={<ProtectedRoute />}>
-							<Route path="me" element={<Profile />} />
-							<Route path="dashboard" element={<Dashboard />} />
-							<Route
-								path="human"
-								element={<HumanFeaturesForm />}
-							/>
+						<Route path="me" element={<Profile />} />
+						<Route path="dashboard" element={<Dashboard />} />
+						<Route path="human" element={<HumanFeaturesForm />} />
 
-							{/* -------- Auditory Test Layout -------- */}
+						{/* -------- Auditory Test Layout -------- */}
+						<Route
+							path="test/auditory"
+							element={<AuditoryTestLayout />}
+						>
 							<Route
-								path="test/auditory"
-								element={<AuditoryTestLayout />}
-							>
-								<Route
-									path="instruction"
-									element={<AuditoryTestStepsDispatcher />}
-								/>
-								<Route
-									path=":type/:cardQuantity"
-									element={<AuditoryTestStepsDispatcher />}
-								/>
-								<Route
-									path="rating"
-									element={<AuditoryTestStepsDispatcher />}
-								/>
-							</Route>
+								path="instruction"
+								element={<TestDispatcher testType="auditory" />}
+							/>
+							<Route
+								path=":type/:cardQuantity"
+								element={<TestDispatcher testType="auditory" />}
+							/>
+							<Route
+								path="rating"
+								element={<TestDispatcher testType="auditory" />}
+							/>
+						</Route>
+
+						{/* -------- Visual Test Layout --------
+						<Route
+							path="test/visual"
+							element={<VisualTestLayout />}
+						>
+							<Route
+								path="instruction"
+								element={<TestDispatcher testType="visual" />}
+							/>
+							<Route
+								path=":type/:cardQuantity"
+								element={<TestDispatcher testType="visual" />}
+							/>
+							<Route
+								path="rating"
+								element={<TestDispatcher testType="visual" />}
+							/>
+						</Route> */}
+
+						{/* -------- Language Test Layout -------- */}
+						{/* <Route
+							path="test/language"
+							element={<LanguageTestLayout />}
+						>
+							<Route
+								path="instruction"
+								element={<TestDispatcher testType="language" />}
+							/>
+							<Route
+								path=":type/:cardQuantity"
+								element={<TestDispatcher testType="language" />}
+							/>
+							<Route
+								path="rating"
+								element={<TestDispatcher testType="language" />}
+							/>
+						</Route> */}
+
 						</Route>
 						{/* 404 */}
 						<Route path="*" element={<NotFound />} />

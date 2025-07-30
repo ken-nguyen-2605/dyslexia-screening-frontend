@@ -1,17 +1,72 @@
 import { useEffect, useState } from "react";
-import { useAuditoryTestStep } from "../contexts/AuditoryTestStepContext";
 import TestCard from "./TestCard";
 import ProgressBar from "./ProgressBar";
+import { useTestStep } from "../contexts/TestStepContext";
 
-// Helper to create shuffled pairs
+/* FREQUENCY */
+import frequency_4_1 from "../assets/auditoryTest/Frequency/1_A_freq_easy_1.mp3";
+import frequency_4_2 from "../assets/auditoryTest/Frequency/1_A_freq_easy_2.mp3";
+import frequency_6_1 from "../assets/auditoryTest/Frequency/1_B_freq_medium_1.mp3";
+import frequency_6_2 from "../assets/auditoryTest/Frequency/1_B_freq_medium_2.mp3";
+import frequency_6_3 from "../assets/auditoryTest/Frequency/1_B_freq_medium_3.mp3";
+
+/* LENGTH */
+import length_4_1 from "../assets/auditoryTest/Length/3_E_length_easy_1_350.mp3";
+import length_4_2 from "../assets/auditoryTest/Length/3_E_length_easy_2_437.mp3";
+import length_6_1 from "../assets/auditoryTest/Length/3_F_length_medium_1_350.mp3";
+import length_6_2 from "../assets/auditoryTest/Length/3_F_length_medium_2_437.mp3";
+import length_6_3 from "../assets/auditoryTest/Length/3_F_length_medium_3_525.mp3";
+
+/* RISE TIME */
+import riseTime_4_1 from "../assets/auditoryTest/RiseTime/4_G_rise_easy_2_500_250_in.mp3";
+import riseTime_4_2 from "../assets/auditoryTest/RiseTime/4_G_rise_easy_3_500_250_out.mp3";
+import riseTime_6_1 from "../assets/auditoryTest/RiseTime/4_G_rise_easy_1_500_no.mp3";
+import riseTime_6_2 from "../assets/auditoryTest/RiseTime/4_G_rise_easy_2_500_250_in.mp3";
+import riseTime_6_3 from "../assets/auditoryTest/RiseTime/4_G_rise_easy_3_500_250_out.mp3";
+
+/* RHYTHM */
+import rhythm_4_1 from "../assets/auditoryTest/Rhythm/intervalRise_1_f_f_n_100.mp3";
+import rhythm_4_2 from "../assets/auditoryTest/Rhythm/intervalRise_1_n_f_f_100.mp3";
+import rhythm_6_1 from "../assets/auditoryTest/Rhythm/intervalRise_1_f_f_n_100.mp3";
+import rhythm_6_2 from "../assets/auditoryTest/Rhythm/intervalRise_1_f_n_f_100.mp3";
+import rhythm_6_3 from "../assets/auditoryTest/Rhythm/intervalRise_1_n_f_f_100.mp3";
+
+const soundFiles: Record<string, { four: string[]; six: string[] }> = {
+	frequency: {
+		four: [frequency_4_1, frequency_4_2],
+		six: [frequency_6_1, frequency_6_2, frequency_6_3],
+	},
+	length: {
+		four: [length_4_1, length_4_2],
+		six: [length_6_1, length_6_2, length_6_3],
+	},
+	rhythm: {
+		four: [rhythm_4_1, rhythm_4_2],
+		six: [rhythm_6_1, rhythm_6_2, rhythm_6_3],
+	},
+	rise: {
+		four: [riseTime_4_1, riseTime_4_2],
+		six: [riseTime_6_1, riseTime_6_2, riseTime_6_3],
+	},
+};
+
+function playCardSound(cardType: string, cardQuantity: 4 | 6, soundId: number) {
+	const files = soundFiles[cardType]?.[cardQuantity === 4 ? "four" : "six"];
+	if (!files) return;
+	const src = files[soundId];
+	if (!src) return;
+	console.log("Playing sound:", src);
+	const audio = new Audio(src);
+	audio.play();
+}
+
 function generateShuffledPairs(cardQuantity: number) {
-	// Create array of pairs: [0,1,0,1] for 4, [0,1,2,0,1,2] for 6 etc
+	// Generate pairs: [0,0,1,1] for 4 cards, [0,0,1,1,2,2] for 6 cards
 	const pairs = Array.from({ length: cardQuantity }, (_, idx) =>
 		Math.floor(idx / 2)
 	);
-	// Optionally replace 0,1,2... with 'A','B', etc for more visual effect
-	// const soundIds = ['A','B','C','D'];
-	// const pairs = Array.from({length: cardQuantity}, (_, idx) => soundIds[Math.floor(idx/2)]);
+
+	// Fisher-Yates shuffle algorithm
 	for (let i = pairs.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
 		[pairs[i], pairs[j]] = [pairs[j], pairs[i]];
@@ -25,10 +80,11 @@ interface Card {
 }
 
 const AuditoryTest = () => {
-	const { currentStep, goToNextStep, steps } = useAuditoryTestStep();
+	const { currentStep, goToNextStep, steps } = useTestStep();
 
+	// Extract current type and quantity from step
 	const stepString = steps[currentStep] || "";
-	const [type, cardQuantityString] = stepString.split("/");
+	const [cardType, cardQuantityString] = stepString.split("/");
 	const cardQuantity = Number(cardQuantityString);
 
 	const [cards, setCards] = useState<Card[]>([]);
@@ -89,19 +145,21 @@ const AuditoryTest = () => {
 		if (!cards[idx].isVisible) return;
 		if (selected.includes(idx)) return;
 
+		// Play the sound for this card!
+		playCardSound(cardType, cardQuantity as 4 | 6, cards[idx].soundId);
+
 		if (selected.length === 0) {
 			setSelected([idx]);
 		} else if (selected.length === 1) {
 			setSelected([selected[0], idx]);
 		}
-		// Don't allow selecting more than 2 at once
 	};
 
 	return (
 		<div className="flex flex-col items-center justify-center">
-			{/* Title and type */}
+			{/* Title */}
 			<h2 className="text-2xl font-bold">Auditory Test</h2>
-						<ProgressBar />
+			<ProgressBar />
 
 			{(cardQuantity === 4 || cardQuantity === 6) && (
 				<div
@@ -112,22 +170,11 @@ const AuditoryTest = () => {
 					{cards.map((card, index) => (
 						<TestCard
 							key={index}
-							label={
-								selected.includes(index) && card.isVisible
-									? `Card ${index + 1}`
-									: ""
-							}
+							label=""
 							onClick={() => handleCardClick(index)}
 							className={!card.isVisible ? "invisible" : ""}
-							// add similar style if card shouldn't be clickable!
 						>
-							{selected.includes(index) ? (
-								<span className="text-2xl">
-									{String.fromCharCode(65 + card.soundId)}
-								</span>
-							) : (
-								<span className="text-2xl">🔊</span>
-							)}
+							<span className="text-2xl">🔊</span>
 						</TestCard>
 					))}
 				</div>

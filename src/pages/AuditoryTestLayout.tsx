@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { AuditoryTestStepProvider } from "../contexts/AuditoryTestStepContext";
+import { TestStepProvider } from "../contexts/TestStepContext";
 
 const AUDITORY_TEST_STEPS = [
 	"instruction",
@@ -15,14 +15,14 @@ const AUDITORY_TEST_STEPS = [
 ];
 
 const AuditoryTestLayout = () => (
-	<AuditoryTestStepProvider
+	<TestStepProvider
 		testType="auditory"
 		testSteps={AUDITORY_TEST_STEPS}
 	>
 		<div className="flex flex-col items-center w-full min-h-screen py-8">
 			<Outlet />
 		</div>
-	</AuditoryTestStepProvider>
+	</TestStepProvider>
 );
 
 export default AuditoryTestLayout;

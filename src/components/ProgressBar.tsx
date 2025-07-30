@@ -1,7 +1,7 @@
-import { useAuditoryTestStep } from "../contexts/AuditoryTestStepContext";
+import { useTestStep } from "../contexts/TestStepContext";
 
 const ProgressBar = () => {
-	const { currentStep, steps } = useAuditoryTestStep();
+	const { currentStep, steps } = useTestStep();
 
 	// Only use the 8 test steps for progress
 	const testSteps = steps.filter(

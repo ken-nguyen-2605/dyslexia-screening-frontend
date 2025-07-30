@@ -1,37 +1,37 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-interface AuditoryTestStepContextType {
+interface TestStepContextType {
 	currentStep: number;
 	setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 	steps: string[];
 	goToNextStep: () => void;
 }
 
-const AuditoryTestStepContext = createContext<
-	AuditoryTestStepContextType | undefined
+const TestStepContext = createContext<
+	TestStepContextType | undefined
 >(undefined);
 
-export const useAuditoryTestStep = () => {
-	const context = useContext(AuditoryTestStepContext);
+export const useTestStep = () => {
+	const context = useContext(TestStepContext);
 	if (!context)
 		throw new Error(
-			"useAuditoryTestStep must be used within an AuditoryTestStepProvider"
+			"useTestStep must be used within a TestStepProvider"
 		);
 	return context;
 };
 
-interface AuditoryTestStepProviderProps {
+interface TestStepProviderProps {
   testType: string;
   testSteps: string[];
 	children: React.ReactNode;
 }
 
-export const AuditoryTestStepProvider = ({
+export const TestStepProvider = ({
 	testType,
   testSteps,
   children,
-}: AuditoryTestStepProviderProps) => {
+}: TestStepProviderProps) => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const steps = testSteps;
 	const location = useLocation();
@@ -54,10 +54,10 @@ export const AuditoryTestStepProvider = ({
 	}, [location.pathname, steps, currentStep, testType]);
 
 	return (
-		<AuditoryTestStepContext.Provider
+		<TestStepContext.Provider
 			value={{ currentStep, setCurrentStep, steps, goToNextStep }}
 		>
 			{children}
-		</AuditoryTestStepContext.Provider>
+		</TestStepContext.Provider>
 	);
 };
