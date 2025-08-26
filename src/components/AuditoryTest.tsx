@@ -80,7 +80,7 @@ interface Card {
 }
 
 const AuditoryTest = () => {
-	const { currentStep, goToNextStep, steps } = useTestStep();
+	const { currentStep, goToNextStep, goToPreviousStep, steps } = useTestStep();
 
 	// Extract current type and quantity from step
 	const stepString = steps[currentStep] || "";
@@ -109,7 +109,6 @@ const AuditoryTest = () => {
 				cards[firstIdx].soundId === cards[secondIdx].soundId &&
 				firstIdx !== secondIdx
 			) {
-				// Correct match: set both to invisible after delay
 				setTimeout(() => {
 					setCards((prev) =>
 						prev.map((card, idx) =>
@@ -120,9 +119,8 @@ const AuditoryTest = () => {
 					);
 					setSelected([]);
 					setLockBoard(false);
-				}, 500); // brief reveal before hiding
+				}, 500);
 			} else {
-				// Wrong match: reset selection after delay
 				setTimeout(() => {
 					setSelected([]);
 					setLockBoard(false);
@@ -138,14 +136,13 @@ const AuditoryTest = () => {
 				goToNextStep();
 			}, 600);
 		}
-	}, [cards]); // Dependency array updated
+	}, [cards]);
 
 	const handleCardClick = (idx: number) => {
 		if (lockBoard) return;
 		if (!cards[idx].isVisible) return;
 		if (selected.includes(idx)) return;
 
-		// Play the sound for this card!
 		playCardSound(cardType, cardQuantity as 4 | 6, cards[idx].soundId);
 
 		if (selected.length === 0) {
@@ -157,7 +154,6 @@ const AuditoryTest = () => {
 
 	return (
 		<div className="flex flex-col items-center justify-center">
-			{/* Title */}
 			<h2 className="text-2xl font-bold">Auditory Test</h2>
 			<ProgressBar />
 
@@ -172,15 +168,38 @@ const AuditoryTest = () => {
 							key={index}
 							label=""
 							onClick={() => handleCardClick(index)}
-							className={!card.isVisible ? "invisible" : ""}
+							className={`
+								transition-all duration-300
+								${selected.includes(index) ? "scale-105 border-4 border-yellow-400" : ""}
+								${!card.isVisible ? "opacity-0 transition-opacity duration-500" : "opacity-100"}
+							`}
 						>
 							<span className="text-2xl">🔊</span>
 						</TestCard>
 					))}
 				</div>
 			)}
+
+			{/* Navigation Buttons */}
+			<div className="flex gap-4 mt-6">
+				<button
+					onClick={goToPreviousStep}
+					className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+					disabled={currentStep === 0}
+				>
+					Previous
+				</button>
+				<button
+					onClick={goToNextStep}
+					className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
+				>
+					Next
+				</button>
+			</div>
 		</div>
 	);
 };
 
+
 export default AuditoryTest;
+
