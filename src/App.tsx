@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import Layout from "./components/Layout";
-import ProtectedRoute from "./components/ProtectedRoute";
+//import ProtectedRoute from "./components/ProtectedRoute";
 
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -15,6 +15,8 @@ import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import TestDispatcher from "./components/TestDispatcher";
 // import VisualTestLayout from "./pages/VisualTestLayout";
 // import LanguageTestLayout from "./pages/LanguageTestLayout";
+import VisualTestLayout from "./pages/VisualTestLayout";
+
 
 function App() {
 	return (
@@ -29,7 +31,7 @@ function App() {
 						<Route path="register" element={<Register />} />
 
 						{/* Protected Routes */}
-						<Route element={<ProtectedRoute />}>
+						{/* <Route element={<ProtectedRoute />}> */}
 						<Route path="me" element={<Profile />} />
 						<Route path="dashboard" element={<Dashboard />} />
 						<Route path="human" element={<HumanFeaturesForm />} />
@@ -53,7 +55,7 @@ function App() {
 							/>
 						</Route>
 
-						{/* -------- Visual Test Layout --------
+						{/* -------- Visual Test Layout -------- */}
 						<Route
 							path="test/visual"
 							element={<VisualTestLayout />}
@@ -70,7 +72,7 @@ function App() {
 								path="rating"
 								element={<TestDispatcher testType="visual" />}
 							/>
-						</Route> */}
+						</Route> 
 
 						{/* -------- Language Test Layout -------- */}
 						{/* <Route
@@ -91,7 +93,7 @@ function App() {
 							/>
 						</Route> */}
 
-						</Route>
+						{/* </Route> */}
 						{/* 404 */}
 						<Route path="*" element={<NotFound />} />
 					</Route>
