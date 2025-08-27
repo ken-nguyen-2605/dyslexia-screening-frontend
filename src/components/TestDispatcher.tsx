@@ -1,5 +1,6 @@
 import AuditoryTestInstruction from "./AuditoryTestInstruction";
 import AuditoryTest from "./AuditoryTest";
+import VisualTest from "./VisualTest";
 import TestDifficultyRating from "./TestDifficultyRating";
 import { useNavigate } from "react-router-dom";
 import type { TestType } from "../enum";
@@ -67,7 +68,16 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 		);
 	}
 
-	return <AuditoryTest />;
+	switch (testType) {
+        case "auditory":
+            return <AuditoryTest />;
+        case "visual":
+            return <VisualTest />;
+        case "language":
+            // return <LanguageTest />; // <-- ensure this component exists
+        default:
+            return null; // Optionally fallback or show error for unknown type
+    }
 };
 
 export default TestDispatcher;
