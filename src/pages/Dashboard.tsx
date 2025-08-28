@@ -42,12 +42,20 @@ const Dashboard = () => {
       <div className="bg-white rounded-2xl p-8 shadow-lg max-w-3xl w-full">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-teal-600">My Tests</h2>
-          <button
-            className="bg-teal-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition"
-            onClick={() => navigate("/human/")}
-          >
-            Start New Test
-          </button>
+          <div className="flex gap-3">
+            <button
+              className="bg-purple-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition"
+              onClick={() => navigate("/test/dyslexia-child")}
+            >
+              🧠 Test Dyslexia (4-5 tuổi)
+            </button>
+            <button
+              className="bg-teal-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition"
+              onClick={() => navigate("/human/")}
+            >
+              Start New Test
+            </button>
+          </div>
         </div>
         {loading ? (
           <div className="text-center text-gray-600 py-10">Loading...</div>

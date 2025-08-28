@@ -14,6 +14,7 @@ import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
+import DyslexiaChildTestPage from "./pages/DyslexiaChildTestPage";
 // import LanguageTestLayout from "./pages/LanguageTestLayout";
 
 function App() {
@@ -71,6 +72,12 @@ function App() {
 								element={<TestDispatcher testType="visual" />}
 							/>
 						</Route>
+
+						{/* -------- Dyslexia Child Test (4-5 years old) -------- */}
+						<Route
+							path="test/dyslexia-child"
+							element={<DyslexiaChildTestPage />}
+						/>
 
 						{/* -------- Language Test Layout -------- */}
 						{/* <Route
