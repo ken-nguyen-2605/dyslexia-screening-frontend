@@ -14,6 +14,7 @@ import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
+import TestTypeSelection from "./pages/TestTypeSelection";
 // import LanguageTestLayout from "./pages/LanguageTestLayout";
 
 function App() {
@@ -33,6 +34,9 @@ function App() {
 						<Route path="me" element={<Profile />} />
 						<Route path="dashboard" element={<Dashboard />} />
 						<Route path="human" element={<HumanFeaturesForm />} />
+
+						{/* -------- Test Euruka Layout -------- */}
+						<Route path="test/selection" element={<TestTypeSelection />} />
 
 						{/* -------- Auditory Test Layout -------- */}
 						<Route
