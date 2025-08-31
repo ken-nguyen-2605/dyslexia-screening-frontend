@@ -38,7 +38,7 @@ const ChevronIcon = ({ direction, size = 64 }: {
   );
 };
 
-// Định nghĩa cards với direction thay vì img
+
 type CardType = {
   id: number;
   direction: 'up' | 'down' | 'left' | 'right';
@@ -82,7 +82,7 @@ const VisualTest = () => {
     return 4; // default
   };
 
-  // Function để chuyển sang step tiếp theo
+  // Next
   const goToNextStep = () => {
     const nextStepIndex = currentStep + 1;
     if (nextStepIndex < steps.length) {
@@ -96,7 +96,7 @@ const VisualTest = () => {
     const randomTarget = allCards[Math.floor(Math.random() * allCards.length)];
     setTargetCard(randomTarget);
 
-    // Reset state cho step mới
+    // Reset state for new step
     setTimeLeft(3);
     setTestActive(false);
     setTestTime(15);
@@ -184,7 +184,7 @@ const VisualTest = () => {
         </div>
       )}
 
-      {/* Nội dung chính */}
+      {/* Test */}
       {!testActive ? (
         <div className="text-center">
           <p className="text-lg font-semibold mb-3">
@@ -212,7 +212,7 @@ const VisualTest = () => {
             Find the symbol and click as many times as possible!
           </p>
 
-          {/* Cards grid - với kích thước vuông cố định */}
+          {/* Cards grid */}
           <div className={`grid gap-4 ${numCards === 4 ? "grid-cols-2" : "grid-cols-3"}`}>
             {cards.map((card, idx) => (
               <button
