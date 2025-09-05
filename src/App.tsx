@@ -15,6 +15,7 @@ import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
 import TestTypeSelection from "./pages/TestTypeSelection";
+import DyslexiaChildTestPage from "./pages/DyslexiaChildTestPage";
 // import LanguageTestLayout from "./pages/LanguageTestLayout";
 
 function App() {
@@ -60,6 +61,25 @@ function App() {
 						{/* -------- Visual Test Layout -------- */}
 						<Route
 							path="test/visual"
+							element={<VisualTestLayout />}
+						>
+							<Route
+								path="instruction"
+								element={<TestDispatcher testType="visual" />}
+							/>
+							<Route
+								path=":type/:cardQuantity"
+								element={<TestDispatcher testType="visual" />}
+							/>
+							<Route
+								path="rating"
+								element={<TestDispatcher testType="visual" />}
+							/>
+						</Route>
+
+						{/* -------- Basic Test Layout (using Visual Test components) -------- */}
+						<Route
+							path="test/basic"
 							element={<VisualTestLayout />}
 						>
 							<Route
