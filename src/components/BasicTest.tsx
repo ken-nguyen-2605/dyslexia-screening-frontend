@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useTestStep } from "../contexts/TestStepContext";
 import { useNavigate } from "react-router-dom";
 
 // Audio imports
@@ -8,12 +7,17 @@ import B_audio from "../assets/audioTestVowel/B.mp3";
 import M_audio from "../assets/audioTestVowel/M.mp3";
 import N_audio from "../assets/audioTestVowel/N.mp3";
 import D_audio from "../assets/audioTestVowel/D.mp3";
+import Đ_audio from "../assets/audioTestVowel/Đ.mp3";
+import ca_audio from "../assets/audioTestVowel/ca.mp3";
 import cá_audio from "../assets/audioTestVowel/cá.mp3";
+import cà_audio from "../assets/audioTestVowel/cà.mp3";
+import cả_audio from "../assets/audioTestVowel/cả.mp3";
 import O_audio from "../assets/audioTestVowel/O.mp3";
 import S_audio from "../assets/audioTestVowel/S.mp3";
 import khiAnChuoi_audio from "../assets/audioTestVowel/khiAnChuoi.mp3";
 import meoAnCa_audio from "../assets/audioTestVowel/meoAnCa.mp3";
 import thichAnKem_vn_audio from "../assets/audioTestVowel/thichAnKem_vn.mp3";
+import thichAnKem_ko_audio from "../assets/audioTestVowel/thichAnKem_ko.mp3";
 import buoiTruaAnBuoiChua_audio from "../assets/audioTestVowel/buoiTruaAnBuoiChua.mp3";
 import buoiTruaUongSuaChua_audio from "../assets/audioTestVowel/buoiTruaUongSuaChua.mp3";
 
@@ -60,11 +64,110 @@ const SpeakerIcon = ({ size = 64 }: { size?: number }) => {
   );
 };
 
+// Simple AI letter recognition function
+const recognizeLetter = (canvas: HTMLCanvasElement, targetLetter: string): { recognized: string; confidence: number } => {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return { recognized: '', confidence: 0 };
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  
+  // Find drawn pixels
+  const drawnPixels: { x: number; y: number }[] = [];
+  for (let i = 0; i < data.length; i += 4) {
+    const alpha = data[i + 3];
+    if (alpha > 0) {
+      const pixelIndex = i / 4;
+      const x = pixelIndex % canvas.width;
+      const y = Math.floor(pixelIndex / canvas.width);
+      drawnPixels.push({ x, y });
+    }
+  }
+
+  if (drawnPixels.length === 0) {
+    return { recognized: '', confidence: 0 };
+  }
+
+  // Calculate bounding box
+  const minX = Math.min(...drawnPixels.map(p => p.x));
+  const maxX = Math.max(...drawnPixels.map(p => p.x));
+  const minY = Math.min(...drawnPixels.map(p => p.y));
+  const maxY = Math.max(...drawnPixels.map(p => p.y));
+  
+  const width = maxX - minX;
+  const height = maxY - minY;
+  const aspectRatio = width / height;
+
+  // Simple pattern recognition for O and S
+  let confidence = 0;
+  let recognized = '';
+
+  if (targetLetter === 'O') {
+    // Check for circular/oval shape
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+    
+    // Count pixels in quadrants
+    const quadrants = [0, 0, 0, 0];
+    drawnPixels.forEach(pixel => {
+      if (pixel.x < centerX && pixel.y < centerY) quadrants[0]++;
+      else if (pixel.x >= centerX && pixel.y < centerY) quadrants[1]++;
+      else if (pixel.x < centerX && pixel.y >= centerY) quadrants[2]++;
+      else quadrants[3]++;
+    });
+    
+    // Check if all quadrants have pixels (circular shape)
+    const hasAllQuadrants = quadrants.every(q => q > 0);
+    const isRoughlyCircular = aspectRatio > 0.6 && aspectRatio < 1.8;
+    
+    if (hasAllQuadrants && isRoughlyCircular) {
+      confidence = 0.8;
+      recognized = 'O';
+    } else if (hasAllQuadrants || isRoughlyCircular) {
+      confidence = 0.6;
+      recognized = 'O';
+    } else {
+      confidence = 0.3;
+      recognized = 'O';
+    }
+  } else if (targetLetter === 'S') {
+    // Check for S-like curve
+    const topThird = drawnPixels.filter(p => p.y < minY + height / 3);
+    const middleThird = drawnPixels.filter(p => p.y >= minY + height / 3 && p.y < minY + 2 * height / 3);
+    const bottomThird = drawnPixels.filter(p => p.y >= minY + 2 * height / 3);
+    
+    // S shape typically has different x-centers for top and bottom
+    const centerX = (minX + maxX) / 2;
+    const topCenterX = topThird.length > 0 ? topThird.reduce((sum, p) => sum + p.x, 0) / topThird.length : centerX;
+    const bottomCenterX = bottomThird.length > 0 ? bottomThird.reduce((sum, p) => sum + p.x, 0) / bottomThird.length : centerX;
+    const hasProperHeight = height > width * 0.8;
+    const hasCurvePattern = Math.abs(topCenterX - bottomCenterX) > width * 0.2;
+    const hasMiddleSection = middleThird.length > drawnPixels.length * 0.2;
+    
+    if (hasProperHeight && hasCurvePattern && hasMiddleSection) {
+      confidence = 0.8;
+      recognized = 'S';
+    } else if ((hasProperHeight && hasCurvePattern) || (hasProperHeight && hasMiddleSection)) {
+      confidence = 0.6;
+      recognized = 'S';
+    } else {
+      confidence = 0.4;
+      recognized = 'S';
+    }
+  }
+
+  return { recognized, confidence };
+};
+
 // Drawing Canvas Component for Module 4
-const DrawingCanvas = ({ onDrawingComplete }: { onDrawingComplete: (hasDrawing: boolean) => void }) => {
+const DrawingCanvas = ({ onDrawingComplete, targetLetter }: { 
+  onDrawingComplete: (hasDrawing: boolean, recognition?: { recognized: string; confidence: number }) => void;
+  targetLetter: string;
+}) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasContent, setHasContent] = useState(false);
+  const [recognition, setRecognition] = useState<{ recognized: string; confidence: number } | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -78,6 +181,15 @@ const DrawingCanvas = ({ onDrawingComplete }: { onDrawingComplete: (hasDrawing: 
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
   }, []);
+
+  const analyzeDrawing = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const result = recognizeLetter(canvas, targetLetter);
+    setRecognition(result);
+    onDrawingComplete(hasContent, result);
+  };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDrawing(true);
@@ -113,11 +225,14 @@ const DrawingCanvas = ({ onDrawingComplete }: { onDrawingComplete: (hasDrawing: 
     
     if (!hasContent) {
       setHasContent(true);
-      onDrawingComplete(true);
     }
   };
 
   const stopDrawing = () => {
+    if (isDrawing && hasContent) {
+      // Analyze drawing after a short delay
+      setTimeout(analyzeDrawing, 500);
+    }
     setIsDrawing(false);
   };
 
@@ -130,6 +245,7 @@ const DrawingCanvas = ({ onDrawingComplete }: { onDrawingComplete: (hasDrawing: 
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setHasContent(false);
+    setRecognition(null);
     onDrawingComplete(false);
   };
 
@@ -145,12 +261,39 @@ const DrawingCanvas = ({ onDrawingComplete }: { onDrawingComplete: (hasDrawing: 
         onMouseUp={stopDrawing}
         onMouseLeave={stopDrawing}
       />
-      <button
-        onClick={clearCanvas}
-        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
-      >
-        Clear
-      </button>
+      
+      {/* AI Recognition Result */}
+      {recognition && hasContent && (
+        <div className="text-center p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+          <p className="text-sm font-semibold text-blue-700">
+            AI nhận dạng: "{recognition.recognized}" 
+            <span className="ml-2 text-blue-600">
+              ({Math.round(recognition.confidence * 100)}% tin cậy)
+            </span>
+          </p>
+          {recognition.recognized === targetLetter && recognition.confidence > 0.5 && (
+            <p className="text-green-600 font-semibold text-sm mt-1">✅ Chính xác!</p>
+          )}
+        </div>
+      )}
+      
+      <div className="flex space-x-2">
+        <button
+          onClick={clearCanvas}
+          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+        >
+          Xóa
+        </button>
+        
+        {hasContent && (
+          <button
+            onClick={analyzeDrawing}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          >
+            Phân tích lại
+          </button>
+        )}
+      </div>
     </div>
   );
 };
@@ -161,145 +304,190 @@ type QuestionType = {
   question: string;
   type: "audio-choice" | "text-choice" | "image-choice" | "drawing" | "language-recognition";
   audio?: string;
+  secondAudio?: string;
   options?: { text?: string; audio?: string; image?: string }[];
   correctAnswer?: number;
   targetLetter?: string;
 };
 
-const questions: QuestionType[] = [
-  // Module 1: Phonological Awareness
-  {
-    id: "phonological-1",
-    module: "Nhận thức âm vị",
-    question: "Hai chữ này phát âm có giống nhau không?",
-    type: "audio-choice",
-    audio: A_audio,
-    options: [
-      { text: "Giống nhau", audio: B_audio },
-      { text: "Khác nhau" }
-    ],
-    correctAnswer: 1 // Different
-  },
-  {
-    id: "phonological-2", 
-    module: "Nhận thức âm vị",
-    question: "Hai âm này có giống nhau không?",
-    type: "audio-choice",
-    audio: M_audio,
-    options: [
-      { text: "Giống nhau" },
-      { text: "Khác nhau", audio: N_audio }
-    ],
-    correctAnswer: 1 // Different
-  },
-  // Module 2: Decoding
-  {
+// Function to generate randomized questions
+const generateRandomizedQuestions = (): QuestionType[] => {
+  const questions: QuestionType[] = [];
+
+  // Module 1: Phonological Awareness - Randomized pairs
+  const phonologicalPairs = [
+    { audio1: A_audio, audio2: A_audio, same: true, label: "A-A" },
+    { audio1: A_audio, audio2: B_audio, same: false, label: "A-B" },
+    { audio1: B_audio, audio2: B_audio, same: true, label: "B-B" },
+    { audio1: B_audio, audio2: A_audio, same: false, label: "B-A" },
+    { audio1: M_audio, audio2: M_audio, same: true, label: "M-M" },
+    { audio1: M_audio, audio2: N_audio, same: false, label: "M-N" },
+    { audio1: N_audio, audio2: N_audio, same: true, label: "N-N" },
+    { audio1: N_audio, audio2: M_audio, same: false, label: "N-M" },
+  ];
+
+  const selectedPhonologicalPairs = phonologicalPairs.sort(() => Math.random() - 0.5).slice(0, 2);
+
+  selectedPhonologicalPairs.forEach((pair, index) => {
+    questions.push({
+      id: `phonological-${index + 1}`,
+      module: "Nhận thức âm vị",
+      question: "Hai âm này có giống nhau không?",
+      type: "audio-choice",
+      audio: pair.audio1,
+      secondAudio: pair.audio2,
+      options: [
+        { text: "Giống nhau", audio: pair.audio2 },
+        { text: "Khác nhau" }
+      ],
+      correctAnswer: pair.same ? 0 : 1
+    });
+  });
+
+  // Module 2: Decoding - Randomized
+  const decodingPairs = [
+    { audio: D_audio, options: ["D", "Đ"], correct: 0 },
+    { audio: Đ_audio, options: ["D", "Đ"], correct: 1 },
+  ];
+
+  const selectedDecoding1 = decodingPairs[Math.floor(Math.random() * decodingPairs.length)];
+  
+  const decodingWords = [
+    { audio: ca_audio, options: ["ca", "cá", "cà", "cả"], correct: 0 },
+    { audio: cá_audio, options: ["ca", "cá", "cà", "cả"], correct: 1 },
+    { audio: cà_audio, options: ["ca", "cá", "cà", "cả"], correct: 2 },
+    { audio: cả_audio, options: ["ca", "cá", "cà", "cả"], correct: 3 },
+  ];
+
+  const selectedDecoding2 = decodingWords[Math.floor(Math.random() * decodingWords.length)];
+
+  questions.push({
     id: "decoding-1",
     module: "Nhận diện chữ & giải mã",
     question: "Chọn chữ cái đúng theo âm thanh:",
     type: "text-choice",
-    audio: D_audio,
-    options: [
-      { text: "D" },
-      { text: "Đ" }
-    ],
-    correctAnswer: 0
-  },
-  {
+    audio: selectedDecoding1.audio,
+    options: selectedDecoding1.options.map(text => ({ text })),
+    correctAnswer: selectedDecoding1.correct
+  });
+
+  questions.push({
     id: "decoding-2",
     module: "Nhận diện chữ & giải mã", 
     question: "Chọn từ đúng theo âm thanh:",
     type: "text-choice",
-    audio: cá_audio,
-    options: [
-      { text: "ca" },
-      { text: "cá" },
-      { text: "cà" },
-      { text: "cả" }
-    ],
-    correctAnswer: 1
-  },
+    audio: selectedDecoding2.audio,
+    options: selectedDecoding2.options.map(text => ({ text })),
+    correctAnswer: selectedDecoding2.correct
+  });
+
   // Module 3: Understanding Fluency
-  {
-    id: "understanding-1",
-    module: "Tốc độ hiểu",
-    question: "Chọn hình ảnh đúng theo câu:",
-    type: "image-choice",
-    audio: khiAnChuoi_audio,
-    options: [
-      { text: "🐵🍌", image: "monkey-banana" },
-      { text: "🐱🐟", image: "cat-fish" },
-      { text: "🐶🦴", image: "dog-bone" }
-    ],
-    correctAnswer: 0
-  },
-  {
-    id: "understanding-2",
-    module: "Tốc độ hiểu",
-    question: "Chọn câu đang được phát âm:",
-    type: "audio-choice",
-    audio: meoAnCa_audio,
-    options: [
-      { text: "🐵🍌" },
-      { text: "🐱🐟" },
-      { text: "🐶🦴" }
-    ],
-    correctAnswer: 1
-  },
-  // Module 4: Spelling & Writing
-  {
-    id: "spelling-1",
-    module: "Chính tả & viết",
-    question: "Vẽ lại chữ cái bạn nghe:",
-    type: "drawing",
-    audio: O_audio,
-    targetLetter: "O"
-  },
-  {
-    id: "spelling-2",
-    module: "Chính tả & viết",
-    question: "Vẽ lại chữ cái bạn nghe:",
-    type: "drawing", 
-    audio: S_audio,
-    targetLetter: "S"
-  },
-  // Module 5: Language Comprehension
-  {
+  questions.push(
+    {
+      id: "understanding-1",
+      module: "Tốc độ hiểu",
+      question: "Chọn hình ảnh đúng theo câu:",
+      type: "image-choice",
+      audio: khiAnChuoi_audio,
+      options: [
+        { text: "🐵🍌", image: "monkey-banana" },
+        { text: "🐱🐟", image: "cat-fish" },
+        { text: "🐶🦴", image: "dog-bone" }
+      ],
+      correctAnswer: 0
+    },
+    {
+      id: "understanding-2",
+      module: "Tốc độ hiểu",
+      question: "Chọn câu đang được phát âm:",
+      type: "audio-choice",
+      audio: meoAnCa_audio,
+      options: [
+        { text: "🐵🍌" },
+        { text: "🐱🐟" },
+        { text: "🐶🦴" }
+      ],
+      correctAnswer: 1
+    }
+  );
+
+  // Module 4: Spelling & Writing - Randomized letters
+  const writingLetters = [
+    { audio: O_audio, letter: "O" },
+    { audio: S_audio, letter: "S" }
+  ];
+
+  const selectedWriting = writingLetters.sort(() => Math.random() - 0.5).slice(0, 2);
+
+  selectedWriting.forEach((item, index) => {
+    questions.push({
+      id: `spelling-${index + 1}`,
+      module: "Chính tả & viết",
+      question: "Vẽ lại chữ cái bạn nghe:",
+      type: "drawing",
+      audio: item.audio,
+      targetLetter: item.letter
+    });
+  });
+
+  // Module 5: Language Comprehension - Randomized
+  const languagePairs = [
+    { audio: thichAnKem_vn_audio, isVietnamese: true },
+    { audio: thichAnKem_ko_audio, isVietnamese: false },
+  ];
+
+  const selectedLanguage = languagePairs[Math.floor(Math.random() * languagePairs.length)];
+
+  questions.push({
     id: "language-1",
     module: "Hiểu và nhận dạng ngôn ngữ",
     question: "Đây có phải tiếng Việt không?",
     type: "language-recognition",
-    audio: thichAnKem_vn_audio,
+    audio: selectedLanguage.audio,
     options: [
       { text: "Có, đây là tiếng Việt" },
       { text: "Không, đây không phải tiếng Việt" }
     ],
-    correctAnswer: 0
-  },
-  {
+    correctAnswer: selectedLanguage.isVietnamese ? 0 : 1
+  });
+
+  const sentenceComparisons = [
+    { audio1: buoiTruaAnBuoiChua_audio, audio2: buoiTruaAnBuoiChua_audio, same: true },
+    { audio1: buoiTruaAnBuoiChua_audio, audio2: buoiTruaUongSuaChua_audio, same: false },
+    { audio1: buoiTruaUongSuaChua_audio, audio2: buoiTruaUongSuaChua_audio, same: true },
+  ];
+
+  const selectedComparison = sentenceComparisons[Math.floor(Math.random() * sentenceComparisons.length)];
+
+  questions.push({
     id: "language-2",
     module: "Hiểu và nhận dạng ngôn ngữ",
     question: "Hai câu này có giống nhau không?",
     type: "audio-choice",
-    audio: buoiTruaAnBuoiChua_audio,
+    audio: selectedComparison.audio1,
+    secondAudio: selectedComparison.audio2,
     options: [
-      { text: "Giống nhau" },
-      { text: "Khác nhau", audio: buoiTruaUongSuaChua_audio }
+      { text: "Giống nhau", audio: selectedComparison.audio2 },
+      { text: "Khác nhau" }
     ],
-    correctAnswer: 1 // Different
-  }
-];
+    correctAnswer: selectedComparison.same ? 0 : 1
+  });
+
+  return questions;
+};
 
 const BasicTest = () => {
-  const { currentStep, setCurrentStep, steps } = useTestStep();
   const navigate = useNavigate();
   
+  const [questions] = useState<QuestionType[]>(() => generateRandomizedQuestions());
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [score, setScore] = useState(0);
   const [hasDrawing, setHasDrawing] = useState(false);
   const [playingAudio, setPlayingAudio] = useState<HTMLAudioElement | null>(null);
+  const [moduleScores, setModuleScores] = useState<Record<string, { correct: number; total: number }>>({});
+  const [drawingRecognition, setDrawingRecognition] = useState<{ recognized: string; confidence: number } | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
@@ -335,6 +523,7 @@ const BasicTest = () => {
     setSelectedAnswer(null);
     setShowFeedback(false);
     setHasDrawing(false);
+    setDrawingRecognition(null);
   }, [currentQuestionIndex]);
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -348,6 +537,23 @@ const BasicTest = () => {
     if (isCorrect) {
       setScore(prev => prev + 1);
     }
+
+    // Update module scores
+    const module = currentQuestion.module;
+    setModuleScores(prev => ({
+      ...prev,
+      [module]: {
+        correct: (prev[module]?.correct || 0) + (isCorrect ? 1 : 0),
+        total: (prev[module]?.total || 0) + 1
+      }
+    }));
+  };
+
+  const handleDrawingComplete = (hasDrawing: boolean, recognition?: { recognized: string; confidence: number }) => {
+    setHasDrawing(hasDrawing);
+    if (recognition) {
+      setDrawingRecognition(recognition);
+    }
   };
 
   const handleDrawingAnswer = () => {
@@ -355,28 +561,214 @@ const BasicTest = () => {
     
     setShowFeedback(true);
     
-    // For drawing questions, give credit if they drew something
-    if (hasDrawing) {
+    // For drawing questions, use AI recognition to determine correctness
+    let isCorrect = false;
+    if (drawingRecognition && hasDrawing) {
+      isCorrect = drawingRecognition.recognized === currentQuestion.targetLetter && 
+                  drawingRecognition.confidence > 0.5;
+    } else if (hasDrawing) {
+      // Give partial credit for attempting to draw
+      isCorrect = true;
+    }
+
+    if (isCorrect) {
       setScore(prev => prev + 1);
     }
+
+    // Update module scores
+    const module = currentQuestion.module;
+    setModuleScores(prev => ({
+      ...prev,
+      [module]: {
+        correct: (prev[module]?.correct || 0) + (isCorrect ? 1 : 0),
+        total: (prev[module]?.total || 0) + 1
+      }
+    }));
   };
 
   const goToNextQuestion = () => {
     if (isLastQuestion) {
-      // Test completed, go to rating
-      const nextStepIndex = currentStep + 1;
-      if (nextStepIndex < steps.length) {
-        setCurrentStep(nextStepIndex);
-        navigate(`/test/basic/${steps[nextStepIndex]}`);
-      }
+      // Test completed, show results
+      setCurrentQuestionIndex(-1); // Use -1 to indicate results screen
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
+  // Calculate dyslexia risk based on module scores
+  const calculateDyslexiaRisk = () => {
+    const moduleResults = Object.entries(moduleScores).map(([module, scores]) => {
+      const percentage = scores.total > 0 ? (scores.correct / scores.total) * 100 : 0;
+      let level = 0;
+      if (percentage > 70) level = 2;
+      else if (percentage >= 50) level = 1;
+      else level = 0;
+      
+      return { module, percentage, level, correct: scores.correct, total: scores.total };
+    });
+
+    const averageLevel = moduleResults.reduce((sum, result) => sum + result.level, 0) / moduleResults.length;
+    
+    let riskAssessment = "";
+    if (averageLevel >= 1.5) {
+      riskAssessment = "Unofficial: tôi hong sao hết 🎉";
+    } else {
+      riskAssessment = "Unofficial: tôi bị dyslexia ròi 😢";
+    }
+
+    return { moduleResults, riskAssessment, averageLevel };
+  };
+
+  // Results screen
+  if (currentQuestionIndex === -1) {
+    const { moduleResults, riskAssessment } = calculateDyslexiaRisk();
+    
+    return (
+      <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-4xl w-full mx-auto">
+        <h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
+          Kết Quả Bài Test
+        </h2>
+
+        {/* Overall Result */}
+        <div className="text-center space-y-4">
+          <div className="text-2xl font-bold text-pink-600">
+            Tổng điểm: {score}/{questions.length}
+          </div>
+          
+          <div className={`text-xl font-semibold p-4 rounded-xl ${
+            riskAssessment.includes("hong sao") 
+              ? "bg-green-100 text-green-700 border-2 border-green-300"
+              : "bg-yellow-100 text-yellow-700 border-2 border-yellow-300"
+          }`}>
+            {riskAssessment}
+          </div>
+        </div>
+
+        {/* Module Breakdown */}
+        <div className="w-full space-y-4">
+          <h3 className="text-xl font-semibold text-pink-600 text-center">Chi tiết theo từng phần:</h3>
+          
+          <div className="grid gap-4">
+            {moduleResults.map((result, index) => (
+              <div key={index} className="bg-pink-50 p-4 rounded-xl border-2 border-pink-200">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-pink-700">{result.module}</span>
+                  <span className="text-pink-600">{result.correct}/{result.total} ({result.percentage.toFixed(0)}%)</span>
+                </div>
+                <div className="w-full h-2 bg-pink-200 rounded-full mt-2">
+                  <div
+                    className={`h-2 rounded-full transition-all ${
+                      result.level === 2 ? 'bg-green-500' :
+                      result.level === 1 ? 'bg-yellow-500' : 'bg-red-500'
+                    }`}
+                    style={{ width: `${result.percentage}%` }}
+                  />
+                </div>
+                <div className="text-xs text-gray-600 mt-1">
+                  {result.level === 2 ? 'Tốt (>70%)' :
+                   result.level === 1 ? 'Trung bình (50-70%)' : 'Cần cải thiện (<50%)'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex space-x-4">
+          <button
+            onClick={() => {
+              // Reset test
+              setCurrentQuestionIndex(0);
+              setScore(0);
+              setModuleScores({});
+              setSelectedAnswer(null);
+              setShowFeedback(false);
+              setHasDrawing(false);
+              setDrawingRecognition(null);
+            }}
+            className="px-6 py-3 bg-pink-500 text-white rounded-xl font-semibold hover:bg-pink-600 transition"
+          >
+            Làm lại
+          </button>
+          
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="px-6 py-3 bg-gray-500 text-white rounded-xl font-semibold hover:bg-gray-600 transition"
+          >
+            Về trang chủ
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const renderQuestion = () => {
     switch (currentQuestion.type) {
       case "audio-choice":
+        return (
+          <div className="space-y-6">
+            {/* Two speakers side by side for audio comparison */}
+            <div className="flex justify-center space-x-8">
+              <div className="flex flex-col items-center space-y-2">
+                <button
+                  onClick={() => playAudio(currentQuestion.audio!)}
+                  className="w-24 h-24 border-4 border-pink-400 rounded-2xl p-2 hover:bg-pink-50 transition"
+                >
+                  <SpeakerIcon size={64} />
+                </button>
+                <span className="text-sm font-semibold text-pink-600">Âm 1</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-2">
+                <button
+                  onClick={() => {
+                    if (currentQuestion.secondAudio) {
+                      playAudio(currentQuestion.secondAudio);
+                    } else {
+                      const secondAudio = currentQuestion.options?.find((opt: any) => opt.audio);
+                      if (secondAudio?.audio) {
+                        playAudio(secondAudio.audio);
+                      }
+                    }
+                  }}
+                  className="w-24 h-24 border-4 border-pink-400 rounded-2xl p-2 hover:bg-pink-50 transition"
+                >
+                  <SpeakerIcon size={64} />
+                </button>
+                <span className="text-sm font-semibold text-pink-600">Âm 2</span>
+              </div>
+            </div>
+            
+            {/* Question text */}
+            <p className="text-xl font-semibold text-center text-pink-600 font-[Comic Sans MS,cursive,sans-serif]">
+              {currentQuestion.question}
+            </p>
+
+            {/* Options */}
+            <div className="grid gap-4 max-w-md mx-auto">
+              {currentQuestion.options?.map((option: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => handleAnswerSelect(index)}
+                  disabled={showFeedback}
+                  className={`
+                    p-4 rounded-xl border-2 font-semibold text-lg transition-all
+                    ${showFeedback && selectedAnswer === index
+                      ? selectedAnswer === currentQuestion.correctAnswer
+                        ? 'bg-green-100 border-green-400 text-green-700'
+                        : 'bg-red-100 border-red-400 text-red-700'
+                      : 'bg-white border-pink-300 hover:border-pink-400 hover:bg-pink-50'
+                    }
+                    ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105'}
+                  `}
+                >
+                  {option.text}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
       case "text-choice":
       case "image-choice":
       case "language-recognition":
@@ -401,7 +793,7 @@ const BasicTest = () => {
 
             {/* Options */}
             <div className="grid gap-4 max-w-md mx-auto">
-              {currentQuestion.options?.map((option, index) => (
+              {currentQuestion.options?.map((option: any, index: number) => (
                 <button
                   key={index}
                   onClick={() => handleAnswerSelect(index)}
@@ -459,7 +851,10 @@ const BasicTest = () => {
 
             {/* Drawing canvas */}
             <div className="flex justify-center">
-              <DrawingCanvas onDrawingComplete={setHasDrawing} />
+              <DrawingCanvas 
+                onDrawingComplete={handleDrawingComplete} 
+                targetLetter={currentQuestion.targetLetter || ''} 
+              />
             </div>
 
             {/* Submit button for drawing */}
@@ -527,9 +922,30 @@ const BasicTest = () => {
       {showFeedback && (
         <div className="text-center">
           {currentQuestion.type === "drawing" ? (
-            <p className="text-lg font-semibold text-green-600">
-              {hasDrawing ? "Tốt lắm! Bạn đã vẽ được!" : "Hãy thử vẽ lại!"}
-            </p>
+            <div className="space-y-2">
+              {drawingRecognition && hasDrawing ? (
+                <div>
+                  <p className="text-lg font-semibold">
+                    {drawingRecognition.recognized === currentQuestion.targetLetter && drawingRecognition.confidence > 0.5 ? (
+                      <span className="text-green-600">Xuất sắc! AI nhận dạng chính xác! 🎉</span>
+                    ) : drawingRecognition.recognized === currentQuestion.targetLetter ? (
+                      <span className="text-yellow-600">Tốt! Cần cải thiện một chút! 👍</span>
+                    ) : hasDrawing ? (
+                      <span className="text-orange-600">Cố gắng lên! Hãy thử vẽ lại! 💪</span>
+                    ) : (
+                      <span className="text-red-600">Hãy thử vẽ lại! 💪</span>
+                    )}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    AI: "{drawingRecognition.recognized}" ({Math.round(drawingRecognition.confidence * 100)}% tin cậy)
+                  </p>
+                </div>
+              ) : (
+                <p className="text-lg font-semibold text-green-600">
+                  {hasDrawing ? "Tốt lắm! Bạn đã vẽ được!" : "Hãy thử vẽ lại!"}
+                </p>
+              )}
+            </div>
           ) : (
             <p className="text-lg font-semibold">
               {selectedAnswer === currentQuestion.correctAnswer ? (
