@@ -76,6 +76,12 @@ function App() {
 							/>
 						</Route>
 
+						{/* -------- Dyslexia Child Test (4-5 years old) -------- */}
+						<Route
+							path="test/dyslexia-child"
+							element={<DyslexiaChildTestPage />}
+						/>
+
 						{/* -------- Language Test Layout -------- */}
 						{/* <Route
 							path="test/language"
