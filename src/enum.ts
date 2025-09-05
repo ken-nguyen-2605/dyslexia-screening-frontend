@@ -1,4 +1,4 @@
-export type TestType = "auditory" | "visual" | "language" | "dyslexia-child";
+export type TestType = "auditory" | "visual" | "language" | "dyslexia-child" | "basic";
 
 export const DyslexiaRiskLevel = {
   LOW: "low",      // Rủi ro thấp - không có dấu hiệu
