@@ -17,9 +17,14 @@ import S_audio from "../assets/audioTestVowel/S.mp3";
 import khiAnChuoi_audio from "../assets/audioTestVowel/khiAnChuoi.mp3";
 import meoAnCa_audio from "../assets/audioTestVowel/meoAnCa.mp3";
 import thichAnKem_vn_audio from "../assets/audioTestVowel/thichAnKem_vn.mp3";
-import thichAnKem_ko_audio from "../assets/audioTestVowel/thichAnKem_ko.mp3";
+import thichAnKem_ko_audio from "../assets/audioTestVowel/thichAnKem_ko.mp3.mp3";
 import buoiTruaAnBuoiChua_audio from "../assets/audioTestVowel/buoiTruaAnBuoiChua.mp3";
 import buoiTruaUongSuaChua_audio from "../assets/audioTestVowel/buoiTruaUongSuaChua.mp3";
+
+// Image imports
+import monkeyBananaImg from "../assets/image/testVowels/monkeyBanana.jpg";
+import catFishImg from "../assets/image/testVowels/catFish.jpg";
+import dogBoneImg from "../assets/image/testVowels/dogBone.jpg";
 
 // Speaker Icon Component
 const SpeakerIcon = ({ size = 64 }: { size?: number }) => {
@@ -327,8 +332,15 @@ const generateRandomizedQuestions = (): QuestionType[] => {
   ];
 
   const selectedPhonologicalPairs = phonologicalPairs.sort(() => Math.random() - 0.5).slice(0, 2);
+  
+  console.log('Selected phonological pairs:', selectedPhonologicalPairs.map(p => p.label));
 
   selectedPhonologicalPairs.forEach((pair, index) => {
+    console.log(`Creating question ${index + 1}:`, {
+      label: pair.label,
+      audio1: pair.audio1,
+      audio2: pair.audio2
+    });
     questions.push({
       id: `phonological-${index + 1}`,
       module: "Nhận thức âm vị",
@@ -337,7 +349,7 @@ const generateRandomizedQuestions = (): QuestionType[] => {
       audio: pair.audio1,
       secondAudio: pair.audio2,
       options: [
-        { text: "Giống nhau", audio: pair.audio2 },
+        { text: "Giống nhau" },
         { text: "Khác nhau" }
       ],
       correctAnswer: pair.same ? 0 : 1
@@ -390,9 +402,9 @@ const generateRandomizedQuestions = (): QuestionType[] => {
       type: "image-choice",
       audio: khiAnChuoi_audio,
       options: [
-        { text: "🐵🍌", image: "monkey-banana" },
-        { text: "🐱🐟", image: "cat-fish" },
-        { text: "🐶🦴", image: "dog-bone" }
+        { text: "Khỉ ăn chuối", image: monkeyBananaImg },
+        { text: "Mèo ăn cá", image: catFishImg },
+        { text: "Chó ăn xương", image: dogBoneImg }
       ],
       correctAnswer: 0
     },
@@ -400,12 +412,12 @@ const generateRandomizedQuestions = (): QuestionType[] => {
       id: "understanding-2",
       module: "Tốc độ hiểu",
       question: "Chọn câu đang được phát âm:",
-      type: "audio-choice",
+      type: "image-choice",
       audio: meoAnCa_audio,
       options: [
-        { text: "🐵🍌" },
-        { text: "🐱🐟" },
-        { text: "🐶🦴" }
+        { text: "Khỉ ăn chuối", image: monkeyBananaImg },
+        { text: "Mèo ăn cá", image: catFishImg },
+        { text: "Chó ăn xương", image: dogBoneImg }
       ],
       correctAnswer: 1
     }
@@ -467,7 +479,7 @@ const generateRandomizedQuestions = (): QuestionType[] => {
     audio: selectedComparison.audio1,
     secondAudio: selectedComparison.audio2,
     options: [
-      { text: "Giống nhau", audio: selectedComparison.audio2 },
+      { text: "Giống nhau" },
       { text: "Khác nhau" }
     ],
     correctAnswer: selectedComparison.same ? 0 : 1
@@ -497,8 +509,11 @@ const BasicTest = () => {
 
   // Play audio function
   const playAudio = (audioSrc: string) => {
+    console.log('playAudio called with:', audioSrc);
+    
     if (playingAudio) {
       playingAudio.pause();
+      playingAudio.currentTime = 0;
     }
     
     const audio = new Audio(audioSrc);
@@ -513,17 +528,69 @@ const BasicTest = () => {
 
   // Auto-play audio when question loads
   useEffect(() => {
-    if (currentQuestion?.audio) {
-      setTimeout(() => {
-        playAudio(currentQuestion.audio!);
-      }, 500);
-    }
-    
-    // Reset states
+    // Reset states first
     setSelectedAnswer(null);
     setShowFeedback(false);
     setHasDrawing(false);
     setDrawingRecognition(null);
+
+    if (currentQuestion?.audio && questions.length > 0 && currentQuestionIndex >= 0) {
+      console.log(`Question ${currentQuestionIndex + 1} autoplay:`, {
+        type: currentQuestion.type,
+        audio: currentQuestion.audio,
+        secondAudio: currentQuestion.secondAudio,
+        id: currentQuestion.id
+      });
+      
+      // Stop any currently playing audio
+      if (playingAudio) {
+        playingAudio.pause();
+        playingAudio.currentTime = 0;
+        setPlayingAudio(null);
+      }
+      
+      if (currentQuestion.type === "audio-choice") {
+        // For audio-choice questions, play audios sequentially
+        const timeoutId = setTimeout(() => {
+          console.log('Playing first audio:', currentQuestion.audio);
+          
+          const firstAudio = new Audio(currentQuestion.audio!);
+          setPlayingAudio(firstAudio);
+          
+          firstAudio.onended = () => {
+            setPlayingAudio(null);
+            
+            const secondTimeoutId = setTimeout(() => {
+              if (currentQuestion.secondAudio) {
+                console.log('Playing second audio:', currentQuestion.secondAudio);
+                const secondAudio = new Audio(currentQuestion.secondAudio);
+                setPlayingAudio(secondAudio);
+                
+                secondAudio.onended = () => {
+                  setPlayingAudio(null);
+                };
+                
+                secondAudio.play().catch(console.error);
+              }
+            }, 800);
+            
+            return () => clearTimeout(secondTimeoutId);
+          };
+          
+          firstAudio.play().catch(console.error);
+        }, 500);
+        
+        return () => clearTimeout(timeoutId);
+      } else {
+        // For other question types, play normally
+        const timeoutId = setTimeout(() => {
+          console.log('Playing single audio:', currentQuestion.audio);
+          playAudio(currentQuestion.audio!);
+        }, 500);
+        
+        return () => clearTimeout(timeoutId);
+      }
+    }
   }, [currentQuestionIndex]);
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -821,7 +888,18 @@ const BasicTest = () => {
                         🔊
                       </button>
                     )}
-                    <span>{option.text}</span>
+                    {option.image ? (
+                      <div className="flex flex-col items-center space-y-2">
+                        <img 
+                          src={option.image} 
+                          alt={option.text}
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
+                        <span className="text-sm">{option.text}</span>
+                      </div>
+                    ) : (
+                      <span>{option.text}</span>
+                    )}
                   </div>
                 </button>
               ))}
