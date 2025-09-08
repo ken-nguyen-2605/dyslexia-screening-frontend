@@ -4,6 +4,7 @@ import VisualTestInstruction from "./VisualTestInstruction";
 import VisualTest from "./VisualTest";
 import LanguageTestInstruction from "./LanguageTestInstruction";
 //import LanguageTest from "./LanguageTest";
+
 import TestDifficultyRating from "./TestDifficultyRating";
 
 import { useNavigate } from "react-router-dom";

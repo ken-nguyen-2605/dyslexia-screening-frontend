@@ -13,7 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import TestDispatcher from "./components/TestDispatcher";
-// import VisualTestLayout from "./pages/VisualTestLayout";
+import VisualTestLayout from "./pages/VisualTestLayout";
 // import LanguageTestLayout from "./pages/LanguageTestLayout";
 import VisualTestLayout from "./pages/VisualTestLayout";
 
