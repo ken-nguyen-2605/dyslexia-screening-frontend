@@ -14,6 +14,9 @@ import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
+import TestTypeSelection from "./pages/TestTypeSelection";
+import DyslexiaChildTestPage from "./pages/DyslexiaChildTestPage";
+import BasicTestLayout from "./pages/BasicTestLayout";
 // import LanguageTestLayout from "./pages/LanguageTestLayout";
 
 function App() {
@@ -33,6 +36,9 @@ function App() {
 						<Route path="me" element={<Profile />} />
 						<Route path="dashboard" element={<Dashboard />} />
 						<Route path="human" element={<HumanFeaturesForm />} />
+
+						{/* -------- Test Euruka Layout -------- */}
+						<Route path="test/selection" element={<TestTypeSelection />} />
 
 						{/* -------- Auditory Test Layout -------- */}
 						<Route
@@ -71,6 +77,31 @@ function App() {
 								element={<TestDispatcher testType="visual" />}
 							/>
 						</Route>
+
+						{/* -------- Basic Test Layout (using Visual Test components) -------- */}
+						<Route
+							path="test/basic"
+							element={<BasicTestLayout />}
+						>
+							<Route
+								path="instruction"
+								element={<TestDispatcher testType="basic" />}
+							/>
+							<Route
+								path=":type/:cardQuantity"
+								element={<TestDispatcher testType="basic" />}
+							/>
+							<Route
+								path="rating"
+								element={<TestDispatcher testType="basic" />}
+							/>
+						</Route>
+
+						{/* -------- Dyslexia Child Test (4-5 years old) -------- */}
+						<Route
+							path="test/dyslexia-child"
+							element={<DyslexiaChildTestPage />}
+						/>
 
 						{/* -------- Language Test Layout -------- */}
 						{/* <Route

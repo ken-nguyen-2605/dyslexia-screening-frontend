@@ -7,6 +7,8 @@ import type { TestType } from "../enum";
 import { useTestStep } from "../contexts/TestStepContext";
 import VisualTestInstruction from "./VisualTestInstruction";
 import LanguageTestInstruction from "./LanguageTestInstruction";
+import BasicTest from "./BasicTest";
+import BasicTestInstruction from "./BasicTestInstruction";
 
 interface TestDispatcherProps {
 	testType: TestType;
@@ -44,6 +46,12 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 						onStartTest={() => goTo(currentStep + 1)}
 					/>
 				);
+			case "basic":
+				return (
+					<BasicTestInstruction
+						onStartTest={() => goTo(currentStep + 1)}
+					/>
+				);
 		}
 	}
 
@@ -62,6 +70,9 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 						case "language":
 							navigate("/dashboard");
 							break;
+						case "basic":
+							navigate("/dashboard");
+							break;
 					}
 				}}
 			/>
@@ -73,6 +84,8 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
             return <AuditoryTest />;
         case "visual":
             return <VisualTest />;
+        case "basic":
+            return <BasicTest />;
         case "language":
             // return <LanguageTest />; // <-- ensure this component exists
         default:
