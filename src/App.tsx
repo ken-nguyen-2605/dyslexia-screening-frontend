@@ -14,9 +14,7 @@ import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
-// import LanguageTestLayout from "./pages/LanguageTestLayout";
-import VisualTestLayout from "./pages/VisualTestLayout";
-
+import LanguageTestLayout from "./pages/LanguageTestLayout";
 
 function App() {
 	return (
@@ -75,7 +73,7 @@ function App() {
 						</Route> 
 
 						{/* -------- Language Test Layout -------- */}
-						{/* <Route
+						<Route
 							path="test/language"
 							element={<LanguageTestLayout />}
 						>
@@ -84,14 +82,14 @@ function App() {
 								element={<TestDispatcher testType="language" />}
 							/>
 							<Route
-								path=":type/:cardQuantity"
+								path=":type"
 								element={<TestDispatcher testType="language" />}
 							/>
 							<Route
 								path="rating"
 								element={<TestDispatcher testType="language" />}
 							/>
-						</Route> */}
+						</Route>
 
 						{/* </Route> */}
 						{/* 404 */}

@@ -1,5 +1,11 @@
 import mainImage from "../assets/image/main.png";
+import { useNavigate } from "react-router-dom";
+
 const Home = () => {
+	const navigate = useNavigate();
+	const handleStartTest = () => {
+		navigate("/dashboard");
+	};
 	return (
 		<div className="bg-blue-50 min-h-screen py-12 px-4 sm:px-8">
 			{/* Hero Section */}
@@ -13,7 +19,8 @@ const Home = () => {
 						Professional, reliable screening tools to help<br />
 						you understand and address dyslexia.
 					</p>
-					<button className="bg-teal-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full text-sm shadow">
+					<button onClick={handleStartTest}
+					 className="bg-teal-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full text-sm shadow">
 						START TEST
 					</button>
 				</div>
