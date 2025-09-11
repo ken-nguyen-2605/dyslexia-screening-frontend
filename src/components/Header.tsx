@@ -8,12 +8,23 @@ const Header = () => {
   const { user, profiles, selectProfile, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [switchingProfile, setSwitchingProfile] = useState(false);
   const { t } = useTranslation();
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const handleProfileSwitch = async (profileId: number) => {
-    await selectProfile(profileId);
-    setIsProfileMenuOpen(false);
+    if (switchingProfile) return; // Prevent multiple clicks
+    
+    setSwitchingProfile(true);
+    try {
+      await selectProfile(profileId);
+      setIsProfileMenuOpen(false);
+    } catch (error) {
+      console.error("Profile switch failed:", error);
+      // Error handling can be improved here with toast notifications
+    } finally {
+      setSwitchingProfile(false);
+    }
   };
 
   // Close profile menu when clicking outside
@@ -94,13 +105,16 @@ const Header = () => {
                         <button
                           key={profile.id}
                           onClick={() => handleProfileSwitch(profile.id)}
-                          className={`w-full text-left px-3 py-2 hover:bg-gray-100 transition ${
+                          disabled={switchingProfile || profile.id === user.id}
+                          className={`w-full text-left px-3 py-2 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed ${
                             profile.id === user.id ? 'bg-teal-50 border-l-4 border-teal-500' : ''
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="font-medium text-gray-800">{profile.name || `Profile ${profile.id}`}</p>
+                              <p className="font-medium text-gray-800">
+                                {switchingProfile && profile.id !== user.id ? "🔄 Switching..." : profile.name || `Profile ${profile.id}`}
+                              </p>
                               <p className="text-xs text-gray-600">
                                 {profile.profile_type} • 
                                 {profile.year_of_birth ? ` Age: ${new Date().getFullYear() - profile.year_of_birth}` : ' Age not set'}

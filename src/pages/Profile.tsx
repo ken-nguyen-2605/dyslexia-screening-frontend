@@ -98,53 +98,71 @@ const Profile = () => {
   };
 
   const handleSelectProfile = async (profileId: number) => {
-    await selectProfile(profileId);
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await selectProfile(profileId);
+      // Success feedback could be added here if needed
+    } catch (err: any) {
+      setError(err?.response?.data?.message || err.message || "Profile selection failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 py-10 px-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">Profile Management</h1>
+        <h1 className="text-4xl font-bold text-pink-600 mb-8 text-center">
+          🎈 Quản Lý Profile
+        </h1>
         
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="bg-red-100 border-2 border-red-300 text-red-700 px-4 py-3 rounded-2xl mb-6">
             {error}
           </div>
         )}
 
         {/* Current Profile Info */}
         {user && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Current Active Profile</h2>
+          <div className="bg-white rounded-3xl shadow-xl p-6 mb-8 border-2 border-pink-200">
+            <h2 className="text-2xl font-bold text-pink-600 mb-4">
+              ⭐ Profile Hiện Tại
+            </h2>
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-semibold text-lg">{user.name || `Profile ${user.id}`}</p>
-                <p className="text-gray-600">
-                  {user.profile_type} • {user.year_of_birth ? `Age: ${new Date().getFullYear() - user.year_of_birth}` : 'Age not set'}
+                <p className="font-bold text-lg text-purple-700">
+                  {user.profile_type === "PARENT" ? "👨‍👩‍👧‍👦" : "🧒"} {user.name || `Profile ${user.id}`}
+                </p>
+                <p className="text-purple-600 font-semibold">
+                  {user.profile_type === "PARENT" ? "Phụ huynh" : "Trẻ em"} • {user.year_of_birth ? `Tuổi: ${new Date().getFullYear() - user.year_of_birth}` : 'Chưa đặt tuổi'}
                 </p>
                 {user.hobbies && (
-                  <p className="text-gray-600 mt-1">Hobbies: {user.hobbies}</p>
+                  <p className="text-purple-600 mt-1 font-semibold">🎯 Sở thích: {user.hobbies}</p>
                 )}
               </div>
               <button
                 onClick={() => setEditingProfile(user)}
-                className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-6 py-3 rounded-2xl transition-all duration-200 font-bold shadow-lg hover:shadow-xl font-[Fredoka,sans-serif]"
               >
-                Edit Profile
+                ✏️ Chỉnh Sửa
               </button>
             </div>
           </div>
         )}
 
         {/* All Profiles */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-3xl shadow-xl p-6 mb-8 border-2 border-pink-200">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">All Profiles</h2>
+            <h2 className="text-2xl font-bold text-pink-600 font-[Fredoka,sans-serif]">
+              👥 Tất Cả Profiles
+            </h2>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white px-6 py-3 rounded-2xl transition-all duration-200 font-bold shadow-lg hover:shadow-xl font-[Fredoka,sans-serif]"
             >
-              + Create New Profile
+              ✨ Tạo Profile Mới
             </button>
           </div>
           
@@ -152,19 +170,21 @@ const Profile = () => {
             {profiles.map((profile) => (
               <div
                 key={profile.id}
-                className={`border rounded-lg p-4 ${
-                  profile.id === user?.id ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
+                className={`border-2 rounded-3xl p-4 transition-all duration-200 shadow-lg hover:shadow-xl ${
+                  profile.id === user?.id ? 'border-yellow-400 bg-yellow-50' : 'border-pink-200 bg-white hover:border-purple-300'
                 }`}
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h3 className="font-semibold text-lg">{profile.name || `Profile ${profile.id}`}</h3>
-                    <p className="text-gray-600 text-sm">
-                      {profile.profile_type} • {profile.year_of_birth ? `Age: ${new Date().getFullYear() - profile.year_of_birth}` : 'Age not set'}
+                    <h3 className="font-bold text-lg text-purple-700 font-[Fredoka,sans-serif]">
+                      {profile.profile_type === "PARENT" ? "👨‍👩‍👧‍👦" : "🧒"} {profile.name || `Profile ${profile.id}`}
+                    </h3>
+                    <p className="text-purple-600 text-sm font-semibold">
+                      {profile.profile_type === "PARENT" ? "Phụ huynh" : "Trẻ em"} • {profile.year_of_birth ? `Tuổi: ${new Date().getFullYear() - profile.year_of_birth}` : 'Chưa đặt tuổi'}
                     </p>
                   </div>
                   {profile.id === user?.id && (
-                    <span className="bg-teal-500 text-white text-xs px-2 py-1 rounded">Active</span>
+                    <span className="bg-yellow-500 text-white text-xs px-3 py-1 rounded-full font-bold">⭐ Đang dùng</span>
                   )}
                 </div>
                 
@@ -172,23 +192,24 @@ const Profile = () => {
                   {profile.id !== user?.id && (
                     <button
                       onClick={() => handleSelectProfile(profile.id)}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 rounded transition-colors"
+                      disabled={loading}
+                      className="flex-1 bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white text-sm px-3 py-2 rounded-2xl transition-all duration-200 font-bold font-[Fredoka,sans-serif] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Switch To
+                      {loading ? "⏳ Đang chuyển..." : "🔄 Chuyển"}
                     </button>
                   )}
                   <button
                     onClick={() => setEditingProfile(profile)}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-2 rounded transition-colors"
+                    className="flex-1 bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white text-sm px-3 py-2 rounded-2xl transition-all duration-200 font-bold font-[Fredoka,sans-serif]"
                   >
-                    Edit
+                    ✏️ Sửa
                   </button>
                   {profiles.length > 1 && (
                     <button
                       onClick={() => handleDeleteProfile(profile.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-2 rounded transition-colors"
+                      className="bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white text-sm px-3 py-2 rounded-2xl transition-all duration-200 font-bold font-[Fredoka,sans-serif]"
                     >
-                      Delete
+                      🗑️
                     </button>
                   )}
                 </div>
@@ -199,73 +220,83 @@ const Profile = () => {
 
         {/* Edit Profile Modal */}
         {editingProfile && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-              <h3 className="text-xl font-semibold mb-4">Edit Profile</h3>
+          <div className="fixed inset-0 bg-pink-100 bg-opacity-80 flex items-center justify-center z-50 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl border-2 border-pink-200">
+              <h3 className="text-2xl font-bold mb-6 text-pink-600 font-[Fredoka,sans-serif]">
+                ✏️ Chỉnh Sửa Profile
+              </h3>
               
               <form onSubmit={handleUpdateProfile} className="space-y-4">
                 <div>
-                  <label className="block font-semibold text-gray-800 mb-1">Name</label>
+                  <label className="block font-bold text-pink-700 mb-2 font-[Fredoka,sans-serif]">
+                    🏷️ Tên
+                  </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full border border-gray-300 p-3 rounded-lg focus:border-teal-500 focus:outline-none"
+                    className="w-full border-2 border-pink-200 p-3 rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-200 font-[Fredoka,sans-serif]"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block font-semibold text-gray-800 mb-1">Year of Birth</label>
+                  <label className="block font-bold text-pink-700 mb-2 font-[Fredoka,sans-serif]">
+                    🎂 Năm Sinh
+                  </label>
                   <input
                     type="number"
                     min="1900"
                     max="2025"
                     value={formData.year_of_birth}
                     onChange={(e) => setFormData(prev => ({ ...prev, year_of_birth: parseInt(e.target.value) }))}
-                    className="w-full border border-gray-300 p-3 rounded-lg focus:border-teal-500 focus:outline-none"
+                    className="w-full border-2 border-pink-200 p-3 rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-200 font-[Fredoka,sans-serif]"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block font-semibold text-gray-800 mb-1">Gender</label>
+                  <label className="block font-bold text-pink-700 mb-2 font-[Fredoka,sans-serif]">
+                    👫 Giới Tính
+                  </label>
                   <select
                     value={formData.gender}
                     onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value as "MALE" | "FEMALE" }))}
-                    className="w-full border border-gray-300 p-3 rounded-lg focus:border-teal-500 focus:outline-none"
+                    className="w-full border-2 border-pink-200 p-3 rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-200 font-[Fredoka,sans-serif]"
                   >
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
+                    <option value="MALE">👦 Nam</option>
+                    <option value="FEMALE">👧 Nữ</option>
                   </select>
                 </div>
                 
                 <div>
-                  <label className="block font-semibold text-gray-800 mb-1">Hobbies</label>
+                  <label className="block font-bold text-pink-700 mb-2 font-[Fredoka,sans-serif]">
+                    🎯 Sở Thích
+                  </label>
                   <input
                     type="text"
                     value={formData.hobbies}
                     onChange={(e) => setFormData(prev => ({ ...prev, hobbies: e.target.value }))}
-                    className="w-full border border-gray-300 p-3 rounded-lg focus:border-teal-500 focus:outline-none"
-                    placeholder="e.g., Reading, Gaming, Sports"
+                    className="w-full border-2 border-pink-200 p-3 rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-200 font-[Fredoka,sans-serif]"
+                    placeholder="VD: Đọc sách, Chơi game, Thể thao..."
                     required
                   />
                 </div>
                 
-                <div className="flex gap-3">
+                <div className="flex gap-3 pt-4">
                   <button
                     type="button"
                     onClick={() => setEditingProfile(null)}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg transition-colors"
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-2xl transition-all duration-200 font-bold font-[Fredoka,sans-serif]"
                   >
-                    Cancel
+                    ❌ Hủy
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50"
+                    className="flex-1 bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white py-3 rounded-2xl transition-all duration-200 disabled:opacity-50 font-bold font-[Fredoka,sans-serif]"
                   >
-                    {loading ? "Saving..." : "Save Changes"}
+                    {loading ? "⏳ Đang lưu..." : "✅ Lưu"}
                   </button>
                 </div>
               </form>
@@ -275,49 +306,55 @@ const Profile = () => {
 
         {/* Create Profile Modal */}
         {showCreateForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-              <h3 className="text-xl font-semibold mb-4">Create New Profile</h3>
+          <div className="fixed inset-0 bg-pink-100 bg-opacity-80 flex items-center justify-center z-50 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl border-2 border-pink-200">
+              <h3 className="text-2xl font-bold mb-6 text-pink-600 font-[Fredoka,sans-serif]">
+                ✨ Tạo Profile Mới
+              </h3>
               
               <form onSubmit={handleCreateProfile} className="space-y-4">
                 <div>
-                  <label className="block font-semibold text-gray-800 mb-1">Profile Name</label>
+                  <label className="block font-bold text-pink-700 mb-2 font-[Fredoka,sans-serif]">
+                    🏷️ Tên Profile
+                  </label>
                   <input
                     type="text"
                     value={newProfileData.name}
                     onChange={(e) => setNewProfileData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full border border-gray-300 p-3 rounded-lg focus:border-teal-500 focus:outline-none"
-                    placeholder="Enter profile name"
+                    className="w-full border-2 border-pink-200 p-3 rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-200 font-[Fredoka,sans-serif]"
+                    placeholder="Nhập tên profile..."
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block font-semibold text-gray-800 mb-1">Profile Type</label>
+                  <label className="block font-bold text-pink-700 mb-2 font-[Fredoka,sans-serif]">
+                    👥 Loại Profile
+                  </label>
                   <select
                     value={newProfileData.profile_type}
                     onChange={(e) => setNewProfileData(prev => ({ ...prev, profile_type: e.target.value as ProfileType }))}
-                    className="w-full border border-gray-300 p-3 rounded-lg focus:border-teal-500 focus:outline-none"
+                    className="w-full border-2 border-pink-200 p-3 rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-200 font-[Fredoka,sans-serif]"
                   >
-                    <option value="CHILD">Child</option>
-                    <option value="PARENT">Parent</option>
+                    <option value="CHILD">🧒 Trẻ em</option>
+                    <option value="PARENT">👨‍👩‍👧‍👦 Phụ huynh</option>
                   </select>
                 </div>
                 
-                <div className="flex gap-3">
+                <div className="flex gap-3 pt-4">
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg transition-colors"
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-2xl transition-all duration-200 font-bold font-[Fredoka,sans-serif]"
                   >
-                    Cancel
+                    ❌ Hủy
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50"
+                    className="flex-1 bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white py-3 rounded-2xl transition-all duration-200 disabled:opacity-50 font-bold font-[Fredoka,sans-serif]"
                   >
-                    {loading ? "Creating..." : "Create Profile"}
+                    {loading ? "⏳ Đang tạo..." : "✅ Tạo"}
                   </button>
                 </div>
               </form>

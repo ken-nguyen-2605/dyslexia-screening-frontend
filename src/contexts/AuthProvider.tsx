@@ -66,9 +66,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 			const userProfiles = await accountService.getProfiles();
 			setProfiles(userProfiles);
 			
-			// If we have profiles, we might need to select one or get current profile
-			// For now, we'll leave user as null until profile is selected
-			setUser(null);
+			// Try to decode token to see if it contains profile info
+			if (token) {
+				try {
+					const decoded: any = jwtDecode(token);
+					if (decoded.profile_id) {
+						// This is a profile token, find the matching profile
+						const currentProfile = userProfiles.find(p => p.id === decoded.profile_id);
+						if (currentProfile) {
+							setUser(currentProfile);
+						}
+					}
+					// If no profile_id in token, it might be an account token - leave user as null for profile selection
+				} catch (decodeError) {
+					console.warn("Could not decode token for profile info");
+				}
+			}
 		} catch (error: any) {
 			// If we can't get profiles, might be an old profile token
 			// Try to clear and force re-login
@@ -121,22 +134,47 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 	};
 
 	const selectProfile = async (profileId: number) => {
+		console.log("🔄 Starting profile selection for ID:", profileId);
 		setLoading(true);
 		setError(null);
 		try {
+			console.log("📡 Calling API to select profile...");
 			const data: Token = await accountService.selectProfile(profileId);
+			console.log("✅ API response received:", data);
+			
 			if (data.access_token) {
 				localStorage.setItem(TOKEN_KEY, data.access_token);
 				setToken(data.access_token);
-				// Find and set the selected profile
+				
+				console.log("🔍 Decoding new token...");
+				// Decode the new token to get user info
+				const decoded: any = jwtDecode(data.access_token);
+				console.log("📋 Token decoded:", decoded);
+				
+				// Find the selected profile from our profiles list
 				const selectedProfile = profiles.find(p => p.id === profileId);
+				console.log("👤 Found profile:", selectedProfile);
+				
 				if (selectedProfile) {
-					setUser(selectedProfile);
+					// Update the selected profile with any additional data from token if needed
+					const updatedUser = {
+						...selectedProfile,
+						// Add any additional fields from the token if available
+						...(decoded.profile || {})
+					};
+					console.log("✨ Setting user to:", updatedUser);
+					setUser(updatedUser);
 				}
+				
+				// Refresh profiles to get latest data
+				console.log("🔄 Refreshing profiles...");
+				await refreshProfiles();
+				console.log("✅ Profile selection completed successfully");
 			} else {
 				throw new Error("No access token in profile selection response");
 			}
 		} catch (err: any) {
+			console.error("❌ Profile selection failed:", err);
 			setError(
 				err?.response?.data?.message || err.message || "Profile selection failed"
 			);
