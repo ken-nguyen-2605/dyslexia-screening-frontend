@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login Formats</title>
+</head>
+<body>
+    <h1>Test Different Login Formats</h1>
+    <button onclick="testJsonLogin()">Test JSON Login</button>
+    <button onclick="testFormLogin()">Test Form Data Login</button>
+    <div id="results"></div>
+
+    <script>
+        async function testJsonLogin() {
+            try {
+                const response = await fetch('http://localhost:8000/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'testpassword'
+                    })
+                });
+                
+                const data = await response.text();
+                document.getElementById('results').innerHTML += `<h3>JSON Login (Status: ${response.status})</h3><pre>${data}</pre>`;
+            } catch (error) {
+                document.getElementById('results').innerHTML += `<h3>JSON Login Error:</h3><pre>${error.message}</pre>`;
+            }
+        }
+
+        async function testFormLogin() {
+            try {
+                const formData = new FormData();
+                formData.append('username', 'test@example.com');
+                formData.append('password', 'testpassword');
+                
+                const response = await fetch('http://localhost:8000/v1/auth/login', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.text();
+                document.getElementById('results').innerHTML += `<h3>Form Data Login (Status: ${response.status})</h3><pre>${data}</pre>`;
+            } catch (error) {
+                document.getElementById('results').innerHTML += `<h3>Form Data Login Error:</h3><pre>${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>

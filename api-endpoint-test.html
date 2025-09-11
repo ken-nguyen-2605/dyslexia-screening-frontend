@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Endpoint Test</title>
+</head>
+<body>
+    <h1>API Endpoint Test</h1>
+    
+    <div>
+        <h2>Test Different Login Endpoints</h2>
+        <input type="email" id="email" placeholder="Email" value="test@example.com">
+        <input type="password" id="password" placeholder="Password" value="testpassword123">
+        <br><br>
+        <button onclick="testEndpoint('http://localhost:8000/v1/auth/login')">Test: /v1/auth/login</button>
+        <button onclick="testEndpoint('http://localhost:8000/auth/login')">Test: /auth/login</button>
+        <button onclick="testEndpoint('http://localhost:8000/api/auth/login')">Test: /api/auth/login</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testEndpoint(url) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<p>Testing: ${url}</p>`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                console.log(`${url} - Status:`, response.status);
+                console.log(`${url} - Headers:`, [...response.headers.entries()]);
+                
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    resultDiv.innerHTML += `<div style="color: red;"><strong>Error ${response.status}:</strong> ${errorData}</div>`;
+                } else {
+                    const data = await response.json();
+                    resultDiv.innerHTML += `<div style="color: green;"><strong>Success:</strong> ${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML += `<div style="color: red;"><strong>Network Error:</strong> ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

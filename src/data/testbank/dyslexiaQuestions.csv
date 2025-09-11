@@ -1,0 +1,11 @@
+id,type,audio,question,num_ans,ans1,ans2,ans3,ans4,ans_correct,module,orderIndex,maxScore,isTextInput,imageFilePath
+1,phonological-awareness,"/assets/auditoryTest/Frequency/1_A_freq_easy_1.mp3","Nghe hai âm thanh sau. Chúng có giống nhau không?",2,"Giống nhau","Khác nhau",,,B,PHONOLOGICAL_AWARENESS,1,2,FALSE,
+2,phonological-awareness,"/assets/auditoryTest/Frequency/1_B_freq_medium_1.mp3","Nghe hai âm thanh sau. Chúng có giống nhau không?",2,"Giống nhau","Khác nhau",,,A,PHONOLOGICAL_AWARENESS,2,2,FALSE,
+3,decoding,"/assets/audioTestVowel/D.mp3","Nghe âm thanh và chọn chữ cái đúng:",4,D,Đ,B,P,A,DECODING,3,2,FALSE,
+4,decoding,"/assets/audioTestVowel/ca.mp3","Nghe từ và chọn cách viết đúng:",4,ca,cá,cà,cả,A,DECODING,4,2,FALSE,
+5,understanding-fluency,"/assets/audioTestVowel/khiAnChuoi.mp3","Nghe câu và chọn hình ảnh phù hợp nhất:",3,"Khỉ ăn chuối","Mèo ăn cá","Chó ăn xương",,A,UNDERSTANDING_FLUENCY,5,2,FALSE,"/assets/image/testVowels/monkeyBanana.jpg"
+6,understanding-fluency,"/assets/audioTestVowel/meoAnCa.mp3","Nghe câu và chọn hình ảnh phù hợp nhất:",3,"Khỉ ăn chuối","Mèo ăn cá","Chó ăn xương",,B,UNDERSTANDING_FLUENCY,6,2,FALSE,"/assets/image/testVowels/catFish.jpg"
+7,spelling-writing,"/assets/audioTestVowel/O.mp3","Nghe chữ cái và viết lại (hoặc vẽ):",0,,,,,O,SPELLING_WRITING,7,2,TRUE,
+8,spelling-writing,"/assets/audioTestVowel/S.mp3","Nghe chữ cái và viết lại (hoặc vẽ):",0,,,,,S,SPELLING_WRITING,8,2,TRUE,
+9,language-comprehension,"/assets/audioTestVowel/thichAnKem_vn.mp3","Nghe và nhận biết: Đây có phải tiếng Việt không?",2,"Có, đây là tiếng Việt","Không, đây không phải tiếng Việt",,,A,LANGUAGE_COMPREHENSION,9,2,FALSE,
+10,language-comprehension,"/assets/audioTestVowel/buoiTruaAnBuoiChua.mp3|/assets/audioTestVowel/buoiTruaUongSuaChua.mp3","Nghe hai câu và so sánh: Chúng có giống nhau không?",2,"Giống nhau","Khác nhau",,,B,LANGUAGE_COMPREHENSION,10,2,FALSE,

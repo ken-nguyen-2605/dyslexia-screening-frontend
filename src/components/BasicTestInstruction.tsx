@@ -1,8 +1,18 @@
+import { useTestSession } from "../contexts/TestSessionContext";
+
 interface BasicTestInstructionProps {
   onStartTest: () => void;
 }
 
 const BasicTestInstruction = ({ onStartTest }: BasicTestInstructionProps) => {
+  const { startSession, isLoading, error } = useTestSession();
+
+  const handleStartTest = async () => {
+    const session = await startSession("BASIC");
+    if (session) {
+      onStartTest();
+    }
+  };
   return (
     <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-2xl w-full mx-auto">
       <h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
@@ -66,13 +76,22 @@ const BasicTestInstruction = ({ onStartTest }: BasicTestInstructionProps) => {
             Test sẽ tự động phát âm thanh khi bắt đầu mỗi câu hỏi.
           </p>
         </div>
+
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+            <p className="text-sm text-red-800">
+              <strong>Lỗi:</strong> {error}
+            </p>
+          </div>
+        )}
       </div>
 
       <button
-        onClick={onStartTest}
-        className="bg-pink-500 py-3 px-8 rounded-lg text-white font-semibold hover:bg-pink-600 transition focus:ring-2 focus:ring-pink-200 text-lg"
+        onClick={handleStartTest}
+        disabled={isLoading}
+        className="bg-pink-500 py-3 px-8 rounded-lg text-white font-semibold hover:bg-pink-600 transition focus:ring-2 focus:ring-pink-200 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Bắt đầu làm bài
+        {isLoading ? "Đang khởi tạo..." : "Bắt đầu làm bài"}
       </button>
     </div>
   );
