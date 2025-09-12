@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LearningPlanService } from '../services/learningPlanService';
+import { DyslexiaModule } from '../enum';
 import LearningPlanDisplay from './LearningPlanDisplay';
 import TreatmentCentersDisplay from './TreatmentCentersDisplay';
 
@@ -681,9 +682,9 @@ const BasicTest = () => {
     
     let riskAssessment = "";
     if (averageLevel >= 1.5) {
-      riskAssessment = "Unofficial: tôi hong sao hết 🎉";
+      riskAssessment = "Kết quả tốt: Không có dấu hiệu rủi ro đáng lo ngại";
     } else {
-      riskAssessment = "Unofficial: tôi bị dyslexia ròi 😢";
+      riskAssessment = "Cần theo dõi: Có một số dấu hiệu cần được chú ý và hỗ trợ �";
     }
 
     return { moduleResults, riskAssessment, averageLevel };
@@ -691,13 +692,37 @@ const BasicTest = () => {
 
   // Create fake DyslexiaTestResult for learning plan service
   const createLearningRecommendation = () => {
+    const { moduleResults } = calculateDyslexiaRisk();
+    
+    // Create a simple mapping of module scores
+    const moduleScores: any = {};
+    
+    // Map basic test modules to dyslexia modules
+    const moduleMapping: { [key: string]: string } = {
+      'Nhận thức âm vị': DyslexiaModule.PHONOLOGICAL_AWARENESS,
+      'Nhận diện chữ & giải mã': DyslexiaModule.DECODING,
+      'Tốc độ hiểu': DyslexiaModule.UNDERSTANDING_FLUENCY,
+      'Chính tả & viết': DyslexiaModule.SPELLING_WRITING,
+      'Hiểu và nhận dạng ngôn ngữ': DyslexiaModule.LANGUAGE_COMPREHENSION
+    };
+    
+    moduleResults.forEach((result) => {
+      const moduleKey = moduleMapping[result.module] || DyslexiaModule.PHONOLOGICAL_AWARENESS;
+      moduleScores[moduleKey] = {
+        score: result.correct,
+        maxScore: result.total,
+        percentage: result.percentage,
+        questionsCount: result.total
+      };
+    });
+
     const fakeTestResult = {
       totalScore: score,
-      maxScore: questions.length * 2, // Fake max score
+      maxScore: questions.length,
       percentage: (score / questions.length) * 100,
       riskLevel: score >= 8 ? 'low' : score >= 5 ? 'medium' : 'high',
       recommendations: '',
-      moduleScores: {},
+      moduleScores: moduleScores,
       completionTime: 0,
       answers: []
     };
@@ -709,6 +734,11 @@ const BasicTest = () => {
   if (currentQuestionIndex === -1) {
     const { moduleResults, riskAssessment } = calculateDyslexiaRisk();
     const learningRecommendation = createLearningRecommendation();
+    
+    // Debug log
+    console.log('BasicTest - Score:', score);
+    console.log('BasicTest - Module Results:', moduleResults);
+    console.log('BasicTest - Learning Recommendation:', learningRecommendation);
     
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -729,7 +759,7 @@ const BasicTest = () => {
                 </div>
                 
                 <div className={`text-xl font-semibold p-4 rounded-xl ${
-                  riskAssessment.includes("hong sao") 
+                  riskAssessment.includes("Kết quả tốt") 
                     ? "bg-green-100 text-green-700 border-2 border-green-300"
                     : "bg-yellow-100 text-yellow-700 border-2 border-yellow-300"
                 }`}>
