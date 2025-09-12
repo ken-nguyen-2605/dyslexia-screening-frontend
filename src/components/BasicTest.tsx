@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TestbankService } from '../data/testbankService';
 
-// Audio imports (keeping for fallback)
+// Audio imports
 import A_audio from "../assets/audioTestVowel/A.mp3";
 import B_audio from "../assets/audioTestVowel/B.mp3";
 import M_audio from "../assets/audioTestVowel/M.mp3";
@@ -492,8 +491,7 @@ const generateRandomizedQuestions = (): QuestionType[] => {
 const BasicTest = () => {
   const navigate = useNavigate();
   
-  const [questions, setQuestions] = useState<QuestionType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [questions] = useState<QuestionType[]>(() => generateRandomizedQuestions());
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -503,45 +501,11 @@ const BasicTest = () => {
   const [moduleScores, setModuleScores] = useState<Record<string, { correct: number; total: number }>>({});
   const [drawingRecognition, setDrawingRecognition] = useState<{ recognized: string; confidence: number } | null>(null);
 
-  // Load questions from testbank
-  useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        setIsLoading(true);
-        const testbank = await TestbankService.loadBasicTestQuestions();
-        const generatedQuestions = TestbankService.generateRandomizedQuestionsFromTestbank(testbank);
-        setQuestions(generatedQuestions);
-      } catch (error) {
-        console.error('Error loading testbank:', error);
-        // Fallback to hardcoded generation
-        const fallbackQuestions = generateRandomizedQuestions();
-        setQuestions(fallbackQuestions);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadQuestions();
-  }, []);
-
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   // Calculate progress
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-
-  // Show loading state while questions are being loaded
-  if (isLoading || questions.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100">
-        <div className="bg-white rounded-2xl p-8 shadow-lg text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-700">Đang tải bài test</h2>
-          <p className="text-gray-500 mt-2">Vui lòng đợi trong khi chúng tôi chuẩn bị các câu hỏi...</p>
-        </div>
-      </div>
-    );
-  }
 
   // Play audio function
   const playAudio = (audioSrc: string) => {
