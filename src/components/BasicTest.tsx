@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LearningPlanService } from '../services/learningPlanService';
+import LearningPlanDisplay from './LearningPlanDisplay';
+import TreatmentCentersDisplay from './TreatmentCentersDisplay';
 
 // Audio imports
 import A_audio from "../assets/audioTestVowel/A.mp3";
@@ -686,84 +689,159 @@ const BasicTest = () => {
     return { moduleResults, riskAssessment, averageLevel };
   };
 
+  // Create fake DyslexiaTestResult for learning plan service
+  const createLearningRecommendation = () => {
+    const fakeTestResult = {
+      totalScore: score,
+      maxScore: questions.length * 2, // Fake max score
+      percentage: (score / questions.length) * 100,
+      riskLevel: score >= 8 ? 'low' : score >= 5 ? 'medium' : 'high',
+      recommendations: '',
+      moduleScores: {},
+      completionTime: 0,
+      answers: []
+    };
+
+    return LearningPlanService.generateLearningRecommendation(fakeTestResult);
+  };
+
   // Results screen
   if (currentQuestionIndex === -1) {
     const { moduleResults, riskAssessment } = calculateDyslexiaRisk();
+    const learningRecommendation = createLearningRecommendation();
     
     return (
-      <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-4xl w-full mx-auto">
-        <h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
-          Kết Quả Bài Test
-        </h2>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-7xl w-full">
+          <h2 className="text-3xl text-pink-600 font-bold text-center mb-8 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
+            Kết Quả Bài Test
+          </h2>
 
-        {/* Overall Result */}
-        <div className="text-center space-y-4">
-          <div className="text-2xl font-bold text-pink-600">
-            Tổng điểm: {score}/{questions.length}
-          </div>
-          
-          <div className={`text-xl font-semibold p-4 rounded-xl ${
-            riskAssessment.includes("hong sao") 
-              ? "bg-green-100 text-green-700 border-2 border-green-300"
-              : "bg-yellow-100 text-yellow-700 border-2 border-yellow-300"
-          }`}>
-            {riskAssessment}
-          </div>
-        </div>
-
-        {/* Module Breakdown */}
-        <div className="w-full space-y-4">
-          <h3 className="text-xl font-semibold text-pink-600 text-center">Chi tiết theo từng phần:</h3>
-          
-          <div className="grid gap-4">
-            {moduleResults.map((result, index) => (
-              <div key={index} className="bg-pink-50 p-4 rounded-xl border-2 border-pink-200">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-pink-700">{result.module}</span>
-                  <span className="text-pink-600">{result.correct}/{result.total} ({result.percentage.toFixed(0)}%)</span>
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            {/* Left Column - Main Results */}
+            <div className="space-y-6">
+              {/* Overall Result */}
+              <div className="text-center space-y-4">
+                <div className="text-2xl font-bold text-pink-600">
+                  Tổng điểm: {score}/{questions.length}
                 </div>
-                <div className="w-full h-2 bg-pink-200 rounded-full mt-2">
-                  <div
-                    className={`h-2 rounded-full transition-all ${
-                      result.level === 2 ? 'bg-green-500' :
-                      result.level === 1 ? 'bg-yellow-500' : 'bg-red-500'
-                    }`}
-                    style={{ width: `${result.percentage}%` }}
-                  />
-                </div>
-                <div className="text-xs text-gray-600 mt-1">
-                  {result.level === 2 ? 'Tốt (>70%)' :
-                   result.level === 1 ? 'Trung bình (50-70%)' : 'Cần cải thiện (<50%)'}
+                
+                <div className={`text-xl font-semibold p-4 rounded-xl ${
+                  riskAssessment.includes("hong sao") 
+                    ? "bg-green-100 text-green-700 border-2 border-green-300"
+                    : "bg-yellow-100 text-yellow-700 border-2 border-yellow-300"
+                }`}>
+                  {riskAssessment}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Action buttons */}
-        <div className="flex space-x-4">
-          <button
-            onClick={() => {
-              // Reset test
-              setCurrentQuestionIndex(0);
-              setScore(0);
-              setModuleScores({});
-              setSelectedAnswer(null);
-              setShowFeedback(false);
-              setHasDrawing(false);
-              setDrawingRecognition(null);
-            }}
-            className="px-6 py-3 bg-pink-500 text-white rounded-xl font-semibold hover:bg-pink-600 transition"
-          >
-            Làm lại
-          </button>
-          
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="px-6 py-3 bg-gray-500 text-white rounded-xl font-semibold hover:bg-gray-600 transition"
-          >
-            Về trang chủ
-          </button>
+              {/* Module Breakdown */}
+              <div className="w-full space-y-4">
+                <h3 className="text-xl font-semibold text-pink-600 text-center">Chi tiết theo từng phần:</h3>
+                
+                <div className="grid gap-4">
+                  {moduleResults.map((result, index) => (
+                    <div key={index} className="bg-pink-50 p-4 rounded-xl border-2 border-pink-200">
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-pink-700">{result.module}</span>
+                        <span className="text-pink-600">{result.correct}/{result.total} ({result.percentage.toFixed(0)}%)</span>
+                      </div>
+                      <div className="w-full h-2 bg-pink-200 rounded-full mt-2">
+                        <div
+                          className={`h-2 rounded-full transition-all ${
+                            result.level === 2 ? 'bg-green-500' :
+                            result.level === 1 ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${result.percentage}%` }}
+                        />
+                      </div>
+                      <div className="text-xs text-gray-600 mt-1">
+                        {result.level === 2 ? 'Tốt (>70%)' :
+                         result.level === 1 ? 'Trung bình (50-70%)' : 'Cần cải thiện (<50%)'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex space-x-4 justify-center">
+                <button
+                  onClick={() => {
+                    // Reset test
+                    setCurrentQuestionIndex(0);
+                    setScore(0);
+                    setModuleScores({});
+                    setSelectedAnswer(null);
+                    setShowFeedback(false);
+                    setHasDrawing(false);
+                    setDrawingRecognition(null);
+                  }}
+                  className="px-6 py-3 bg-pink-500 text-white rounded-xl font-semibold hover:bg-pink-600 transition"
+                >
+                  Làm lại
+                </button>
+                
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="px-6 py-3 bg-gray-500 text-white rounded-xl font-semibold hover:bg-gray-600 transition"
+                >
+                  Về trang chủ
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column - Learning Plan or Treatment Centers */}
+            <div className="space-y-6">
+              {learningRecommendation ? (
+                <div>
+                  {/* Encouragement message */}
+                  <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-orange-200 rounded-2xl p-6 mb-6">
+                    <div className="text-center mb-4">
+                      <div className="text-3xl mb-2">
+                        {learningRecommendation.type === 'learning_plan' ? '💪' : '🏥'}
+                      </div>
+                      <h3 className="text-lg font-bold text-orange-700 mb-2">
+                        {learningRecommendation.type === 'learning_plan' 
+                          ? 'Cần hỗ trợ học tập' 
+                          : 'Cần can thiệp chuyên nghiệp'
+                        }
+                      </h3>
+                    </div>
+                    <p className="text-gray-700 text-center leading-relaxed">
+                      {LearningPlanService.getEncouragementMessage(learningRecommendation.correctAnswers)}
+                    </p>
+                  </div>
+
+                  {/* Learning Plan or Treatment Centers */}
+                  {learningRecommendation.type === 'learning_plan' && learningRecommendation.learningPlans && (
+                    <LearningPlanDisplay 
+                      learningPlans={learningRecommendation.learningPlans}
+                      weakestModules={learningRecommendation.weakestModules}
+                    />
+                  )}
+                  
+                  {learningRecommendation.type === 'treatment_centers' && learningRecommendation.treatmentCenters && (
+                    <TreatmentCentersDisplay 
+                      treatmentCenters={learningRecommendation.treatmentCenters}
+                    />
+                  )}
+                </div>
+              ) : (
+                // If no specific recommendation needed (good results)
+                <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-2xl p-8 text-center">
+                  <div className="text-4xl mb-3">🎉</div>
+                  <h2 className="text-2xl font-bold text-green-700 mb-4">Kết quả tuyệt vời!</h2>
+                  <p className="text-gray-700 leading-relaxed">
+                    Chúc mừng! Kết quả cho thấy khả năng học tập tốt. Hãy tiếp tục duy trì và 
+                    phát triển những kỹ năng này thông qua việc đọc sách và luyện tập hàng ngày.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DYSLEXIA_QUESTIONS } from '../data/dyslexiaQuestions';
-import type { DyslexiaQuestion, DyslexiaAnswer, DyslexiaTestResult } from '../data/dyslexiaQuestions';
+import type { DyslexiaAnswer, DyslexiaTestResult } from '../data/dyslexiaQuestions';
 import { DyslexiaTestService } from '../services/dyslexiaTestService';
+import { LearningPlanService } from '../services/learningPlanService';
 import { DyslexiaRiskLevel } from '../enum';
-import ProgressBar from './ProgressBar';
+import SimpleProgressBar from './SimpleProgressBar';
+import LearningPlanDisplay from './LearningPlanDisplay';
+import TreatmentCentersDisplay from './TreatmentCentersDisplay';
 
 const DyslexiaChildTest: React.FC = () => {
   const navigate = useNavigate();
@@ -136,9 +139,11 @@ const DyslexiaChildTest: React.FC = () => {
 
   // Render test result
   if (isCompleted && testResult) {
+    const learningRecommendation = LearningPlanService.generateLearningRecommendation(testResult);
+    
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-4xl w-full">
+        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-7xl w-full">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-teal-600 mb-4">🎉 Hoàn thành bài test!</h1>
@@ -147,70 +152,126 @@ const DyslexiaChildTest: React.FC = () => {
             </div>
           </div>
 
-          {/* Results Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-gray-50 rounded-lg p-6 text-center">
-              <h3 className="font-semibold text-gray-700 mb-2">Điểm số</h3>
-              <p className="text-3xl font-bold text-teal-600 mb-1">
-                {testResult.totalScore}/{testResult.maxScore}
-              </p>
-              <p className="text-sm text-gray-500">({testResult.percentage.toFixed(1)}%)</p>
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            {/* Left Column - Main Results */}
+            <div className="space-y-6">
+              {/* Results Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gray-50 rounded-lg p-6 text-center">
+                  <h3 className="font-semibold text-gray-700 mb-2">Điểm số</h3>
+                  <p className="text-3xl font-bold text-teal-600 mb-1">
+                    {testResult.totalScore}/{testResult.maxScore}
+                  </p>
+                  <p className="text-sm text-gray-500">({testResult.percentage.toFixed(1)}%)</p>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-6 text-center">
+                  <h3 className="font-semibold text-gray-700 mb-2">Mức độ rủi ro</h3>
+                  <p className={`text-2xl font-bold ${getRiskLevelColor(testResult.riskLevel)}`}>
+                    {getRiskLevelText(testResult.riskLevel)}
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-6 text-center">
+                  <h3 className="font-semibold text-gray-700 mb-2">Thời gian</h3>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {testResult.completionTime.toFixed(1)} phút
+                  </p>
+                  <p className="text-sm text-gray-500">Mục tiêu: 5 phút</p>
+                </div>
+              </div>
+
+              {/* Module Scores */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Điểm từng module:</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(testResult.moduleScores).map(([module, score]) => {
+                    const moduleScore = score as any;
+                    return moduleScore.questionsCount > 0 && (
+                      <div key={module} className="bg-blue-50 rounded-lg p-4">
+                        <h4 className="font-medium text-gray-700 mb-2">
+                          {DyslexiaTestService.getModuleName(module)}
+                        </h4>
+                        <div className="flex justify-between items-center">
+                          <span className="text-lg font-bold text-blue-600">
+                            {moduleScore.score}/{moduleScore.maxScore}
+                          </span>
+                          <span className={`text-sm font-semibold ${
+                            moduleScore.percentage >= 70 ? 'text-green-600' :
+                            moduleScore.percentage >= 50 ? 'text-yellow-600' : 'text-red-600'
+                          }`}>
+                            {moduleScore.percentage.toFixed(0)}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Recommendations */}
+              <div className="bg-blue-50 rounded-lg p-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Khuyến nghị:</h3>
+                <div className="text-gray-700 whitespace-pre-line leading-relaxed">
+                  {testResult.recommendations}
+                </div>
+              </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-6 text-center">
-              <h3 className="font-semibold text-gray-700 mb-2">Mức độ rủi ro</h3>
-              <p className={`text-2xl font-bold ${getRiskLevelColor(testResult.riskLevel)}`}>
-                {getRiskLevelText(testResult.riskLevel)}
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-6 text-center">
-              <h3 className="font-semibold text-gray-700 mb-2">Thời gian</h3>
-              <p className="text-2xl font-bold text-blue-600">
-                {testResult.completionTime.toFixed(1)} phút
-              </p>
-              <p className="text-sm text-gray-500">Mục tiêu: 5 phút</p>
-            </div>
-          </div>
-
-          {/* Module Scores */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Điểm từng module:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Object.entries(testResult.moduleScores).map(([module, score]) => {
-                const moduleScore = score as any; // Type assertion for now
-                return moduleScore.questionsCount > 0 && (
-                  <div key={module} className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="font-medium text-gray-700 mb-2">
-                      {DyslexiaTestService.getModuleName(module)}
-                    </h4>
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-blue-600">
-                        {moduleScore.score}/{moduleScore.maxScore}
-                      </span>
-                      <span className={`text-sm font-semibold ${
-                        moduleScore.percentage >= 70 ? 'text-green-600' :
-                        moduleScore.percentage >= 50 ? 'text-yellow-600' : 'text-red-600'
-                      }`}>
-                        {moduleScore.percentage.toFixed(0)}%
-                      </span>
+            {/* Right Column - Learning Plan or Treatment Centers */}
+            <div className="space-y-6">
+              {learningRecommendation ? (
+                <div>
+                  {/* Encouragement message */}
+                  <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-orange-200 rounded-2xl p-6 mb-6">
+                    <div className="text-center mb-4">
+                      <div className="text-3xl mb-2">
+                        {learningRecommendation.type === 'learning_plan' ? '💪' : '🏥'}
+                      </div>
+                      <h3 className="text-lg font-bold text-orange-700 mb-2">
+                        {learningRecommendation.type === 'learning_plan' 
+                          ? 'Cần hỗ trợ học tập' 
+                          : 'Cần can thiệp chuyên nghiệp'
+                        }
+                      </h3>
                     </div>
+                    <p className="text-gray-700 text-center leading-relaxed">
+                      {LearningPlanService.getEncouragementMessage(learningRecommendation.correctAnswers)}
+                    </p>
                   </div>
-                );
-              })}
-            </div>
-          </div>
 
-          {/* Recommendations */}
-          <div className="bg-blue-50 rounded-lg p-6 mb-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Khuyến nghị:</h3>
-            <div className="text-gray-700 whitespace-pre-line leading-relaxed">
-              {testResult.recommendations}
+                  {/* Learning Plan or Treatment Centers */}
+                  {learningRecommendation.type === 'learning_plan' && learningRecommendation.learningPlans && (
+                    <LearningPlanDisplay 
+                      learningPlans={learningRecommendation.learningPlans}
+                      weakestModules={learningRecommendation.weakestModules}
+                    />
+                  )}
+                  
+                  {learningRecommendation.type === 'treatment_centers' && learningRecommendation.treatmentCenters && (
+                    <TreatmentCentersDisplay 
+                      treatmentCenters={learningRecommendation.treatmentCenters}
+                    />
+                  )}
+                </div>
+              ) : (
+                // If no specific recommendation needed (good results)
+                <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-2xl p-8 text-center">
+                  <div className="text-4xl mb-3">🎉</div>
+                  <h2 className="text-2xl font-bold text-green-700 mb-4">Kết quả tuyệt vời!</h2>
+                  <p className="text-gray-700 leading-relaxed">
+                    Chúc mừng! Kết quả cho thấy trẻ có khả năng học tập tốt. Hãy tiếp tục duy trì và 
+                    phát triển những kỹ năng này thông qua việc đọc sách và luyện tập hàng ngày.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <button
               onClick={() => navigate('/dashboard')}
               className="bg-teal-500 text-white px-8 py-3 rounded-lg hover:bg-teal-600 transition font-semibold"
@@ -250,7 +311,7 @@ const DyslexiaChildTest: React.FC = () => {
             </div>
           </div>
           
-          <ProgressBar 
+          <SimpleProgressBar 
             current={currentQuestionIndex + 1} 
             total={DYSLEXIA_QUESTIONS.length} 
           />
