@@ -19,7 +19,7 @@ const AuditoryTestLayout = () => (
 		testType="auditory"
 		testSteps={AUDITORY_TEST_STEPS}
 	>
-		<div className="flex flex-col items-center w-full min-h-screen py-8">
+		<div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100 py-14 px-4 sm:px-8 min-h-screen rounded-[1.5rem] flex items-center justify-center font-[Comic Sans MS,cursive,sans-serif]">
 			<Outlet />
 		</div>
 	</TestStepProvider>

@@ -37,11 +37,11 @@ const HumanFeaturesForm = () => {
 			!form.native_language ||
 			!form.rl_dyslexia
 		) {
-			setFormError("Please fill in all fields.");
+			setFormError("Hãy nhập đầy đủ thông tin.");
 			return;
 		}
 		if (isNaN(Number(form.age)) || Number(form.age) < 0) {
-			setFormError("Please enter a valid age.");
+			setFormError("Vui lòng nhập số tuổi hợp lệ.");
 			return;
 		}
 		// add any other validation as needed
@@ -65,161 +65,180 @@ const HumanFeaturesForm = () => {
 	};
 
 	return (
-		<form
-			onSubmit={handleSubmit}
-			className="flex flex-col bg-white border border-gray-100 p-8 rounded-2xl items-center space-y-5 shadow-lg max-w-md w-full mx-auto mt-10"
-		>
-			<h2 className="text-2xl text-teal-600 font-bold mb-1 text-center">
-				Information
-			</h2>
-			<div className="text-teal-600 font-medium mb-2 text-center text-lg">
-				Step 1 of 4:{" "}
-				<span className="text-gray-700 font-normal">
-					Human features
-				</span>
-			</div>
-			<div className="w-full h-1.5 bg-teal-100 rounded-full mb-4">
-				<div
-					className="bg-teal-400 h-1.5 rounded-full transition-all"
-					style={{ width: "25%" }}
-				/>
-			</div>
-
-			{/* Error Message */}
-			{formError && (
-				<div className="w-full bg-red-100 border border-red-300 text-red-700 px-4 py-2 mb-2 rounded text-sm text-center">
-					{formError}
-				</div>
-			)}
-
-			{/* Name */}
-			<div className="w-full flex flex-col space-y-1">
-				<label className="font-semibold text-gray-800">Name</label>
-				<input
-					className="border border-gray-300 p-2 rounded-md focus:border-teal-500 focus:outline-none transition"
-					type="text"
-					name="name"
-					placeholder="Enter your name"
-					value={form.name}
-					onChange={handleChange}
-				/>
-			</div>
-			{/* Email */}
-			<div className="w-full flex flex-col space-y-1">
-				<label className="font-semibold text-gray-800">Email</label>
-				<input
-					className="border border-gray-300 p-2 rounded-md focus:border-teal-500 focus:outline-none transition"
-					type="email"
-					name="email"
-					placeholder="Enter your email"
-					value={form.email}
-					onChange={handleChange}
-				/>
-			</div>
-			{/* Age */}
-			<div className="w-full flex flex-col space-y-1">
-				<label className="font-semibold text-gray-800">Age</label>
-				<input
-					className="border border-gray-300 p-2 rounded-md focus:border-teal-500 focus:outline-none transition"
-					type="number"
-					name="age"
-					min={0}
-					placeholder="Enter your age"
-					value={form.age}
-					onChange={handleChange}
-				/>
-			</div>
-			{/* Gender */}
-			<div className="w-full flex flex-col space-y-1">
-				<label className="font-semibold text-gray-800">Gender</label>
-				<div className="flex gap-8 mt-1">
-					<label className="flex items-center font-normal">
-						<input
-							type="radio"
-							name="gender"
-							value="MALE"
-							checked={form.gender === "MALE"}
-							onChange={handleChange}
-							className="mr-1"
-						/>
-						Male
-					</label>
-					<label className="flex items-center font-normal">
-						<input
-							type="radio"
-							name="gender"
-							value="FEMALE"
-							checked={form.gender === "FEMALE"}
-							onChange={handleChange}
-							className="mr-1"
-						/>
-						Female
-					</label>
-				</div>
-			</div>
-			{/* Native Language */}
-			<div className="w-full flex flex-col space-y-1">
-				<label className="font-semibold text-gray-800">
-					Native Language
-				</label>
-				<input
-					className="border border-gray-300 p-2 rounded-md focus:border-teal-500 focus:outline-none transition"
-					type="text"
-					name="native_language"
-					placeholder="Enter your native language"
-					value={form.native_language}
-					onChange={handleChange}
-				/>
-			</div>
-			{/* Diagnosed as dyslexic */}
-			<div className="w-full flex flex-col space-y-1">
-				<label className="font-semibold text-gray-800">
-					Diagnosed as dyslexic?
-				</label>
-				<div className="flex gap-6 mt-1 flex-wrap">
-					<label className="flex items-center font-normal">
-						<input
-							type="radio"
-							name="rl_dyslexia"
-							value="yes"
-							checked={form.rl_dyslexia === "yes"}
-							onChange={handleChange}
-							className="mr-1"
-						/>
-						Yes
-					</label>
-					<label className="flex items-center font-normal">
-						<input
-							type="radio"
-							name="rl_dyslexia"
-							value="no"
-							checked={form.rl_dyslexia === "no"}
-							onChange={handleChange}
-							className="mr-1"
-						/>
-						No
-					</label>
-					<label className="flex items-center font-normal">
-						<input
-							type="radio"
-							name="rl_dyslexia"
-							value="unknown"
-							checked={form.rl_dyslexia === "unknown"}
-							onChange={handleChange}
-							className="mr-1"
-						/>
-						Has not undergone assessment
-					</label>
-				</div>
-			</div>
-
-			<button
-				type="submit"
-				className="bg-teal-500 py-2 w-full rounded-lg text-white font-semibold hover:bg-teal-600 transition focus:ring-2 focus:ring-teal-200 focus:outline-none"
+		<div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100 py-14 px-4 sm:px-8 min-h-screen rounded-[1.5rem] flex items-center justify-center">
+			<form
+				onSubmit={handleSubmit}
+				className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-lg w-full mx-auto"
 			>
-				Start
-			</button>
-		</form>
+				{/* Heading */}
+				<h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
+					Chia sẻ một chút nhé!
+				</h2>
+				<div className="text-pink-500 font-semibold mb-2 text-center text-lg font-[Comic Sans MS,cursive,sans-serif]">
+					Bước 1 / 4:{" "}
+					<span className="text-gray-700 font-normal">
+						Thông tin của bạn
+					</span>
+				</div>
+				<div className="w-full h-2 bg-pink-100 rounded-full mb-4">
+					<div
+						className="bg-pink-400 h-2 rounded-full transition-all"
+						style={{ width: "25%" }}
+					/>
+				</div>
+
+				{/* Error Message */}
+				{formError && (
+					<div className="w-full bg-red-100 border border-red-300 text-red-700 px-4 py-2 mb-2 rounded text-sm text-center">
+						{formError}
+					</div>
+				)}
+
+				{/* Name */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+						Tên
+					</label>
+					<input
+						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
+						type="text"
+						name="name"
+						placeholder="Nhập tên của bạn"
+						value={form.name}
+						onChange={handleChange}
+					/>
+				</div>
+
+				{/* Email */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+						Email
+					</label>
+					<input
+						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
+						type="email"
+						name="email"
+						placeholder="Nhập email của bạn"
+						value={form.email}
+						onChange={handleChange}
+					/>
+				</div>
+
+				{/* Age */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+						Tuổi
+					</label>
+					<input
+						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
+						type="text"
+						name="age"
+						placeholder="Nhập tuổi của bạn"
+						value={form.age}
+						onChange={handleChange}
+						autoComplete="off"
+						inputMode="numeric" // mobile users will see the numeric keyboard
+						pattern="\d*" // hint for numeric input, doesn't enforce on its own
+					/>
+				</div>
+				{/* Gender */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+						Giới tính
+					</label>
+					<div className="flex gap-10 mt-2">
+						<label className="flex items-center font-semibold text-pink-600">
+							<input
+								type="radio"
+								name="gender"
+								value="MALE"
+								checked={form.gender === "MALE"}
+								onChange={handleChange}
+								className="mr-2 accent-pink-500 bg-white w-5 h-5"
+							/>
+							Nam
+						</label>
+						<label className="flex items-center font-semibold text-pink-600">
+							<input
+								type="radio"
+								name="gender"
+								value="FEMALE"
+								checked={form.gender === "FEMALE"}
+								onChange={handleChange}
+								className="mr-2 accent-pink-500 bg-white w-5 h-5"
+							/>
+							Nữ
+						</label>
+					</div>
+				</div>
+
+				{/* Native Language */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+						Ngôn ngữ mẹ đẻ
+					</label>
+					<input
+						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
+						type="text"
+						name="native_language"
+						placeholder="Nhập ngôn ngữ mẹ đẻ của bạn"
+						value={form.native_language}
+						onChange={handleChange}
+						autoComplete="off"
+					/>
+				</div>
+
+				{/* Diagnosed as dyslexic */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+						Bạn đã từng được chẩn đoán là khó đọc chưa?
+					</label>
+					<div className="flex gap-6 mt-2 flex-wrap">
+						<label className="flex items-center font-semibold text-pink-600">
+							<input
+								type="radio"
+								name="rl_dyslexia"
+								value="yes"
+								checked={form.rl_dyslexia === "yes"}
+								onChange={handleChange}
+								className="mr-2 accent-pink-500 bg-white w-5 h-5"
+							/>
+							Có
+						</label>
+						<label className="flex items-center font-semibold text-pink-600">
+							<input
+								type="radio"
+								name="rl_dyslexia"
+								value="no"
+								checked={form.rl_dyslexia === "no"}
+								onChange={handleChange}
+								className="mr-2 accent-pink-500 bg-white w-5 h-5"
+							/>
+							Không
+						</label>
+						<label className="flex items-center font-semibold text-pink-600">
+							<input
+								type="radio"
+								name="rl_dyslexia"
+								value="unknown"
+								checked={form.rl_dyslexia === "unknown"}
+								onChange={handleChange}
+								className="mr-2 accent-pink-500 bg-white w-5 h-5"
+							/>
+							Chưa từng kiểm tra / Không rõ
+						</label>
+					</div>
+				</div>
+
+				{/* Button */}
+				<button
+					type="submit"
+					className="bg-yellow-300 hover:bg-yellow-400 text-pink-700 px-12 py-3 rounded-full text-xl font-bold shadow-lg border-2 border-pink-200 transition-all duration-200 focus:ring focus:ring-yellow-100 active:scale-95 font-[Comic Sans MS,cursive,sans-serif] mt-3"
+				>
+					Bắt đầu
+				</button>
+			</form>
+		</div>
 	);
 };
 
