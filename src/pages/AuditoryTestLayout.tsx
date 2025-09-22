@@ -1,28 +1,27 @@
 import { Outlet } from "react-router-dom";
 import { TestStepProvider } from "../contexts/TestStepContext";
 
-const AUDITORY_TEST_STEPS = [
+const BASIC_TEST_STEPS = [
 	"instruction",
-	"frequency/4",
-	"frequency/6",
-	"length/4",
-	"length/6",
-	"rise/4",
-	"rise/6",
-	"rhythm/4",
-	"rhythm/6",
+	"phonological-awareness/1", // Module 1: Nhận thức âm vị
+	"phonological-awareness/2",
+	"decoding/1", // Module 2: Nhận diện chữ & giải mã  
+	"decoding/2",
+	"understanding-fluency/1", // Module 3: Tốc độ hiểu
+	"understanding-fluency/2", 
+	"language-comprehension/1", // Module 5: Hiểu và nhận dạng ngôn ngữ
+	"language-comprehension/2",
 	"rating",
 ];
 
-const AuditoryTestLayout = () => (
-	<TestStepProvider
-		testType="auditory"
-		testSteps={AUDITORY_TEST_STEPS}
-	>
-		<div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100 py-14 px-4 sm:px-8 min-h-screen rounded-[1.5rem] flex items-center justify-center font-[Comic Sans MS,cursive,sans-serif]">
-			<Outlet />
+const BasicTestLayout = () => (
+	<TestStepProvider testType="basic" testSteps={BASIC_TEST_STEPS}>
+		<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100">
+			<div>
+				<Outlet />
+			</div>
 		</div>
 	</TestStepProvider>
 );
 
-export default AuditoryTestLayout;
+export default BasicTestLayout;

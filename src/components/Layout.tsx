@@ -8,7 +8,7 @@ const Layout = () => {
       min-h-screen 
       flex flex-col 
       bg-gradient-to-br from-yellow-100 via-pink-50 to-purple-100
-      font-[Fredoka,Comic Sans MS,Arial Rounded,sans-serif]
+      font-fredoka
     ">
       <Header />
       <main
