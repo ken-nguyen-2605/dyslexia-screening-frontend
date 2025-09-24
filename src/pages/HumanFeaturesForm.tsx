@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import testSessionService from "../services/testSessionService";
+import userService from "../services/userService";
 
 const HumanFeaturesForm = () => {
 	const [form, setForm] = useState({
@@ -46,43 +46,40 @@ const HumanFeaturesForm = () => {
 		}
 		// add any other validation as needed
 
+		userService.updateUserProfile({
+			name: form.name,
+			year_of_birth: Number(form.age),
+			email: form.email,
+			gender: form.gender,
+			mother_tongue: form.native_language,
+			official_dyslexia_diagnosis: form.rl_dyslexia.toUpperCase(),
+		})
+
 		// Simulate next step, or API call etc.
 		setFormError(null);
 		console.log("Form submitted:", form);
-		const data = testSessionService.startTestSession({
-			info: {
-				age: Number(form.age),
-				gender: form.gender,
-				native_language: form.native_language,
-				rl_dyslexia: form.rl_dyslexia === "yes",
-			},
-		});
-		if (!data) {
-			setFormError("Failed to start test session. Please try again.");
-			return;
-		}
 		navigate("/test/auditory/instruction");
 	};
 
 	return (
-		<div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100 py-14 px-4 sm:px-8 min-h-screen rounded-[1.5rem] flex items-center justify-center">
+		<div className="bg-gradient-cyan p-10 rounded-2xl">
 			<form
 				onSubmit={handleSubmit}
-				className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-lg w-full mx-auto"
+				className="flex flex-col bg-white p-8 rounded-3xl items-center space-y-5 shadow-xl md:max-w-md xl:max-w-xl w-full mx-auto border-4 border-pink-200"
 			>
 				{/* Heading */}
-				<h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
+				<h2 className="text-2xl text-pink-600 font-bold text-center mb-1 drop-shadow">
 					Chia sẻ một chút nhé!
 				</h2>
-				<div className="text-pink-500 font-semibold mb-2 text-center text-lg font-[Comic Sans MS,cursive,sans-serif]">
+				<div className="text-pink-500 font-semibold mb-2 text-center">
 					Bước 1 / 4:{" "}
 					<span className="text-gray-700 font-normal">
 						Thông tin của bạn
 					</span>
 				</div>
-				<div className="w-full h-2 bg-pink-100 rounded-full mb-4">
+				<div className="w-full h-1.5 bg-pink-100 rounded-full mb-4">
 					<div
-						className="bg-pink-400 h-2 rounded-full transition-all"
+						className="bg-pink-400 h-1.5 rounded-full transition-all"
 						style={{ width: "25%" }}
 					/>
 				</div>
@@ -93,14 +90,14 @@ const HumanFeaturesForm = () => {
 						{formError}
 					</div>
 				)}
-
+				<div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6 w-full">
 				{/* Name */}
 				<div className="w-full flex flex-col space-y-1">
-					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+					<label className="font-semibold text-pink-600">
 						Tên
 					</label>
 					<input
-						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
+						className="border border-gray-300 rounded-lg p-2 font-medium focus:border-yellow-400 focus:outline-none transition bg-white/70 font-fredoka"
 						type="text"
 						name="name"
 						placeholder="Nhập tên của bạn"
@@ -109,28 +106,13 @@ const HumanFeaturesForm = () => {
 					/>
 				</div>
 
-				{/* Email */}
-				<div className="w-full flex flex-col space-y-1">
-					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
-						Email
-					</label>
-					<input
-						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
-						type="email"
-						name="email"
-						placeholder="Nhập email của bạn"
-						value={form.email}
-						onChange={handleChange}
-					/>
-				</div>
-
 				{/* Age */}
 				<div className="w-full flex flex-col space-y-1">
-					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+					<label className="font-semibold text-pink-600">
 						Tuổi
 					</label>
 					<input
-						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
+						className="border border-gray-300 rounded-lg p-2 font-medium focus:border-yellow-400 focus:outline-none transition bg-white/70 font-fredoka"
 						type="text"
 						name="age"
 						placeholder="Nhập tuổi của bạn"
@@ -141,9 +123,42 @@ const HumanFeaturesForm = () => {
 						pattern="\d*" // hint for numeric input, doesn't enforce on its own
 					/>
 				</div>
+
+				{/* Email */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600">
+						Email
+					</label>
+					<input
+						className="border border-gray-300 rounded-lg p-2 font-medium focus:border-yellow-400 focus:outline-none transition bg-white/70 font-fredoka"
+						type="email"
+						name="email"
+						placeholder="Nhập email của bạn"
+						value={form.email}
+						onChange={handleChange}
+					/>
+				</div>
+
+				
+
+				{/* Native Language */}
+				<div className="w-full flex flex-col space-y-1">
+					<label className="font-semibold text-pink-600">
+						Ngôn ngữ mẹ đẻ
+					</label>
+					<input
+						className="border border-gray-300 rounded-lg p-2 font-medium focus:border-yellow-400 focus:outline-none transition bg-white/70 font-fredoka"
+						type="text"
+						name="native_language"
+						placeholder="Nhập ngôn ngữ mẹ đẻ của bạn"
+						value={form.native_language}
+						onChange={handleChange}
+						autoComplete="off"
+					/>
+				</div>
 				{/* Gender */}
 				<div className="w-full flex flex-col space-y-1">
-					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+					<label className="font-semibold text-pink-600">
 						Giới tính
 					</label>
 					<div className="flex gap-10 mt-2">
@@ -172,25 +187,11 @@ const HumanFeaturesForm = () => {
 					</div>
 				</div>
 
-				{/* Native Language */}
-				<div className="w-full flex flex-col space-y-1">
-					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
-						Ngôn ngữ mẹ đẻ
-					</label>
-					<input
-						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
-						type="text"
-						name="native_language"
-						placeholder="Nhập ngôn ngữ mẹ đẻ của bạn"
-						value={form.native_language}
-						onChange={handleChange}
-						autoComplete="off"
-					/>
-				</div>
+				
 
 				{/* Diagnosed as dyslexic */}
 				<div className="w-full flex flex-col space-y-1">
-					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
+					<label className="font-semibold text-pink-600">
 						Bạn đã từng được chẩn đoán là khó đọc chưa?
 					</label>
 					<div className="flex gap-6 mt-2 flex-wrap">
@@ -229,13 +230,14 @@ const HumanFeaturesForm = () => {
 						</label>
 					</div>
 				</div>
+				</div>
 
 				{/* Button */}
 				<button
 					type="submit"
-					className="bg-yellow-300 hover:bg-yellow-400 text-pink-700 px-12 py-3 rounded-full text-xl font-bold shadow-lg border-2 border-pink-200 transition-all duration-200 focus:ring focus:ring-yellow-100 active:scale-95 font-[Comic Sans MS,cursive,sans-serif] mt-3"
+        className="bg-pink-500 py-2.5 px-8 rounded-lg text-white font-semibold hover:bg-pink-600 transition focus:ring-2 focus:ring-pink-200 text-lg"
 				>
-					Bắt đầu
+					Xác nhận thông tin
 				</button>
 			</form>
 		</div>

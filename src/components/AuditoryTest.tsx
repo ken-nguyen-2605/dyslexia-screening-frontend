@@ -233,7 +233,7 @@ const generateRandomizedQuestions = (): QuestionType[] => {
   return questions;
 };
 
-const BasicTest = () => {
+const AuditoryTest = () => {
   const navigate = useNavigate();
   
   const [questions] = useState<QuestionType[]>(() => generateRandomizedQuestions());
@@ -615,7 +615,7 @@ const BasicTest = () => {
   };
 
   return (
-    <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-4xl w-full mx-auto">
+    <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl min-w-xl w-full mx-auto">
       {/* Header */}
       <h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
         Bài Test Cơ Bản
@@ -659,4 +659,4 @@ const BasicTest = () => {
   );
 };
 
-export default BasicTest;
+export default AuditoryTest;

@@ -13,17 +13,21 @@ const apiClient: AxiosInstance = axios.create({
 	headers: {
 		"Content-Type": "application/json",
 	},
+	timeout: 5000,
 });
 
 apiClient.interceptors.request.use(
-	(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-		const token = localStorage.getItem("access_token");
-		if (token) {
-			config.headers.Authorization = `Bearer ${token}`;
-		}
-		return config;
-	},
-	(error: any) => Promise.reject(error)
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+    const profileToken = localStorage.getItem("profile_token");
+    const token = localStorage.getItem("access_token");
+    config.headers.Authorization = profileToken
+      ? `Bearer ${profileToken}`
+      : token
+      ? `Bearer ${token}`
+      : "";
+    return config;
+  },
+  (error: any) => Promise.reject(error)
 );
 
 apiClient.interceptors.response.use(

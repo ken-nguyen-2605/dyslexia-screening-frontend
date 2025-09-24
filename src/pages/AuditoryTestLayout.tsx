@@ -16,7 +16,7 @@ const BASIC_TEST_STEPS = [
 
 const BasicTestLayout = () => (
 	<TestStepProvider testType="basic" testSteps={BASIC_TEST_STEPS}>
-		<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100">
+		<div className="flex items-center justify-center min-h-screen bg-gradient-cyan p-8 rounded-2xl">
 			<div>
 				<Outlet />
 			</div>
