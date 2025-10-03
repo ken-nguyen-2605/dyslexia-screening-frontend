@@ -1,0 +1,343 @@
+{
+  "metadata": {
+    "testType": "basic-test",
+    "version": "1.0", 
+    "description": "Basic dyslexia screening test with randomized questions",
+    "totalQuestions": "10 (2 per module)",
+    "modules": [
+      "phonological-awareness",
+      "decoding", 
+      "understanding-fluency",
+      "spelling-writing",
+      "language-comprehension"
+    ]
+  },
+  "questionPools": {
+    "phonological-awareness": [
+      {
+        "id": "phon-1",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/A.mp3", "/assets/audioTestVowel/A.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau", 
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Nhận thức âm vị"
+      },
+      {
+        "id": "phon-2",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/A.mp3", "/assets/audioTestVowel/B.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Nhận thức âm vị"
+      },
+      {
+        "id": "phon-3",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/B.mp3", "/assets/audioTestVowel/B.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Nhận thức âm vị"
+      },
+      {
+        "id": "phon-4",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/B.mp3", "/assets/audioTestVowel/A.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Nhận thức âm vị"
+      },
+      {
+        "id": "phon-5",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/M.mp3", "/assets/audioTestVowel/M.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Nhận thức âm vị"
+      },
+      {
+        "id": "phon-6",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/M.mp3", "/assets/audioTestVowel/N.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Nhận thức âm vị"
+      },
+      {
+        "id": "phon-7",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/N.mp3", "/assets/audioTestVowel/N.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Nhận thức âm vị"
+      },
+      {
+        "id": "phon-8",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/N.mp3", "/assets/audioTestVowel/M.mp3"],
+        "question": "Hai âm này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Nhận thức âm vị"
+      }
+    ],
+    "decoding": [
+      {
+        "id": "dec-1",
+        "type": "text-choice",
+        "audio": ["/assets/audioTestVowel/D.mp3"],
+        "question": "Chọn chữ cái đúng theo âm thanh:",
+        "num_ans": 2,
+        "ans1": "D",
+        "ans2": "Đ",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Nhận diện chữ & giải mã"
+      },
+      {
+        "id": "dec-2",
+        "type": "text-choice",
+        "audio": ["/assets/audioTestVowel/Đ.mp3"],
+        "question": "Chọn chữ cái đúng theo âm thanh:",
+        "num_ans": 2,
+        "ans1": "D",
+        "ans2": "Đ",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Nhận diện chữ & giải mã"
+      },
+      {
+        "id": "dec-3",
+        "type": "text-choice",
+        "audio": ["/assets/audioTestVowel/ca.mp3"],
+        "question": "Chọn từ đúng theo âm thanh:",
+        "num_ans": 4,
+        "ans1": "ca",
+        "ans2": "cá",
+        "ans3": "cà",
+        "ans4": "cả",
+        "ans_correct": 1,
+        "module": "Nhận diện chữ & giải mã"
+      },
+      {
+        "id": "dec-4",
+        "type": "text-choice",
+        "audio": ["/assets/audioTestVowel/cá.mp3"],
+        "question": "Chọn từ đúng theo âm thanh:",
+        "num_ans": 4,
+        "ans1": "ca",
+        "ans2": "cá",
+        "ans3": "cà",
+        "ans4": "cả",
+        "ans_correct": 2,
+        "module": "Nhận diện chữ & giải mã"
+      },
+      {
+        "id": "dec-5",
+        "type": "text-choice",
+        "audio": ["/assets/audioTestVowel/cà.mp3"],
+        "question": "Chọn từ đúng theo âm thanh:",
+        "num_ans": 4,
+        "ans1": "ca",
+        "ans2": "cá",
+        "ans3": "cà",
+        "ans4": "cả",
+        "ans_correct": 3,
+        "module": "Nhận diện chữ & giải mã"
+      },
+      {
+        "id": "dec-6",
+        "type": "text-choice",
+        "audio": ["/assets/audioTestVowel/cả.mp3"],
+        "question": "Chọn từ đúng theo âm thanh:",
+        "num_ans": 4,
+        "ans1": "ca",
+        "ans2": "cá",
+        "ans3": "cà",
+        "ans4": "cả",
+        "ans_correct": 4,
+        "module": "Nhận diện chữ & giải mã"
+      }
+    ],
+    "understanding-fluency": [
+      {
+        "id": "uf-1",
+        "type": "image-choice",
+        "audio": ["/assets/audioTestVowel/khiAnChuoi.mp3"],
+        "question": "Chọn hình ảnh đúng theo câu:",
+        "num_ans": 3,
+        "ans1": "Khỉ ăn chuối",
+        "ans2": "Mèo ăn cá",
+        "ans3": "Chó ăn xương",
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Tốc độ hiểu",
+        "images": [
+          "/assets/image/testVowels/monkeyBanana.jpg",
+          "/assets/image/testVowels/catFish.jpg",
+          "/assets/image/testVowels/dogBone.jpg"
+        ]
+      },
+      {
+        "id": "uf-2",
+        "type": "image-choice",
+        "audio": ["/assets/audioTestVowel/meoAnCa.mp3"],
+        "question": "Chọn câu đang được phát âm:",
+        "num_ans": 3,
+        "ans1": "Khỉ ăn chuối",
+        "ans2": "Mèo ăn cá",
+        "ans3": "Chó ăn xương",
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Tốc độ hiểu",
+        "images": [
+          "/assets/image/testVowels/monkeyBanana.jpg",
+          "/assets/image/testVowels/catFish.jpg",
+          "/assets/image/testVowels/dogBone.jpg"
+        ]
+      }
+    ],
+    "spelling-writing": [
+      {
+        "id": "sw-1",
+        "type": "drawing",
+        "audio": ["/assets/audioTestVowel/O.mp3"],
+        "question": "Vẽ lại chữ cái bạn nghe:",
+        "num_ans": 0,
+        "ans1": null,
+        "ans2": null,
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": "O",
+        "module": "Chính tả & viết",
+        "targetLetter": "O"
+      },
+      {
+        "id": "sw-2",
+        "type": "drawing",
+        "audio": ["/assets/audioTestVowel/S.mp3"],
+        "question": "Vẽ lại chữ cái bạn nghe:",
+        "num_ans": 0,
+        "ans1": null,
+        "ans2": null,
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": "S",
+        "module": "Chính tả & viết",
+        "targetLetter": "S"
+      }
+    ],
+    "language-comprehension": [
+      {
+        "id": "lc-1",
+        "type": "language-recognition",
+        "audio": ["/assets/audioTestVowel/thichAnKem_vn.mp3"],
+        "question": "Đây có phải tiếng Việt không?",
+        "num_ans": 2,
+        "ans1": "Có, đây là tiếng Việt",
+        "ans2": "Không, đây không phải tiếng Việt",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Hiểu và nhận dạng ngôn ngữ"
+      },
+      {
+        "id": "lc-2",
+        "type": "language-recognition",
+        "audio": ["/assets/audioTestVowel/thichAnKem_ko.mp3.mp3"],
+        "question": "Đây có phải tiếng Việt không?",
+        "num_ans": 2,
+        "ans1": "Có, đây là tiếng Việt",
+        "ans2": "Không, đây không phải tiếng Việt",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Hiểu và nhận dạng ngôn ngữ"
+      },
+      {
+        "id": "lc-3",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/buoiTruaAnBuoiChua.mp3", "/assets/audioTestVowel/buoiTruaAnBuoiChua.mp3"],
+        "question": "Hai câu này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Hiểu và nhận dạng ngôn ngữ"
+      },
+      {
+        "id": "lc-4",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/buoiTruaAnBuoiChua.mp3", "/assets/audioTestVowel/buoiTruaUongSuaChua.mp3"],
+        "question": "Hai câu này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 2,
+        "module": "Hiểu và nhận dạng ngôn ngữ"
+      },
+      {
+        "id": "lc-5",
+        "type": "audio-choice",
+        "audio": ["/assets/audioTestVowel/buoiTruaUongSuaChua.mp3", "/assets/audioTestVowel/buoiTruaUongSuaChua.mp3"],
+        "question": "Hai câu này có giống nhau không?",
+        "num_ans": 2,
+        "ans1": "Giống nhau",
+        "ans2": "Khác nhau",
+        "ans3": null,
+        "ans4": null,
+        "ans_correct": 1,
+        "module": "Hiểu và nhận dạng ngôn ngữ"
+      }
+    ]
+  },
+  "testConfiguration": {
+    "questionsPerModule": 2,
+    "randomSelection": true,
+    "description": "Each test run will randomly select 2 questions from each module pool"
+  }
+}

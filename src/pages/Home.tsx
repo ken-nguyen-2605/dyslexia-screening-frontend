@@ -3,9 +3,11 @@ import benefitBook from "../assets/icons/book.jpg";
 import benefitHeart from "../assets/icons/heart.png";
 import benefitStar from "../assets/icons/star.jpg";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Home = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const handleStart = () => {
 		navigate("/human");
 	};
@@ -16,21 +18,18 @@ const Home = () => {
 				{/* Left content */}
 				<div className="text-center md:text-left md:w-1/2 space-y-6 px-4">
 					<h1 className="text-5xl font-extrabold text-pink-600 leading-tight font-[Comic Sans MS,cursive,sans-serif] drop-shadow-md">
-						Đọc dễ dàng hơn
+						{t('home.title')}
 						<br />
-						với Dyslexia
-						<span className="text-yellow-500">Buddy</span>
+						{t('home.subtitle')}
 					</h1>
 					<p className="text-lg text-pink-500 font-semibold drop-shadow">
-						Công cụ hỗ trợ đọc dành cho mọi người.
-						<br />
-						Học - chơi - khám phá thật vui vẻ!
+						{t('home.description')}
 					</p>
 					<br />
 					<button 
 					onClick={handleStart}
 					className="bg-yellow-300 hover:bg-yellow-400 text-pink-500 px-10 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-200 border-4 border-pink-200 animate-bounce">
-						Bắt đầu ngay
+						{t('home.getStarted')}
 					</button>
 				</div>
 
@@ -47,7 +46,7 @@ const Home = () => {
 			{/* Benefits Section */}
 			<section className="mt-20 text-center">
 				<h2 className="text-3xl font-extrabold text-green-500 mb-10 font-[Comic Sans MS,cursive,sans-serif] drop-shadow-md">
-					Vì sao học cùng DyslexiaBuddy thật tuyệt?
+					{t('home.whyChooseTitle')}
 				</h2>
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -59,11 +58,10 @@ const Home = () => {
 							className="w-16 h-16 mb-4"
 						/>
 						<h3 className="font-bold text-xl mb-2 font-[Comic Sans MS,cursive,sans-serif]">
-							Bắt đầu sớm!
+							{t('home.benefits.early.title')}
 						</h3>
 						<p className="text-base font-semibold">
-							Phát hiện khó khăn khi đọc sớm giúp hỗ trợ kịp thời
-							và hiệu quả hơn.
+							{t('home.benefits.early.description')}
 						</p>
 					</div>
 
@@ -75,11 +73,10 @@ const Home = () => {
 							className="w-16 h-16 mb-4"
 						/>
 						<h3 className="font-bold text-xl mb-2 font-[Comic Sans MS,cursive,sans-serif]">
-							Chỉ dành riêng cho bạn!
+							{t('home.benefits.personalized.title')}
 						</h3>
 						<p className="text-base font-semibold">
-							Lộ trình học cá nhân hóa, phù hợp với từng bạn và
-							phong cách học riêng biệt.
+							{t('home.benefits.personalized.description')}
 						</p>
 					</div>
 
@@ -91,11 +88,10 @@ const Home = () => {
 							className="w-16 h-16 mb-4"
 						/>
 						<h3 className="font-bold text-xl mb-2 font-[Comic Sans MS,cursive,sans-serif]">
-							Tự tin tỏa sáng!
+							{t('home.benefits.fun.title')}
 						</h3>
 						<p className="text-base font-semibold">
-							Tiến bộ mỗi ngày, mạnh dạn đọc to và tự tin hơn
-							trong học tập!
+							{t('home.benefits.fun.description')}
 						</p>
 					</div>
 				</div>

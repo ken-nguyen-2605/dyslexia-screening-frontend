@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { HiOutlineClock } from "react-icons/hi";
 import { FaStar, FaLightbulb } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const TestTypeSelection = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleChoose = (type: "basic" | "advanced") => {
     if (type === "basic") {
@@ -17,11 +19,11 @@ const TestTypeSelection = () => {
     <div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100 py-14 px-4 sm:px-8 min-h-screen rounded-[1.5rem] flex items-center justify-center font-[Comic Sans MS,cursive,sans-serif]">
       <div className="flex flex-col items-center bg-white/90 border-4 border-pink-200 py-10 px-6 rounded-[2em] w-full max-w-lg shadow-xl space-y-8">
         <h2 className="text-3xl text-pink-600 font-bold text-center drop-shadow mb-1">
-          Chọn bài test nhé!
+          {t('testSelection.title')}
         </h2>
         <div className="text-center text-pink-500 font-semibold text-lg mb-2">
           Bước 2 / 4:{" "}
-          <span className="text-gray-700 font-normal">Chọn loại bài kiểm tra</span>
+          <span className="text-gray-700 font-normal">{t('testSelection.subtitle')}</span>
         </div>
         <div className="w-full h-2 bg-pink-100 rounded-full mb-3">
           <div

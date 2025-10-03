@@ -1,22 +1,19 @@
 import apiClient from "./apiClient";
-
-interface LoginCredentials {
-	email: string;
-	password: string;
-}
-
-interface RegisterInfo {
-	email: string;
-	password: string;
-	name: string;
-}
+import type {
+	LoginRequest,
+	RegisterRequest,
+	Token,
+	RegisterResponse,
+	LoginCredentials,
+	RegisterInfo,
+} from "../types";
 
 const authService = {
 	/**
 	 * Logs in a user.
 	 */
-	login: async (credentials: LoginCredentials) => {
-		const response = await apiClient.post("/auth/login", credentials);
+	login: async (credentials: LoginRequest): Promise<Token> => {
+		const response = await apiClient.post("/v1/auth/login", credentials);
 		return response.data;
 	},
   
@@ -30,9 +27,19 @@ const authService = {
 	/**
 	 * Registers a new user.
 	 */
-	register: async (userInfo: RegisterInfo) => {
-		const response = await apiClient.post("/auth/register", userInfo);
+	register: async (userInfo: RegisterRequest): Promise<RegisterResponse> => {
+		const response = await apiClient.post("/v1/auth/register", userInfo);
 		return response.data;
+	},
+
+	// Legacy methods for backward compatibility
+	loginLegacy: async (credentials: LoginCredentials): Promise<Token> => {
+		return authService.login(credentials);
+	},
+
+	registerLegacy: async (userInfo: RegisterInfo): Promise<RegisterResponse> => {
+		const { email, password } = userInfo;
+		return authService.register({ email, password });
 	},
 };
 

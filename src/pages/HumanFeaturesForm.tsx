@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import testSessionService from "../services/testSessionService";
+import userService from "../services/userService";
+import { useTranslation } from "react-i18next";
+import type { Gender } from "../types";
 
 const HumanFeaturesForm = () => {
+	const { t } = useTranslation();
 	const [form, setForm] = useState({
 		name: "",
 		year: "",
@@ -23,7 +26,7 @@ const HumanFeaturesForm = () => {
 		setFormError(null); // clear error on any change
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		// Validation (expand as needed)
@@ -33,31 +36,31 @@ const HumanFeaturesForm = () => {
 			!form.gender ||
 			!form.hobby
 		) {
-			setFormError("Hãy nhập đầy đủ thông tin.");
+			setFormError(t('humanForm.errors.required'));
 			return;
 		}
 		if (isNaN(Number(form.year)) || Number(form.year) < 0) {
-			setFormError("Vui lòng nhập năm sinh hợp lệ.");
+			setFormError(t('humanForm.errors.invalidYear'));
 			return;
 		}
 		// add any other validation as needed
 
-		// Simulate next step, or API call etc.
 		setFormError(null);
 		console.log("Form submitted:", form);
-		const data = testSessionService.startTestSession({
-			info: {
-				age: Number(form.year),
-				gender: form.gender,
-				native_language: "vietnamese",
-				rl_dyslexia: true,
-			},
-		});
-		if (!data) {
-			setFormError("Failed to start test session. Please try again.");
-			return;
+
+		try {
+			// Update user profile with the provided information
+			await userService.updateProfile({
+				name: form.name,
+				year_of_birth: Number(form.year),
+				gender: form.gender.toUpperCase() as Gender,
+				hobbies: form.hobby,
+			});
+			navigate("/test/selection");
+		} catch (error: any) {
+			console.error("Profile update failed:", error);
+			setFormError(t('humanForm.errors.sessionFailed'));
 		}
-		navigate("/test/selection");
 	};
 
 	return (
@@ -68,13 +71,10 @@ const HumanFeaturesForm = () => {
 			>
 				{/* Heading */}
 				<h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
-					Chia sẻ một chút nhé!
+					{t('humanForm.title')}
 				</h2>
 				<div className="text-pink-500 font-semibold mb-2 text-center text-lg font-[Comic Sans MS,cursive,sans-serif]">
-					Bước 1 / 4:{" "}
-					<span className="text-gray-700 font-normal">
-						Thông tin của bạn
-					</span>
+					{t('humanForm.step')}
 				</div>
 				<div className="w-full h-2 bg-pink-100 rounded-full mb-4">
 					<div
@@ -93,13 +93,13 @@ const HumanFeaturesForm = () => {
 				{/* Name */}
 				<div className="w-full flex flex-col space-y-1">
 					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
-						Tên
+						{t('humanForm.name')}
 					</label>
 					<input
 						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
 						type="text"
 						name="name"
-						placeholder="Nhập tên của bạn"
+						placeholder={t('humanForm.namePlaceholder')}
 						value={form.name}
 						onChange={handleChange}
 					/>
@@ -108,13 +108,13 @@ const HumanFeaturesForm = () => {
 				{/* Year of birth */}
 <div className="w-full flex flex-col space-y-1">
   <label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
-    Năm sinh
+    {t('humanForm.yearOfBirth')}
   </label>
   <input
     className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
     type="text"
     name="year"
-    placeholder="Nhập năm sinh của bạn"
+    placeholder={t('humanForm.yearPlaceholder')}
     value={form.year}
     onChange={handleChange}
     autoComplete="off"
@@ -125,7 +125,7 @@ const HumanFeaturesForm = () => {
 {/* Gender */}
 				<div className="w-full flex flex-col space-y-1">
   <label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
-    Giới tính
+    {t('humanForm.gender')}
   </label>
   <div className="flex gap-10 mt-2">
     <label className="flex items-center font-semibold text-pink-600">
@@ -137,7 +137,7 @@ const HumanFeaturesForm = () => {
         onChange={handleChange}
         className="mr-2 accent-pink-500 bg-white w-5 h-5"
       />
-      Nam
+      {t('common.male')}
     </label>
     <label className="flex items-center font-semibold text-pink-600">
       <input
@@ -148,20 +148,20 @@ const HumanFeaturesForm = () => {
         onChange={handleChange}
         className="mr-2 accent-pink-500 bg-white w-5 h-5"
       />
-      Nữ
+      {t('common.female')}
     </label>
   </div>
 </div>
 				{/* Hobby */}
 				<div className="w-full flex flex-col space-y-1">
 					<label className="font-semibold text-pink-600 text-lg font-[Comic Sans MS,cursive,sans-serif]">
-						Sở thích
+						{t('humanForm.hobby')}
 					</label>
 					<input
 						className="border-2 border-yellow-200 rounded-xl p-3 font-medium focus:border-pink-400 focus:outline-none transition bg-white/70"
 						type="text"
 						name="hobby"
-						placeholder="Nhập sở thích của bạn"
+						placeholder={t('humanForm.hobbyPlaceholder')}
 						value={form.hobby}
 						onChange={handleChange}
 					/>
@@ -172,7 +172,7 @@ const HumanFeaturesForm = () => {
 					type="submit"
 					className="bg-yellow-300 hover:bg-yellow-400 text-pink-700 px-12 py-3 rounded-full text-xl font-bold shadow-lg border-2 border-pink-200 transition-all duration-200 focus:ring focus:ring-yellow-100 active:scale-95 font-[Comic Sans MS,cursive,sans-serif] mt-3"
 				>
-					Bắt đầu
+					{t('common.start')}
 				</button>
 			</form>
 		</div>

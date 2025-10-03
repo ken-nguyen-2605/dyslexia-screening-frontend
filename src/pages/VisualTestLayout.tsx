@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { TestStepProvider } from "../contexts/TestStepContext";
+import { TestSessionProvider } from "../contexts/TestSessionContext";
 
 const VISUAL_TEST_STEPS = [
 	"instruction",
@@ -15,13 +16,15 @@ const VISUAL_TEST_STEPS = [
 ];
 
 const VisualTestLayout = () => (
-	<TestStepProvider testType="visual" testSteps={VISUAL_TEST_STEPS}>
-		<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100">
-			<div>
-				<Outlet />
+	<TestSessionProvider>
+		<TestStepProvider testType="visual" testSteps={VISUAL_TEST_STEPS}>
+			<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100">
+				<div>
+					<Outlet />
+				</div>
 			</div>
-		</div>
-	</TestStepProvider>
+		</TestStepProvider>
+	</TestSessionProvider>
 );
 
 export default VisualTestLayout;
