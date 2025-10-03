@@ -1,6 +1,6 @@
 const Footer = () => (
-	<footer className="bg-gradient-to-r from-yellow-100 via-pink-100 to-purple-100 text-pink-500 py-8 mt-12 font-[Fredoka,Comic Sans MS,Arial Rounded,sans-serif] border-t-4 border-pink-200">
-		<div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+	<footer className="bg-gradient-pink-right text-pink-500 py-4 font-fredoka border-t-4 border-pink-200">
+		<div className="container mx-auto px-20 grid grid-cols-1 md:grid-cols-4 gap-8">
 			{/* Logo */}
 			<div>
 				<h2 className="text-2xl font-extrabold mb-2 drop-shadow">
@@ -82,7 +82,7 @@ const Footer = () => (
 		</div>
 		<div className="text-center text-xs mt-8 text-pink-400 opacity-80">
 			© {new Date().getFullYear()} Dyslexia Buddy · Được tạo bằng ❤️ cho
-			trẻ em ở khắp mọi nơi
+			trẻ em ở khắp Việt Nam
 		</div>
 	</footer>
 );

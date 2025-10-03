@@ -1,12 +1,7 @@
 import apiClient from "./apiClient";
 
 interface StartTestSessionParams {
-	info: {
-    age: number;
-    gender: string;
-    native_language: string;
-    rl_dyslexia: boolean;
-  }
+	test_type: "AUDITORY" | "VISUAL" | "LANGUAGE";
 }
 
 interface SubmitAuditoryFeatureParams {

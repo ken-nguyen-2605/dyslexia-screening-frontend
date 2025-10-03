@@ -30,7 +30,7 @@ const Dashboard = () => {
   const getScore = () => "--";
   const getResult = () => "Pending";
   const getResultColor = (result: string) => {
-    if (result === "Safe") return "text-teal-600 font-bold";
+    if (result === "Safe") return "text-pink-600 font-bold";
     if (result === "Risk") return "text-yellow-500 font-bold";
     if (result === "Dyslexic") return "text-red-500 font-bold";
     // for pending/unknown
@@ -38,12 +38,12 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
+    <div className="min-h-screen bg-gradient-cyan rounded-2xl flex flex-col items-center py-10 px-4">
       <div className="bg-white rounded-2xl p-8 shadow-lg max-w-3xl w-full">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-teal-600">My Tests</h2>
+          <h2 className="text-2xl font-bold text-pink-600">My Tests</h2>
           <button
-            className="bg-teal-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition"
+            className="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition"
             onClick={() => navigate("/human/")}
           >
             Start New Test
@@ -61,7 +61,7 @@ const Dashboard = () => {
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse">
               <thead>
-                <tr className="bg-teal-50">
+                <tr className="bg-pink-50">
                   <th className="py-2 px-4 text-left font-semibold">#</th>
                   <th className="py-2 px-4 text-left font-semibold">Date</th>
                   <th className="py-2 px-4 text-left font-semibold">Score</th>
@@ -83,7 +83,7 @@ const Dashboard = () => {
                       <td className={`py-2 px-4 ${getResultColor(result)}`}>{result}</td>
                       <td className="py-2 px-4">
                         <button
-                          className="text-teal-600 hover:underline hover:text-teal-800 font-medium"
+                          className="text-pink-600 hover:underline hover:text-pink-800 font-medium"
                           onClick={() => navigate(`/test-session/${session.id}`)}
                         >
                           View

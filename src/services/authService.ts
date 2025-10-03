@@ -1,39 +1,42 @@
 import apiClient from "./apiClient";
+import type {
+	LoginRequest,
+	LoginResponse,
+	RegisterRequest,
+	RegisterResponse,
+} from "../types/auth";
 
-interface LoginCredentials {
-	email: string;
-	password: string;
-}
-
-interface RegisterInfo {
-	email: string;
-	password: string;
-	name: string;
-}
-
-const authService = {
+/**
+ * Service for handling authentication-related operations.
+ */
+class AuthService {
 	/**
 	 * Logs in a user.
 	 */
-	login: async (credentials: LoginCredentials) => {
-		const response = await apiClient.post("/auth/login", credentials);
+	async login(loginRequest: LoginRequest): Promise<LoginResponse> {
+		const response = await apiClient.post("/auth/login", loginRequest);
 		return response.data;
-	},
-  
+	}
+
 	/**
 	 * Logs out the user by removing the token.
 	 */
-	logout: () => {
+	logout(): void {
 		localStorage.removeItem("access_token");
-	},
+	}
 
 	/**
 	 * Registers a new user.
 	 */
-	register: async (userInfo: RegisterInfo) => {
-		const response = await apiClient.post("/auth/register", userInfo);
+	async register(
+		registerRequest: RegisterRequest
+	): Promise<RegisterResponse> {
+		const response = await apiClient.post(
+			"/auth/register",
+			registerRequest
+		);
 		return response.data;
-	},
-};
+	}
+}
 
-export default authService;
+export default new AuthService();

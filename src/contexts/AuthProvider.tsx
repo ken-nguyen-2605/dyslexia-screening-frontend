@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { jwtDecode, type JwtPayload } from "jwt-decode";
 import authService from "../services/authService";
+import accountService from "../services/accountService";
 import apiClient from "../services/apiClient";
 
 interface User {
@@ -8,22 +9,44 @@ interface User {
 	email: string;
 	name: string;
 	created_at: string;
+	profiles?: Profile[];
+	selected_profile?: Profile;
+}
+
+export interface Profile {
+	id: number;
+	profile_type: string;
+	created_at: string;
+
+	name?: string;
+	year_of_birth?: number;
+	gender?: string;
+	hobbies?: string;
 }
 
 interface LoginResponse {
 	access_token: string;
 	token_type: string;
-	id: number;
+}
+
+interface ProfileSelectionResponse {
+	access_token: string;
+	token_type: string;
 }
 
 interface AuthContextType {
 	token: string | null;
+	profileToken: string | null;
 	user: User | null;
+	selectedProfile: Profile | null;
 	isAuthenticated: boolean;
+	hasSelectedProfile: boolean;
 	loading: boolean;
 	error: string | null;
 	login: (email: string, password: string) => Promise<void>;
+	selectProfile: (profileId: number) => Promise<void>;
 	logout: () => void;
+	clearError: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -35,26 +58,42 @@ interface AuthProviderProps {
 }
 
 const TOKEN_KEY = "access_token";
+const PROFILE_TOKEN_KEY = "profile_token";
+const SELECTED_PROFILE_KEY = "selected_profile";
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [token, setToken] = useState<string | null>(() =>
 		localStorage.getItem(TOKEN_KEY)
 	);
+	const [profileToken, setProfileToken] = useState<string | null>(() =>
+		localStorage.getItem(PROFILE_TOKEN_KEY)
+	);
 	const [user, setUser] = useState<User | null>(null);
+	const [selectedProfile, setSelectedProfile] = useState<Profile | null>(
+		() => {
+			const stored = localStorage.getItem(SELECTED_PROFILE_KEY);
+			return stored ? JSON.parse(stored) : null;
+		}
+	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
+	// Validate and fetch user on auth_token
 	useEffect(() => {
 		const validateTokenAndFetchUser = async () => {
-			if (token) {
+			// Check profile token first, then auth token
+			const currentToken = profileToken || token;
+
+			if (currentToken) {
 				try {
-					const decoded: JwtPayload = jwtDecode(token);
+					const decoded: JwtPayload = jwtDecode(currentToken);
 					if (decoded.exp && decoded.exp * 1000 < Date.now()) {
 						handleLogout();
 					} else {
 						await fetchUserProfile();
 					}
 				} catch (error: any) {
+					console.error("Token validation error:", error);
 					handleLogout();
 				}
 			} else {
@@ -64,13 +103,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 		validateTokenAndFetchUser();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [token]);
+	}, [token, profileToken]);
 
+	// Fetch user and profiles
 	const fetchUserProfile = async () => {
 		try {
-			const response = await apiClient.get<User>("/user/profile");
+			const response = await apiClient.get<User>("/account/me");
 			setUser(response.data);
 		} catch (error: any) {
+			console.error("Fetch user profile error:", error);
+			// If profile token fails, try with auth token only
+			if (profileToken && token) {
+				setProfileToken(null);
+				setSelectedProfile(null);
+				localStorage.removeItem(PROFILE_TOKEN_KEY);
+				localStorage.removeItem(SELECTED_PROFILE_KEY);
+				// This will trigger useEffect again with just the auth token
+				return;
+			}
 			handleLogout();
 		} finally {
 			setLoading(false);
@@ -79,8 +129,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 	const handleLogout = () => {
 		setToken(null);
+		setProfileToken(null);
 		setUser(null);
+		setSelectedProfile(null);
 		localStorage.removeItem(TOKEN_KEY);
+		localStorage.removeItem(PROFILE_TOKEN_KEY);
+		localStorage.removeItem(SELECTED_PROFILE_KEY);
 		setLoading(false);
 	};
 
@@ -92,6 +146,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 				email,
 				password,
 			});
+
 			if (data.access_token) {
 				localStorage.setItem(TOKEN_KEY, data.access_token);
 				setToken(data.access_token);
@@ -105,6 +160,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 			handleLogout();
 		} finally {
 			// Loading is set to false in fetchUserProfile's finally block
+			// or immediately if there's an error
+			if (error) {
+				setLoading(false);
+			}
+		}
+	};
+
+	const selectProfile = async (profileId: number) => {
+		setLoading(true);
+		setError(null);
+
+		try {
+			const data: ProfileSelectionResponse =
+				await accountService.selectProfile(profileId);
+
+			if (data.access_token) {
+				localStorage.setItem(PROFILE_TOKEN_KEY, data.access_token);
+				setProfileToken(data.access_token);
+			} else {
+				throw new Error(
+					"No access token in profile selection response"
+				);
+			}
+		} catch (err: any) {
+			setError(
+				err?.response?.data?.message ||
+					err.message ||
+					"Profile selection failed"
+			);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -113,19 +199,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 		handleLogout();
 	};
 
+	const clearError = () => {
+		setError(null);
+	};
+
 	const contextValue: AuthContextType = {
 		token,
+		profileToken,
 		user,
+		selectedProfile,
 		isAuthenticated: !!user,
+		hasSelectedProfile: !!profileToken,
 		loading,
 		error,
 		login,
+		selectProfile,
 		logout,
+		clearError,
 	};
 
 	return (
 		<AuthContext.Provider value={contextValue}>
-			{!loading && children}
+			{children}
 		</AuthContext.Provider>
 	);
 };

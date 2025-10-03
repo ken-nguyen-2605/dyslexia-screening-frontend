@@ -3,11 +3,35 @@ import benefitBook from "../assets/icons/book.jpg";
 import benefitHeart from "../assets/icons/heart.png";
 import benefitStar from "../assets/icons/star.jpg";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import authService from "../services/authService";
 
 const Home = () => {
 	const navigate = useNavigate();
-	const handleStart = () => {
-		navigate("/human");
+	const { isAuthenticated, hasSelectedProfile, selectedProfile } = useAuth();
+	const handleStart = async () => {
+		console.log("Selected Profile:", selectedProfile);
+		if (!isAuthenticated) {
+			navigate("/login");
+		} else if (isAuthenticated && !hasSelectedProfile) {
+			navigate("/profile/select");
+		} else if (isAuthenticated && hasSelectedProfile) {
+			const profileInfo: any = await authService.getProfileInfo();
+			console.log("Profile Info:", profileInfo);
+			const hasInfo =
+				profileInfo &&
+				profileInfo.name &&
+				profileInfo.year_of_birth &&
+				profileInfo.email &&
+				profileInfo.gender &&
+				profileInfo.mother_tongue &&
+				profileInfo.official_dyslexia_diagnosis;
+			if (hasInfo) {
+				navigate("/test/auditory/instruction");
+			} else {
+				navigate("/human");
+			}
+		}
 	};
 	return (
 		<div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100 min-h-screen py-12 px-4 sm:px-8 rounded-[1.5rem]">
@@ -27,9 +51,10 @@ const Home = () => {
 						Học - chơi - khám phá thật vui vẻ!
 					</p>
 					<br />
-					<button 
-					onClick={handleStart}
-					className="bg-yellow-300 hover:bg-yellow-400 text-pink-500 px-10 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-200 border-4 border-pink-200 animate-bounce">
+					<button
+						onClick={handleStart}
+						className="bg-yellow-300 hover:bg-yellow-400 text-pink-500 px-10 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-200 border-4 border-pink-200 animate-bounce"
+					>
 						Bắt đầu ngay
 					</button>
 				</div>
