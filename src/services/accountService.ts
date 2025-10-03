@@ -16,7 +16,7 @@ class AccountService {
    * Get profile information
    */
   async getProfileInfo() {
-    const response = await apiClient.get(`/user/profile`);
+    const response = await apiClient.get(`/account/profiles/me`);
     return response.data;
   }
 }

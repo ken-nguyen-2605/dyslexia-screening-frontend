@@ -4,7 +4,7 @@ import benefitHeart from "../assets/icons/heart.png";
 import benefitStar from "../assets/icons/star.jpg";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import authService from "../services/authService";
+import accountService from "../services/accountService";
 
 const Home = () => {
 	const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Home = () => {
 		} else if (isAuthenticated && !hasSelectedProfile) {
 			navigate("/profile/select");
 		} else if (isAuthenticated && hasSelectedProfile) {
-			const profileInfo: any = await authService.getProfileInfo();
+			const profileInfo: any = await accountService.getProfileInfo();
 			console.log("Profile Info:", profileInfo);
 			const hasInfo =
 				profileInfo &&

@@ -14,7 +14,7 @@ class AuthService {
 	 * Logs in a user.
 	 */
 	async login(loginRequest: LoginRequest): Promise<LoginResponse> {
-		const response = await apiClient.post("/auth/login", loginRequest);
+		const response = await apiClient.post("/public/auth/login", loginRequest);
 		return response.data;
 	}
 
@@ -32,7 +32,7 @@ class AuthService {
 		registerRequest: RegisterRequest
 	): Promise<RegisterResponse> {
 		const response = await apiClient.post(
-			"/auth/register",
+			"/public/auth/register",
 			registerRequest
 		);
 		return response.data;
