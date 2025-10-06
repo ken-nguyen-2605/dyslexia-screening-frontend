@@ -12,7 +12,7 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import HumanFeaturesForm from "./pages/HumanFeaturesForm";
-import AuditoryTestLayout from "./pages/AuditoryTestLayout";
+import AuditoryTest from "./pages/AuditoryTest";
 import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
 import LanguageTestLayout from "./pages/LanguageTestLayout";
@@ -47,30 +47,11 @@ function App() {
 								element={<HumanFeaturesForm />}
 							/>
 
-							{/* -------- Auditory Test Layout -------- */}
+							{/* -------- Auditory Test -------- */}
 							<Route
 								path="test/auditory"
-								element={<AuditoryTestLayout />}
-							>
-								<Route
-									path="instruction"
-									element={
-										<TestDispatcher testType="auditory" />
-									}
-								/>
-								<Route
-									path=":type/:cardQuantity"
-									element={
-										<TestDispatcher testType="auditory" />
-									}
-								/>
-								<Route
-									path="rating"
-									element={
-										<TestDispatcher testType="auditory" />
-									}
-								/>
-							</Route>
+								element={<AuditoryTest />}
+							/>
 
 							{/* -------- Visual Test Layout -------- */}
 							<Route

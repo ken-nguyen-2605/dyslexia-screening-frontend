@@ -27,7 +27,7 @@ const Home = () => {
 				profileInfo.mother_tongue &&
 				profileInfo.official_dyslexia_diagnosis;
 			if (hasInfo) {
-				navigate("/test/auditory/instruction");
+				navigate("/test/auditory/");
 			} else {
 				navigate("/human");
 			}

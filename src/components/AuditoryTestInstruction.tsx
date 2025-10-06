@@ -1,8 +1,12 @@
-interface BasicTestInstructionProps {
-  onStartTest: () => void;
+interface AuditoryTestInstructionProps {
+  goToNextStep: () => void;
 }
 
-const BasicTestInstruction = ({ onStartTest }: BasicTestInstructionProps) => {
+const AuditoryTestInstruction = ({ goToNextStep }: AuditoryTestInstructionProps) => {
+  const onStartTest = () => {
+    goToNextStep();
+    console.log("Call API to start test session")
+  };
   return (
     <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-3xl items-center space-y-7 shadow-xl max-w-2xl w-full mx-auto">
       <h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow">
@@ -66,4 +70,4 @@ const BasicTestInstruction = ({ onStartTest }: BasicTestInstructionProps) => {
   );
 };
 
-export default BasicTestInstruction;
+export default AuditoryTestInstruction;

@@ -1,5 +1,4 @@
 import AuditoryTestInstruction from "./AuditoryTestInstruction";
-import AuditoryTest from "./AuditoryTest";
 import VisualTestInstruction from "./VisualTestInstruction";
 import VisualTest from "./VisualTest";
 import LanguageTestInstruction from "./LanguageTestInstruction";
@@ -33,14 +32,8 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 		switch (testType) {
 			case "auditory":
 				return (
-					<AuditoryTestInstruction
-						onStartTest={() => {
-							goTo(currentStep + 1);
-							testSessionService.startTestSession({
-								test_type: "AUDITORY",
-							});
-						}}
-					/>
+					// <AuditoryTestInstruction/>
+					<div></div>
 				);
 			case "visual":
 				return (
@@ -82,7 +75,7 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 	// Xử lý phần Test chính
 	switch (testType) {
 		case "auditory":
-			return <AuditoryTest />;
+			return <div></div>;
 		case "visual":
 			return <VisualTest />;
 		//case "language":
