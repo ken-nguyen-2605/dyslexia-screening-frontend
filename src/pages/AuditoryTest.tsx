@@ -437,7 +437,7 @@ const AuditoryTestLayout = () => {
 			<div className="sm: min-w-sm flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-2xl items-center space-y-7 shadow-xl mx-auto">
 				{/* Title */}
 				<h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
-					Bài Test Âm Thanh
+					Bài Test Ngôn Ngữ Thính Giác
 				</h2>
 
 				{/* Progress */}
