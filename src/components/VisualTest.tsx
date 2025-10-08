@@ -54,16 +54,14 @@ const RectangleIcon = ({ variant, size = 64 }: { variant: "tl" | "tr" | "bl" | "
   );
 };
 
-
-// FaceIcon: giữ dạng nửa hình tròn với 2 ô vuông làm mắt (variant 1..4)
 const FaceIcon = ({ variant, size = 64 }: { variant: 1 | 2 | 3 | 4; size?: number }) => {
-  // we'll slightly rotate/transform for different variants
   const transforms: Record<number, string> = {
     1: "rotate(0 50 50)",
     2: "rotate(10 50 50)",
     3: "rotate(-10 50 50)",
     4: "rotate(0 50 50) translate(0,2)",
   };
+
   const eyePositions: Record<number, { x1: number; x2: number; y: number }> = {
     1: { x1: 35, x2: 65, y: 35 },
     2: { x1: 38, x2: 62, y: 35 },
@@ -71,15 +69,90 @@ const FaceIcon = ({ variant, size = 64 }: { variant: 1 | 2 | 3 | 4; size?: numbe
     4: { x1: 35, x2: 65, y: 38 },
   };
   const pos = eyePositions[variant];
+
+  // Hàm vẽ mắt
+  const renderEye = (shape: "circle" | "triangle" | "star" | "square", cx: number, cy: number) => {
+    switch (shape) {
+      case "circle":
+        return <circle cx={cx} cy={cy} r="5" fill="#ec4899" />;
+      case "triangle":
+  // Tam giác đều hướng lên trên
+  const side = 14; // độ dài cạnh
+  const height = (Math.sqrt(3) / 2) * side; // chiều cao tam giác đều
+  return (
+    <polygon
+      points={`
+        ${cx},${cy - height / 2} 
+        ${cx - side / 2},${cy + height / 2} 
+        ${cx + side / 2},${cy + height / 2}
+      `}
+      fill="#ec4899"
+    />
+  );
+      case "star":
+        // Hình sao 5 cánh
+        const R = 8; // bán kính ngoài
+        const r = 3.5; // bán kính trong
+        const points = Array.from({ length: 10 }, (_, i) => {
+          const angle = (i * 36 - 90) * (Math.PI / 180);
+          const rad = i % 2 === 0 ? R : r;
+          return `${cx + rad * Math.cos(angle)},${cy + rad * Math.sin(angle)}`;
+        }).join(" ");
+        return <polygon points={points} fill="#ec4899" />;
+      case "square":
+      default:
+        return <rect x={cx - 5} y={cy - 5} width="10" height="10" fill="#ec4899" />;
+    }
+  };
+
+  // Map variant -> kiểu mắt
+  const eyeShapeMap: Record<number, "circle" | "triangle" | "star" | "square"> = {
+    1: "circle",
+    2: "triangle",
+    3: "star",
+    4: "square", // hoặc đổi thành loại khác nếu muốn
+  };
+
   return (
     <div className="w-full h-full bg-pink-50 rounded-xl border-2 border-pink-200 flex items-center justify-center">
       <svg width={size} height={size} viewBox="0 0 100 100" style={{ transform: transforms[variant] }}>
-        {/* half circle (top) */}
+        {/* Nửa hình tròn */}
         <path d="M 10 50 A 40 40 0 0 1 90 50 L 90 90 L 10 90 Z" stroke="#ec4899" strokeWidth="5" fill="white"/>
-        {/* two square eyes */}
-        <rect x={pos.x1 - 5} y={pos.y - 5} width="10" height="10" fill="#ec4899" />
-        <rect x={pos.x2 - 5} y={pos.y - 5} width="10" height="10" fill="#ec4899" />
+        {/* Hai mắt */}
+        {renderEye(eyeShapeMap[variant], pos.x1, pos.y)}
+        {renderEye(eyeShapeMap[variant], pos.x2, pos.y)}
       </svg>
+    </div>
+  );
+};
+
+/* ---------------- CLOCK ICON ---------------- */
+const ClockFace = ({ timeLeft, totalTime }: { timeLeft: number; totalTime: number }) => {
+  const degreesPerSec = 360 / totalTime;
+  const angle = (totalTime - timeLeft) * degreesPerSec;
+  const counterClockwiseAngle = 360 - angle;
+
+  return (
+    <div className="flex flex-col items-center">
+      {/* Mặt đồng hồ */}
+      <svg width="80" height="80" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" stroke="#ec4899" strokeWidth="4" fill="white" />
+        {/* Kim ngắn hơn để không che chữ */}
+        <line
+          x1="50"
+          y1="50"
+          x2="50"
+          y2="25" // rút ngắn từ 15 -> 25
+          stroke="#ec4899"
+          strokeWidth="4"
+          strokeLinecap="round"
+          transform={`rotate(${counterClockwiseAngle} 50 50)`}
+        />
+      </svg>
+      {/* Số thời gian rõ ràng bên ngoài */}
+      <span className="mt-1 text-pink-600 font-bold text-xl">
+        {Math.ceil(timeLeft)}s
+      </span>
     </div>
   );
 };
@@ -92,24 +165,16 @@ type Variant = 1 | 2 | 3 | 4;
 type CardType = {
   id: number;
   type: "chevron" | "z" | "rectangle" | "face";
-  direction?: Direction;    // used for chevron
-  variant?: Variant;        // used for z, face
-  rectangleVariant?: RectangleVariant; // dùng cho rectangle
+  direction?: Direction;
+  variant?: Variant;
+  rectangleVariant?: RectangleVariant;
   isTarget?: boolean;
 };
 
-const makeChevron = (id: number, direction: Direction, isTarget = false): CardType => ({
-  id, type: "chevron", direction, isTarget,
-});
-const makeZ = (id: number, variant: Variant, isTarget = false): CardType => ({
-  id, type: "z", variant, isTarget,
-});
-const makeRectangle = (id: number, variant: RectangleVariant, isTarget = false): CardType => ({
-  id, type: "rectangle", rectangleVariant: variant, isTarget,
-});
-const makeFace = (id: number, variant: Variant, isTarget = false): CardType => ({
-  id, type: "face", variant, isTarget,
-});
+const makeChevron = (id: number, direction: Direction, isTarget = false): CardType => ({ id, type: "chevron", direction, isTarget });
+const makeZ = (id: number, variant: Variant, isTarget = false): CardType => ({ id, type: "z", variant, isTarget });
+const makeRectangle = (id: number, variant: RectangleVariant, isTarget = false): CardType => ({ id, type: "rectangle", rectangleVariant: variant, isTarget });
+const makeFace = (id: number, variant: Variant, isTarget = false): CardType => ({ id, type: "face", variant, isTarget });
 
 const shuffle = <T,>(arr: T[]) => {
   const a = [...arr];
@@ -130,16 +195,15 @@ const VisualTest = () => {
   const [timeLeft, setTimeLeft] = useState(3);
   const [testActive, setTestActive] = useState(false);
   const [testTime, setTestTime] = useState(15);
+  const [testTimeFloat, setTestTimeFloat] = useState(15); // Thời gian thực để quay mượt
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [wrongCount, setWrongCount] = useState(0);
   const [multiTargetCount, setMultiTargetCount] = useState(0);
 
-  // get current round number (1..8)
   const getCurrentRound = () => (currentStep >= 1 && currentStep <= 8 ? currentStep : 1);
   const round = getCurrentRound();
 
-  // map round -> icon type
   const getIconType = (): CardType["type"] => {
     if (round <= 2) return "chevron";
     if (round <= 4) return "z";
@@ -147,96 +211,64 @@ const VisualTest = () => {
     return "face";
   };
 
-  // create cards strictly typed (no spread)
   const buildCards = (roundNum: number): { target: CardType; cards: CardType[] } => {
     const type = getIconType();
 
     if (type === "chevron") {
-      // define target & distractors
       const target = makeChevron(1, "up", true);
       if (roundNum % 2 === 1) {
-        // 4 cards: 1T + 3D
-        const d1 = makeChevron(2, "down", false);
-        const d2 = makeChevron(3, "left", false);
-        const d3 = makeChevron(4, "right", false);
-        return { target, cards: shuffle([target, d1, d2, d3]) };
+        return { target, cards: shuffle([target, makeChevron(2, "down"), makeChevron(3, "left"), makeChevron(4, "right")]) };
       } else {
-        // 9 cards: 2T, d1 x3, d2 x2, d3 x2
-        const t1 = makeChevron(101, "up", true);
-        const t2 = makeChevron(102, "up", true);
-        const d1 = makeChevron(201, "down", false);
-        const d1b = makeChevron(202, "down", false);
-        const d1c = makeChevron(203, "down", false);
-        const d2 = makeChevron(301, "left", false);
-        const d2b = makeChevron(302, "left", false);
-        const d3 = makeChevron(401, "right", false);
-        const d3b = makeChevron(402, "right", false);
-        const arr = [t1, t2, d1, d1b, d1c, d2, d2b, d3, d3b];
-        return { target, cards: shuffle(arr) };
+        return { target, cards: shuffle([
+          makeChevron(101, "up", true),
+          makeChevron(102, "up", true),
+          makeChevron(201, "down"), makeChevron(202, "down"), makeChevron(203, "down"),
+          makeChevron(301, "left"), makeChevron(302, "left"),
+          makeChevron(401, "right"), makeChevron(402, "right"),
+        ])};
       }
     }
 
     if (type === "z") {
       const target = makeZ(1, 1, true);
       if (roundNum % 2 === 1) {
-        const d1 = makeZ(2, 2, false);
-        const d2 = makeZ(3, 3, false);
-        const d3 = makeZ(4, 4, false);
-        return { target, cards: shuffle([target, d1, d2, d3]) };
+        return { target, cards: shuffle([target, makeZ(2, 2), makeZ(3, 3), makeZ(4, 4)]) };
       } else {
-        const t1 = makeZ(101, 1, true);
-        const t2 = makeZ(102, 1, true);
-        const d1 = makeZ(201, 2, false);
-        const d1b = makeZ(202, 2, false);
-        const d1c = makeZ(203, 2, false);
-        const d2 = makeZ(301, 3, false);
-        const d2b = makeZ(302, 3, false);
-        const d3 = makeZ(401, 4, false);
-        const d3b = makeZ(402, 4, false);
-        return { target, cards: shuffle([t1, t2, d1, d1b, d1c, d2, d2b, d3, d3b]) };
+        return { target, cards: shuffle([
+          makeZ(101, 1, true),
+          makeZ(102, 1, true),
+          makeZ(201, 2), makeZ(202, 2), makeZ(203, 2),
+          makeZ(301, 3), makeZ(302, 3),
+          makeZ(401, 4), makeZ(402, 4),
+        ])};
       }
     }
 
     if (type === "rectangle") {
-  const target = makeRectangle(1, "tl", true);
-  if (roundNum % 2 === 1) {
-    const d1 = makeRectangle(2, "tr", false);
-    const d2 = makeRectangle(3, "bl", false);
-    const d3 = makeRectangle(4, "br", false);
-    return { target, cards: shuffle([target, d1, d2, d3]) };
-  } else {
-    const t1 = makeRectangle(101, "tl", true);
-    const t2 = makeRectangle(102, "tl", true);
-    const d1 = makeRectangle(201, "tr", false);
-    const d1b = makeRectangle(202, "tr", false);
-    const d1c = makeRectangle(203, "tr", false);
-    const d2 = makeRectangle(301, "bl", false);
-    const d2b = makeRectangle(302, "bl", false);
-    const d3 = makeRectangle(401, "br", false);
-    const d3b = makeRectangle(402, "br", false);
-    return { target, cards: shuffle([t1, t2, d1, d1b, d1c, d2, d2b, d3, d3b]) };
-  }
-}
+      const target = makeRectangle(1, "tl", true);
+      if (roundNum % 2 === 1) {
+        return { target, cards: shuffle([target, makeRectangle(2, "tr"), makeRectangle(3, "bl"), makeRectangle(4, "br")]) };
+      } else {
+        return { target, cards: shuffle([
+          makeRectangle(101, "tl", true),
+          makeRectangle(102, "tl", true),
+          makeRectangle(201, "tr"), makeRectangle(202, "tr"), makeRectangle(203, "tr"),
+          makeRectangle(301, "bl"), makeRectangle(302, "bl"),
+          makeRectangle(401, "br"), makeRectangle(402, "br"),
+        ])};
+      }
+    }
 
-
-    // face
     const targetFace = makeFace(1, 1, true);
     if (roundNum % 2 === 1) {
-      const d1 = makeFace(2, 2, false);
-      const d2 = makeFace(3, 3, false);
-      const d3 = makeFace(4, 4, false);
-      return { target: targetFace, cards: shuffle([targetFace, d1, d2, d3]) };
+      return { target: targetFace, cards: shuffle([targetFace, makeFace(2, 2), makeFace(3, 3), makeFace(4, 4)]) };
     } else {
-      const t1 = makeFace(101, 1, true);
-      const t2 = makeFace(102, 1, true);
-      const d1 = makeFace(201, 2, false);
-      const d1b = makeFace(202, 2, false);
-      const d1c = makeFace(203, 2, false);
-      const d2 = makeFace(301, 3, false);
-      const d2b = makeFace(302, 3, false);
-      const d3 = makeFace(401, 4, false);
-      const d3b = makeFace(402, 4, false);
-      return { target: targetFace, cards: shuffle([t1, t2, d1, d1b, d1c, d2, d2b, d3, d3b]) };
+      return { target: targetFace, cards: shuffle([
+        makeFace(101, 1, true), makeFace(102, 1, true),
+        makeFace(201, 2), makeFace(202, 2), makeFace(203, 2),
+        makeFace(301, 3), makeFace(302, 3),
+        makeFace(401, 4), makeFace(402, 4),
+      ])};
     }
   };
 
@@ -248,21 +280,19 @@ const VisualTest = () => {
     }
   };
 
-  // init when step changes
   useEffect(() => {
-      setMultiTargetCount(0); // Thêm dòng này ở đầu useEffect
-
+    setMultiTargetCount(0);
     const { target, cards: built } = buildCards(round);
     setTargetCard(target);
     setCards(built);
     setTimeLeft(3);
     setTestActive(false);
     setTestTime(15);
+    setTestTimeFloat(15);
     setCorrectCount(0);
     setWrongCount(0);
-  }, [currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentStep]);
 
-  // countdown to start
   useEffect(() => {
     if (timeLeft > 0) {
       const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
@@ -272,58 +302,68 @@ const VisualTest = () => {
     }
   }, [timeLeft]);
 
-  // test countdown
   useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval>;
     if (testActive && testTime > 0) {
-      const t = setTimeout(() => setTestTime((s) => s - 1), 1000);
-      return () => clearTimeout(t);
-    } else if (testActive && testTime === 0) {
-      goToNextStep();
+      const start = Date.now();
+      const startValue = testTime;
+
+      intervalId = setInterval(() => {
+        const elapsed = (Date.now() - start) / 1000;
+        const newTimeFloat = startValue - elapsed;
+        setTestTimeFloat(newTimeFloat > 0 ? newTimeFloat : 0);
+
+        if (newTimeFloat <= (testTime - 1)) {
+          setTestTime(prev => prev - 1);
+        }
+
+        if (newTimeFloat <= 0) {
+          clearInterval(intervalId);
+          goToNextStep();
+        }
+      }, 50);
     }
-  }, [testActive, testTime]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => clearInterval(intervalId);
+}, [testActive, testTime]);
 
-  // handle click
   const handleCardClick = (card: CardType) => {
-  if (!testActive) return;
+    if (!testActive) return;
 
-  if (round % 2 === 0) {
-    // Round 9 card: chọn đúng 2 lần thì shuffle lại card
+    if (round % 2 === 0) {
+      if (card.isTarget) {
+        setScore((s) => s + 1);
+        setCorrectCount((c) => c + 1);
+        setMultiTargetCount((cnt) => {
+          if (cnt + 1 >= 2) {
+            setCards((prev) => shuffle(prev));
+            return 0;
+          }
+          return cnt + 1;
+        });
+      } else {
+        setWrongCount((w) => w + 1);
+        setCards((prev) => shuffle(prev));
+      }
+      return;
+    }
+
     if (card.isTarget) {
       setScore((s) => s + 1);
       setCorrectCount((c) => c + 1);
-      setMultiTargetCount((cnt) => {
-        if (cnt + 1 >= 2) {
-          setCards((prev) => shuffle(prev));
-          return 0;
-        }
-        return cnt + 1;
-      });
     } else {
       setWrongCount((w) => w + 1);
-      setCards((prev) => shuffle(prev));
     }
-    return;
-  }
-
-  // Round 4 card: chọn đúng thì shuffle lại card, không chuyển round
-  if (card.isTarget) {
-    setScore((s) => s + 1);
-    setCorrectCount((c) => c + 1);
     setCards((prev) => shuffle(prev));
-  } else {
-    setWrongCount((w) => w + 1);
-    setCards((prev) => shuffle(prev));
-  }
-};
+  };
 
   const renderCard = (card: CardType) => {
-  switch (card.type) {
-    case "chevron": return <ChevronIcon direction={card.direction!} size={60} />;
-    case "z": return <ZIcon variant={card.variant!} size={60} />;
-    case "rectangle": return <RectangleIcon variant={card.rectangleVariant!} size={60} />;
-    case "face": return <FaceIcon variant={card.variant!} size={60} />;
-  }
-}
+    switch (card.type) {
+      case "chevron": return <ChevronIcon direction={card.direction!} size={60} />;
+      case "z": return <ZIcon variant={card.variant!} size={60} />;
+      case "rectangle": return <RectangleIcon variant={card.rectangleVariant!} size={60} />;
+      case "face": return <FaceIcon variant={card.variant!} size={60} />;
+    }
+  };
 
   return (
     <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-3xl w-full mx-auto">
@@ -365,12 +405,12 @@ const VisualTest = () => {
       ) : (
         <div className="w-full">
           <div className="flex justify-end items-center mb-6">
-            <div className="w-16 h-16 flex items-center justify-center border-4 border-pink-400 rounded-full text-xl font-bold text-pink-600">
-              {testTime}
-            </div>
+            <ClockFace timeLeft={testTimeFloat} totalTime={15} />
           </div>
 
-          <p className="text-center font-semibold mb-4 font-[Comic Sans MS,cursive,sans-serif]">Find the symbol and click as many times as possible!</p>
+          <p className="text-center font-semibold mb-4 font-[Comic Sans MS,cursive,sans-serif]">
+            Find the symbol and click as many times as possible!
+          </p>
 
           <div className={`grid gap-4 ${round % 2 === 1 ? "grid-cols-2" : "grid-cols-3"} justify-items-center`}>
             {cards.map((card) => (
