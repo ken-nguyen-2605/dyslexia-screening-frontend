@@ -1,4 +1,3 @@
-import AuditoryTestInstruction from "./AuditoryTestInstruction";
 import VisualTestInstruction from "./VisualTestInstruction";
 import VisualTest from "./VisualTest";
 import LanguageTestInstruction from "./LanguageTestInstruction";
@@ -9,7 +8,6 @@ import TestDifficultyRating from "./TestDifficultyRating";
 import { useNavigate } from "react-router-dom";
 import type { TestType } from "../enum";
 import { useTestStep } from "../contexts/TestStepContext";
-import testSessionService from "../services/testSessionService";
 
 interface TestDispatcherProps {
 	testType: TestType;

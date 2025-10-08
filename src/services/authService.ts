@@ -9,34 +9,26 @@ import type {
 /**
  * Service for handling authentication-related operations.
  */
-class AuthService {
+export const authService = {
 	/**
 	 * Logs in a user.
 	 */
-	async login(loginRequest: LoginRequest): Promise<LoginResponse> {
-		const response = await apiClient.post("/public/auth/login", loginRequest);
-		return response.data;
-	}
+	login: async (loginRequest: LoginRequest): Promise<LoginResponse> => {
+		return await apiClient.post("/public/auth/login", loginRequest);
+	},
 
 	/**
 	 * Logs out the user by removing the token.
 	 */
-	logout(): void {
+	logout: (): void => {
 		localStorage.removeItem("access_token");
-	}
+		localStorage.removeItem("profile_token");
+	},
 
 	/**
 	 * Registers a new user.
 	 */
-	async register(
-		registerRequest: RegisterRequest
-	): Promise<RegisterResponse> {
-		const response = await apiClient.post(
-			"/public/auth/register",
-			registerRequest
-		);
-		return response.data;
+	register: async (registerRequest: RegisterRequest): Promise<RegisterResponse> => {
+		return await apiClient.post("/public/auth/register", registerRequest);
 	}
 }
-
-export default new AuthService();

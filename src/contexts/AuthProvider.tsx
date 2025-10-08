@@ -1,8 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { jwtDecode, type JwtPayload } from "jwt-decode";
-import authService from "../services/authService";
-import accountService from "../services/accountService";
-import apiClient from "../services/apiClient";
+import { authService } from "../services/authService";
+import { accountService } from "../services/accountService";
 
 interface User {
 	id: number;
@@ -10,7 +9,7 @@ interface User {
 	name: string;
 	created_at: string;
 	profiles?: Profile[];
-	selected_profile?: Profile;
+	selected_profile?: Profile | null;
 }
 
 export interface Profile {
@@ -108,8 +107,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 	// Fetch user and profiles
 	const fetchUserProfile = async () => {
 		try {
-			const response = await apiClient.get<User>("/account/me");
-			setUser(response.data);
+			// const response = await apiClient.get<User>("/account/me");
+			const accountDetails = await accountService.getCurrentAccount();
+			setUser(() => ({
+				id: accountDetails.id,
+				email: accountDetails.email,
+				name: accountDetails.profiles?.[0]?.name || "DEFAULT",
+				created_at: accountDetails.created_at,
+				profiles: accountDetails.profiles,
+			}));
 		} catch (error: any) {
 			console.error("Fetch user profile error:", error);
 			// If profile token fails, try with auth token only
@@ -174,6 +180,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 		try {
 			const data: ProfileSelectionResponse =
 				await accountService.selectProfile(profileId);
+
+			setUser((prev) => {
+				if (prev) {
+					const selected = prev.profiles?.find(
+						(p) => p.id === profileId
+					);
+					
+					console.log("Selected profile hehe:", {
+						...prev,
+						selected_profile: selected || null,
+					});
+
+					return {
+						...prev,
+						selected_profile: selected || null,
+					};
+				}
+				return prev;
+			});
+
+			setSelectedProfile(() => {
+				const selected = user?.profiles?.find(
+					(p) => p.id === profileId
+				);
+				return selected || null;
+			});
 
 			if (data.access_token) {
 				localStorage.setItem(PROFILE_TOKEN_KEY, data.access_token);

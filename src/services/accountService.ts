@@ -1,24 +1,71 @@
 import apiClient from "./apiClient";
+import type { Account, CreateProfileData, Profile } from "../types/account";
 
 /**
- * Service for handling account-related operations.
+ * Service for account-related operations.
  */
-class AccountService {
-  /**
-   * Select a profile for the user.
-   */
-  async selectProfile(profileId: number) {
-    const response = await apiClient.post(`/account/profiles/${profileId}/select`);
-    return response.data;
-  }
+export const accountService = {
+	/**
+	 * Fetch current account details.
+	 */
+	getCurrentAccount: async (): Promise<Account> => {
+		return await apiClient.get("/account/me");
+	},
 
-  /**
-   * Get profile information
-   */
-  async getProfileInfo() {
-    const response = await apiClient.get(`/account/profiles/me`);
-    return response.data;
-  }
-}
+	/**
+	 * Fetch all profiles for the current account.
+	 */
+	getProfiles: async (): Promise<Profile[]> => {
+		return await apiClient.get("/account/profiles");
+	},
 
-export default new AccountService();
+	/**
+	 * Create a new profile for the current account.
+	 */
+	createProfile: async (profileData: CreateProfileData): Promise<Profile> => {
+		return await apiClient.post("/account/profiles", profileData);
+	},
+
+	/**
+	 * Get the active (selected) profile for this account.
+	 */
+	getCurrentProfile: async (): Promise<Profile> => {
+		return await apiClient.get("/account/profiles/me");
+	},
+
+	/**
+	 * Retrieve a profile by ID.
+	 */
+	getProfileById: async (profileId: number): Promise<Profile> => {
+		return await apiClient.get(`/account/profiles/${profileId}`);
+	},
+
+	/**
+	 * Update an existing profile.
+	 */
+	updateProfile: async (
+		profileId: number,
+		profileData: Partial<Profile>
+	): Promise<Profile> => {
+		return await apiClient.put(
+			`/account/profiles/${profileId}`,
+			profileData
+		);
+	},
+
+	/**
+	 * Delete a profile by ID.
+	 */
+	deleteProfile: async (profileId: number): Promise<void> => {
+		return await apiClient.delete(`/account/profiles/${profileId}`);
+	},
+
+	/**
+	 * Select a profile and receive an access token.
+	 */
+	selectProfile: async (
+		profileId: number
+	): Promise<{ access_token: string; token_type: string }> => {
+		return await apiClient.post(`/account/profiles/${profileId}/select`);
+	},
+};

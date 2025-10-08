@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import testSessionService from "../services/testSessionService";
+import {testSessionService} from "../services/testSessionService";
 
 const Dashboard = () => {
   const [sessions, setSessions] = useState([]);
@@ -15,7 +15,7 @@ const Dashboard = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await testSessionService.fetchTestSessions();
+        const data = await testSessionService.getAllTestSessions();
         setSessions(data);
       } catch (err: any) {
         setError(err.message || "Unknown error");

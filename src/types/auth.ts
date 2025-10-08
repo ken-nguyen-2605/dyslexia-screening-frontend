@@ -17,5 +17,6 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   id: number;
   email: string;
+  role: string;
   created_at: string;
 }
