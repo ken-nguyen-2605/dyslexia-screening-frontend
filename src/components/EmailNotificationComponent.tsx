@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import apiClient from '../services/apiClient';
 
 interface EmailNotificationProps {
@@ -18,7 +18,7 @@ const EmailNotificationComponent: React.FC<EmailNotificationProps> = ({
   testResult, 
   userEmail 
 }) => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const [settings, setSettings] = useState<NotificationSettings>({
     email: userEmail || '',
     notificationType: 'weekly',
