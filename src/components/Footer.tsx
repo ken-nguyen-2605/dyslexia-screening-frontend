@@ -10,7 +10,7 @@ const Footer = () => {
 			<div>
 				<h2 className="text-2xl font-extrabold mb-2 drop-shadow">
 					<span className="text-pink-500">Dyslexia</span>
-					<span className="text-yellow-500">Buddy</span>
+					<span className="text-yellow-500">Care</span>
 				</h2>
 				<p className="text-base mt-2 opacity-90">
 					{t('footer.description')}

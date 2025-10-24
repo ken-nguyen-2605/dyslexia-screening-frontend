@@ -45,10 +45,10 @@ const resources = {
       // Home page
       "home": {
         "title": "Đọc dễ dàng hơn",
-        "subtitle": "cùng DyslexiaBuddy",
+        "subtitle": "cùng DyslexiaCare",
         "description": "Phát hiện sớm khó khăn đọc viết và nhận hỗ trợ kịp thời cho trẻ em",
         "getStarted": "Bắt đầu ngay!",
-        "whyChooseTitle": "Vì sao học cùng DyslexiaBuddy thật tuyệt?",
+        "whyChooseTitle": "Vì sao học cùng DyslexiaCare thật tuyệt?",
         "benefits": {
           "early": {
             "title": "Bắt đầu sớm!",
@@ -192,7 +192,7 @@ const resources = {
           "placeholder": "Email của bạn",
           "button": "ĐĂNG KÝ"
         },
-        "copyright": "© {{year}} Dyslexia Buddy · Được tạo bằng ❤️ cho trẻ em ở khắp mọi nơi"
+        "copyright": "© {{year}} Dyslexia Care · Được tạo bằng ❤️ cho trẻ em ở khắp mọi nơi"
       }
     }
   },
@@ -237,10 +237,10 @@ const resources = {
       // Home page
       "home": {
         "title": "Reading made easier",
-        "subtitle": "with DyslexiaBuddy",
+        "subtitle": "with DyslexiaCare",
         "description": "Early detection of reading difficulties and timely support for children",
         "getStarted": "Get Started!",
-        "whyChooseTitle": "Why learning with DyslexiaBuddy is awesome?",
+        "whyChooseTitle": "Why learning with DyslexiaCare is awesome?",
         "benefits": {
           "early": {
             "title": "Start Early!",
@@ -384,7 +384,7 @@ const resources = {
           "placeholder": "Your email",
           "button": "SUBSCRIBE"
         },
-        "copyright": "© {{year}} Dyslexia Buddy · Made with ❤️ for children everywhere"
+        "copyright": "© {{year}} Dyslexia Care · Made with ❤️ for children everywhere"
       }
     }
   }

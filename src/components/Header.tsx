@@ -55,7 +55,7 @@ const Header = () => {
         {/* Logo */}
         <Link to="/" className="text-3xl font-extrabold flex items-baseline">
           <span className="text-pink-500 drop-shadow">Dyslexia</span>
-          <span className="text-yellow-500 drop-shadow">Buddy</span>
+          <span className="text-yellow-500 drop-shadow">Care</span>
         </Link>
 
         {/* Desktop menu */}

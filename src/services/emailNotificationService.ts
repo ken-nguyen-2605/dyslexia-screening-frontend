@@ -88,7 +88,7 @@ export interface EmailScheduleRequest {
  * Example Email Templates:
  * 
  * 1. Test Completion Email:
- *    Subject: "Your Dyslexia Screening Results - DyslexiaBuddy"
+ *    Subject: "Your Dyslexia Screening Results - DyslexiaCare"
  *    Content: Result summary, next steps, encouragement
  * 
  * 2. Weekly Progress Reminder:
