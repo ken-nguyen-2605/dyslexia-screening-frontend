@@ -33,13 +33,13 @@ const LoginForm = () => {
 			onSubmit={handleSubmit}
 			className="flex flex-col bg-white border border-gray-100 p-8 rounded-2xl items-center space-y-5 shadow-lg max-w-sm w-full mx-auto mt-10"
 		>
-			<h1 className="text-3xl text-teal-600 font-bold mb-2">Login</h1>
+			<h1 className="text-3xl text-pink-600 font-bold mb-2">Login</h1>
 			<div className="w-full flex flex-col space-y-1">
 				<label htmlFor="email" className="font-semibold text-gray-800">
 					Email
 				</label>
 				<input
-					className="border border-gray-300 p-2 rounded-md focus:border-teal-500 focus:outline-none transition"
+					className="border border-gray-300 p-2 rounded-md focus:border-pink-500 focus:outline-none transition"
 					autoComplete="username"
 					type="email"
 					id="email"
@@ -57,7 +57,7 @@ const LoginForm = () => {
 					Password
 				</label>
 				<input
-					className="border border-gray-300 p-2 rounded-md focus:border-teal-500 focus:outline-none transition"
+					className="border border-gray-300 p-2 rounded-md focus:border-pink-500 focus:outline-none transition"
 					autoComplete="current-password"
 					type="password"
 					id="password"
@@ -69,7 +69,7 @@ const LoginForm = () => {
 			</div>
 			{error && <div className="text-red-500 w-full">{error}</div>}
 			<button
-				className="bg-teal-500 py-2 w-full rounded-lg text-white font-semibold hover:bg-teal-600 transition focus:ring-2 focus:ring-teal-200 focus:outline-none"
+				className="bg-pink-500 py-2 w-full rounded-lg text-white font-semibold hover:bg-pink-600 transition focus:ring-2 focus:ring-pink-200 focus:outline-none"
 				type="submit"
 				disabled={loading}
 			>
@@ -78,7 +78,7 @@ const LoginForm = () => {
 			<p className="text-gray-700 text-sm">
 				Don&apos;t have an account?{" "}
 				<a
-					className="text-teal-600 hover:underline hover:text-teal-800 font-medium"
+					className="text-pink-600 hover:underline hover:text-pink-800 font-medium"
 					href="/register"
 				>
 					Register
@@ -86,7 +86,7 @@ const LoginForm = () => {
 			</p>
 			<p className="text-gray-700 text-sm">
 				<a
-					className="text-teal-600 hover:underline hover:text-teal-800 font-medium"
+					className="text-pink-600 hover:underline hover:text-pink-800 font-medium"
 					href="/forgot-password"
 				>
 					Forgot password?

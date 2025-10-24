@@ -53,23 +53,23 @@ const Dashboard = () => {
     
     switch (session.predict_dyslexia) {
       case "YES": return "text-red-500 font-bold";
-      case "NO": return "text-teal-600 font-bold";
+      case "NO": return "text-pink-600 font-bold";
       case "MAYBE": return "text-yellow-500 font-bold";
       default: return "text-gray-500 font-semibold";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-pink-50 to-blue-100 rounded-2xl flex flex-col items-center py-10 px-4">
       <div className="bg-white rounded-2xl p-8 shadow-lg max-w-3xl w-full">
         {/* Profile Header */}
         {user && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg border border-teal-200">
+          <div className="mb-6 p-4 bg-gradient-to-r from-pink-50 to-yellow-50 rounded-lg border border-pink-200">
             <h1 className="text-xl font-semibold text-gray-800 mb-2">
               Welcome, {user.name || `Profile ${user.id}`}!
             </h1>
             <div className="flex items-center gap-4 text-sm text-gray-600">
-              <span className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full font-medium">
+              <span className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full font-medium">
                 {user.profile_type === "PARENT" ? "👨‍👩‍👧‍👦 Parent" : "👶 Child"}
               </span>
               {user.year_of_birth && (
@@ -81,10 +81,10 @@ const Dashboard = () => {
         )}
         
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-teal-600">Test History</h2>
+          <h2 className="text-2xl font-bold text-pink-600">Test History</h2>
           <div className="flex gap-3">
             <button
-              className="bg-teal-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition"
+              className="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition"
               onClick={() => navigate("/human/")}
             >
               Start New Test
@@ -103,7 +103,7 @@ const Dashboard = () => {
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse">
               <thead>
-                <tr className="bg-teal-50">
+                <tr className="bg-pink-50">
                   <th className="py-2 px-4 text-left font-semibold">#</th>
                   <th className="py-2 px-4 text-left font-semibold">Date</th>
                   <th className="py-2 px-4 text-left font-semibold">Score</th>
@@ -125,7 +125,7 @@ const Dashboard = () => {
                       <td className={`py-2 px-4 ${getResultColor(session)}`}>{result}</td>
                       <td className="py-2 px-4">
                         <button
-                          className="text-teal-600 hover:underline hover:text-teal-800 font-medium"
+                          className="text-pink-600 hover:underline hover:text-pink-800 font-medium"
                           onClick={() => navigate(`/test-session/${session.id}`)}
                         >
                           View
