@@ -2,15 +2,11 @@ import VisualTestInstruction from "./VisualTestInstruction";
 import VisualTest from "./VisualTest";
 import LanguageTestInstruction from "./LanguageTestInstruction";
 //import LanguageTest from "./LanguageTest";
-
-// 🚀 IMPORTS MỚI CHO MINIGAME 2
 import Minigame2Instruction from "./MiniGame2Instruction";
 import MiniGame2 from "./MiniGame2";
-
 import TestDifficultyRating from "./TestDifficultyRating";
-
 import { useNavigate } from "react-router-dom";
-import type { TestType } from "../enum"; // Giả sử TestType đã được cập nhật
+import type { TestType } from "../enum"; 
 import { useTestStep } from "../contexts/TestStepContext";
 
 interface TestDispatcherProps {
@@ -49,7 +45,6 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 						onStartTest={() => goTo(currentStep + 1)}
 					/>
 				);
-			// 🚀 LOGIC MỚI CHO MINIGAME 2
 			case "minigame2":
 				return (
 					<Minigame2Instruction
@@ -73,10 +68,8 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 							navigate("/test/language/instruction");
 							break;
 						case "language":
-                            // Ví dụ: Sau LanguageTest chuyển sang Minigame 2
 							navigate("/test/minigame2/instruction"); 
 							break;
-						// 🚀 LOGIC MỚI CHO MINIGAME 2
 						case "minigame2":
 							navigate("/dashboard");
 							break;
@@ -86,7 +79,6 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 		);
 	}
 
-	// Xử lý phần Test chính
 	switch (testType) {
 		case "auditory":
 			return <div></div>;
@@ -94,7 +86,6 @@ const TestDispatcher = ({ testType }: TestDispatcherProps) => {
 			return <VisualTest />;
 		//case "language":
 		//return <LanguageTest />;
-		// 🚀 LOGIC MỚI CHO MINIGAME 2
 		case "minigame2":
 			return <MiniGame2 />;
 		default:

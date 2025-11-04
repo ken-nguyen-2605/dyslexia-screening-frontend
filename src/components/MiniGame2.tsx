@@ -22,7 +22,6 @@ const TOTAL_QUESTIONS = QUESTIONS.length;
 const REVEAL_INCREMENT = 100 / TOTAL_QUESTIONS; 
 
 
-/* ---------------- COMPONENT CHÍNH ---------------- */
 const MiniGame2 = () => {
     const navigate = useNavigate(); 
     
@@ -150,14 +149,14 @@ const MiniGame2 = () => {
                     disabled={feedbackVisible}
                     className="flex-1 py-3 text-white font-semibold rounded-lg transition-colors bg-green-500 hover:bg-green-600 disabled:opacity-50"
                 >
-                    TRUE
+                    ĐÚNG
                 </button>
                 <button
                     onClick={() => handleAnswer(false)}
                     disabled={feedbackVisible}
                     className="flex-1 py-3 text-white font-semibold rounded-lg transition-colors bg-red-500 hover:bg-red-600 disabled:opacity-50"
                 >
-                    FALSE
+                    SAI
                 </button>
             </div>
             

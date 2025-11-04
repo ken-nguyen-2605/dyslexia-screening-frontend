@@ -49,7 +49,6 @@ export const TestStepProvider = ({
   const goToPreviousStep = () => {
     const prevStepIndex = currentStep - 1;
     if (prevStepIndex >= 0) {
-      // 🚨 Áp dụng logic tương tự cho nút quay lại
       setCurrentStep(prevStepIndex);
       navigate(`/test/${testType}/${steps[prevStepIndex]}`);
     }

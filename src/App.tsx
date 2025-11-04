@@ -17,8 +17,6 @@ import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
 import LanguageTestLayout from "./pages/LanguageTestLayout";
 import SelectProfile from "./pages/SelectProfile";
-
-// 🚀 IMPORT MỚI: Layout Component cho Minigame 2
 import MiniGame2Layout from "./pages/Minigame2Layout.tsx"; 
 
 function App() {
