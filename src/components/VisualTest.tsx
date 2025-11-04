@@ -4,7 +4,7 @@ import { useTestStep } from "../contexts/TestStepContext";
 
 
 import { ChevronIcon, ZIcon, RectangleIcon, FaceIcon } from "./icon/VisualTestIcon";
-import { ClockFace, TestStats } from "./ClockAndStats"; // Đảm bảo ClockFace và TestStats được import
+import { ClockFace, TestStats } from "./ClockAndStats"; 
 import type { Direction, Variant, RectangleVariant } from "./icon/VisualTestIcon";
 
 
@@ -154,7 +154,7 @@ const VisualTest = () => {
     }
   }, [feedback.wrongId]);
 
-  // 3-second countdown (ĐÃ SỬA LỖI PHẠM VI)
+  // 3-second countdown
   useEffect(() => {
     let t: ReturnType<typeof setTimeout> | undefined; // Khai báo 't' ở đây
 
@@ -164,11 +164,10 @@ const VisualTest = () => {
       setTestActive(true);
       setTestTimeFloat(15); // Đảm bảo timer bắt đầu từ 15
     }
-    // Cleanup luôn gọi clearTimeout(t)
     return () => { if (t) clearTimeout(t) };
   }, [timeLeft]);
 
-  // 15-second test timer (Đã sửa lại logic)
+  // 15-second test timer (FIXED)
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval>;
 
@@ -180,19 +179,20 @@ const VisualTest = () => {
         const elapsed = (Date.now() - start) / 1000;
         const newTimeFloat = startValue - elapsed;
         
-        setTestTimeFloat(newTimeFloat > 0 ? newTimeFloat : 0);
-
+        // 🚨 FIX: Kiểm tra newTimeFloat <= 0 trước khi cập nhật state
         if (newTimeFloat <= 0) {
+          setTestTimeFloat(0);
           clearInterval(intervalId);
-          goToNextStep();
+          goToNextStep(); 
+          return;
         }
-      }, 50); // Cập nhật mượt mà
-    } else if (testActive && testTimeFloat <= 0) {
-        goToNextStep();
+        
+        setTestTimeFloat(newTimeFloat);
+      }, 50); 
     }
+    // 🚨 FIX LỖI ĐỒNG BỘ: Sử dụng currentStep để reset khi chuyển vòng
     return () => clearInterval(intervalId);
-  }, [testActive, testTimeFloat, goToNextStep]);
-
+  }, [testActive, currentStep]); // testTimeFloat ĐÃ BỊ LOẠI BỎ khỏi dependency
 
   /* --- HANDLERS --- */
   const handleCardClick = (card: CardType) => {
