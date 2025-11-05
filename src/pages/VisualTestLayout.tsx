@@ -1,16 +1,17 @@
 import { Outlet } from "react-router-dom";
 import { TestStepProvider } from "../contexts/TestStepContext";
 
+// ĐỊNH NGHĨA CÁC BƯỚC CHÍNH XÁC (8 VÒNG TEST)
 const VISUAL_TEST_STEPS = [
 	"instruction",
-	"simple/1",
-	"simple/2",
-	"simple/3",
-	"simple/4",
-	"hard/5",
-	"hard/6",
-	"hard/7",
-	"hard/8",
+	"simple/1", // Round 1 (Lẻ - Simple)
+	"hard/2",   // Round 2 (Chẵn - Hard)
+	"simple/3", // Round 3 (Lẻ - Simple)
+	"hard/4",   // Round 4 (Chẵn - Hard)
+	"simple/5", // Round 5 (Lẻ - Simple)
+	"hard/6",   // Round 6 (Chẵn - Hard)
+	"simple/7", // Round 7 (Lẻ - Simple)
+	"hard/8",   // Round 8 (Chẵn - Hard)
 	"rating",
 ];
 

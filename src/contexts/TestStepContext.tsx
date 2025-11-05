@@ -6,7 +6,7 @@ interface TestStepContextType {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   steps: string[];
   goToNextStep: () => void;
-  goToPreviousStep: () => void; // ✅ Thêm dòng này
+  goToPreviousStep: () => void;
 }
 
 const TestStepContext = createContext<TestStepContextType | undefined>(
@@ -37,14 +37,20 @@ export const TestStepProvider = ({
   const navigate = useNavigate();
 
   const goToNextStep = () => {
-    if (currentStep < steps.length - 1) {
-      navigate(`/test/${testType}/${steps[currentStep + 1]}`);
+    const nextStepIndex = currentStep + 1;
+    if (nextStepIndex < steps.length) {
+      // 🚨 BƯỚC SỬA 1: Cập nhật currentStep ngay lập tức
+      setCurrentStep(nextStepIndex); 
+      // 🚨 BƯỚC SỬA 2: Điều hướng đến bước tiếp theo
+      navigate(`/test/${testType}/${steps[nextStepIndex]}`);
     }
   };
 
-  const goToPreviousStep = () => { // ✅ Thêm hàm này
-    if (currentStep > 0) {
-      navigate(`/test/${testType}/${steps[currentStep - 1]}`);
+  const goToPreviousStep = () => {
+    const prevStepIndex = currentStep - 1;
+    if (prevStepIndex >= 0) {
+      setCurrentStep(prevStepIndex);
+      navigate(`/test/${testType}/${steps[prevStepIndex]}`);
     }
   };
 
@@ -53,6 +59,7 @@ export const TestStepProvider = ({
       .replace(`/test/${testType}/`, "")
       .replace(/^\//, "");
     const idx = steps.findIndex((s) => s === path);
+    // Nếu URL khớp với một bước khác với bước hiện tại, cập nhật nó (đây là logic cho nút Back/Forward)
     if (idx !== -1 && idx !== currentStep) {
       setCurrentStep(idx);
     }
@@ -60,7 +67,7 @@ export const TestStepProvider = ({
 
   return (
     <TestStepContext.Provider
-      value={{ currentStep, setCurrentStep, steps, goToNextStep, goToPreviousStep }} // ✅ Truyền vào context
+      value={{ currentStep, setCurrentStep, steps, goToNextStep, goToPreviousStep }}
     >
       {children}
     </TestStepContext.Provider>
