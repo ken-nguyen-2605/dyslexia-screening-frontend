@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import Layout from "./components/common/Layout";
-import ProfileProtectedRoute from "./components/auth/ProfileProtectedRoute";
-import AccountProtectedRoute from "./components/auth/AccountProtectedRoute";
+// import ProfileProtectedRoute from "./components/auth/ProfileProtectedRoute";
+// import AccountProtectedRoute from "./components/auth/AccountProtectedRoute";
 
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -18,6 +18,10 @@ import VisualTestLayout from "./pages/VisualTestLayout";
 import LanguageTestLayout from "./pages/LanguageTestLayout";
 import SelectProfile from "./pages/SelectProfile";
 import MiniGame2Layout from "./pages/Minigame2Layout.tsx"; 
+import MiniGame1Layout from "./pages/MiniGame1Layout.tsx";
+
+
+
 
 function App() {
     return (
@@ -91,6 +95,15 @@ function App() {
                                 element={<TestDispatcher testType="minigame2" />}
                             />
                         </Route>
+
+                              {/* === MiniGame1 (Spelling Bee) === */}
+                        <Route path="/test/minigame1" element={<MiniGame1Layout />}>
+                            <Route path="instruction" element={<TestDispatcher testType="minigame1" />} />
+                            <Route path="start" element={<TestDispatcher testType="minigame1" />} />
+                            <Route path="rating" element={<TestDispatcher testType="minigame1" />} />
+                            {/* <Route index element={<Navigate to="instruction" replace />} /> */}
+                        </Route>
+
                         {/* ------------------------------------- */}
 
                         {/* 404 */}
