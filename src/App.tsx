@@ -17,12 +17,15 @@ import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
 import LanguageTestLayout from "./pages/LanguageTestLayout";
 import SelectProfile from "./pages/SelectProfile";
+import GameCanvas from "./components/GameCanvas";
+import Minigame3 from "./pages/Minigame3";
 
 function App() {
 	return (
 		<Router>
 			<AuthProvider>
 				<Routes>
+					<Route path="/minigame" element={<GameCanvas />} />
 					<Route path="/" element={<Layout />}>
 						{/* Public Routes */}
 						<Route index element={<Home />} />
@@ -39,7 +42,7 @@ function App() {
 						</Route>
 
 						{/* Protected Routes */}
-						<Route element={<ProfileProtectedRoute />}>
+						{/* <Route element={<ProfileProtectedRoute />}> */}
 							<Route path="me" element={<Profile />} />
 							<Route path="dashboard" element={<Dashboard />} />
 							<Route
@@ -102,11 +105,18 @@ function App() {
 									}
 								/>
 							</Route>
-						</Route>
+
+							
+						{/* </Route> */}
 
 						{/* 404 */}
 						<Route path="*" element={<NotFound />} />
 					</Route>
+					{/* -------- Minigame 3 -------- */
+							<Route
+								path="test/minigame3"
+								element={<Minigame3 />}
+							/>}
 				</Routes>
 			</AuthProvider>
 		</Router>

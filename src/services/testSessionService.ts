@@ -2,6 +2,7 @@ import apiClient from "./apiClient";
 import type {
 	StartSpecificTestSessionParams,
 	SubmitSpecificTestSessionParams,
+	TestSession,
 } from "../types/testSession";
 
 // interface SubmitAuditoryFeatureParams {
@@ -55,21 +56,21 @@ export const testSessionService = {
 	/**
 	 * Fetches all test sessions.
 	 */
-	getAllTestSessions: async () => {
+	getAllTestSessions: async (): Promise<TestSession[]> => {
 		return await apiClient.get("/test-session/");
 	},
 
 	/**
 	 * Starts a new test session.
 	 */
-	startTestSession: async () => {
+	startTestSession: async (): Promise<TestSession> => {
 		return await apiClient.post("/test-session");
 	},
 
 	/**
 	 * Fetches a test session by ID.
 	 */
-	getTestSessionById: async (testSessionId: number) => {
+	getTestSessionById: async (testSessionId: number): Promise<TestSession> => {
 		return await apiClient.get(`/test-session/${testSessionId}`);
 	},
 
@@ -77,9 +78,10 @@ export const testSessionService = {
 	 * Starts a specific type of test session.
 	 */
 	startSpecificTestSession: async (
+		testSessionId: number,
 		params: StartSpecificTestSessionParams
-	) => {
-		return await apiClient.post("/test-session/start", params);
+	): Promise<TestSession> => {
+		return await apiClient.post(`/test-session/${testSessionId}`, params);
 	},
 
 	/**

@@ -29,6 +29,8 @@ import catFishImg from "../assets/image/testVowels/catFish.jpg";
 import dogBoneImg from "../assets/image/testVowels/dogBone.jpg";
 
 import ProgressBar from "../components/common/ProgressBar";
+import { useLocation } from "react-router-dom";
+import { testSessionService } from "../services/testSessionService";
 
 const PA_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
 	{
@@ -287,13 +289,15 @@ const AuditoryTestLayout = () => {
 	const [questions] = useState(getRandomQuestions());
 	const [score, setScore] = useState(0);
 
+	const location = useLocation();
+
 	const goToNextStep = () => setCurrentStep((s) => s + 1);
 	const updateScore = (isCorrect: boolean) => {
 		const module = AUDITORY_TEST_STEPS[currentStep];
 		setTestDetails((prev) => [...prev, { module, isCorrect }]);
 		setScore((s) => s + (isCorrect ? 1 : 0));
 	};
-	const goToNextQuestion = () => {
+	const goToNextQuestion = async () => {
 		setShowFeedback(false);
 		setCurrentQuestionIndex((i) => i + 1);
 		if (currentQuestionIndex === QUESTIONS_INFO.length - 1) {
@@ -303,6 +307,26 @@ const AuditoryTestLayout = () => {
 			console.log("Final Score:", score);
 		}
 	};
+	const onRating = (rating: number) => {
+		console.log("User rated the test difficulty as:", rating);
+
+		const params = new URLSearchParams(location.search);
+		const sessionId = params.get("sessionId");
+		const specificTestId = params.get("specificTestId");
+
+		const response = testSessionService.submitTestSection(Number(specificTestId), {
+			id: Number(specificTestId),
+			test_session_id: Number(sessionId),
+			score: score,
+			test_details: {
+				questions: testDetails,
+			},
+			test_type: "AUDITORY",
+		});
+		console.log("Submission response:", response);
+		alert("Cảm ơn bạn đã hoàn thành bài test!");
+		
+	}
 
 	switch (AUDITORY_TEST_STEPS[currentStep]) {
 		case "INSTRUCTION":
@@ -316,12 +340,15 @@ const AuditoryTestLayout = () => {
 				<div className="flex items-center justify-center min-h-screen bg-gradient-cyan p-8 rounded-2xl">
 					<TestDifficultyRating
 						testType="auditory"
-						onSubmit={() => console.log("Rating")}
+						onSubmit={onRating}
 					/>
 				</div>
 			);
 		case "QUESTION":
-			break;
+			if (currentQuestionIndex >= QUESTIONS_INFO.length) {
+        return <div>Loading...</div>;
+    }
+    break;
 		default:
 			return <div>Unknown Step</div>;
 	}
