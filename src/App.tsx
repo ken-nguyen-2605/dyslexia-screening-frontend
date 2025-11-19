@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import Layout from "./components/common/Layout";
-import ProfileProtectedRoute from "./components/auth/ProfileProtectedRoute";
-import AccountProtectedRoute from "./components/auth/AccountProtectedRoute";
 
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -13,11 +11,12 @@ import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import AuditoryTest from "./pages/AuditoryTest";
-import TestDispatcher from "./components/TestDispatcher";
 import VisualTestLayout from "./pages/VisualTestLayout";
 import LanguageTestLayout from "./pages/LanguageTestLayout";
 import SelectProfile from "./pages/SelectProfile";
-import MiniGame2Layout from "./pages/Minigame2Layout.tsx"; 
+
+// --- 1. IMPORT MINIGAME MỚI TẠI ĐÂY ---
+import SpaceRescueGame from "./minigame4"; 
 
 function App() {
     return (
@@ -31,67 +30,38 @@ function App() {
                         <Route path="login" element={<Login />} />
                         <Route path="register" element={<Register />} />
 
-                        {/* 👉 Cho chạy thẳng không cần đăng nhập: */}
-                        <Route
-                            path="profile/select"
-                            element={<SelectProfile />}
-                        />
+                        {/* Chọn profile trực tiếp */}
+                        <Route path="profile/select" element={<SelectProfile />} />
 
-                        {/* Protected Routes (Sử dụng tạm thời cho chạy thẳng) */}
+                        {/* Protected Routes */}
                         <Route path="me" element={<Profile />} />
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="human" element={<HumanFeaturesForm />} />
                         <Route path="test/auditory" element={<AuditoryTest />} />
 
                         <Route path="test/visual" element={<VisualTestLayout />}>
-                            <Route
-                                path="instruction"
-                                element={<TestDispatcher testType="visual" />}
-                            />
-                            {/* Visual Test sử dụng params cho các bước */}
-                            <Route
-                                path=":type/:cardQuantity"
-                                element={<TestDispatcher testType="visual" />}
-                            />
-                            <Route
-                                path="rating"
-                                element={<TestDispatcher testType="visual" />}
-                            />
+                            <Route path="instruction" element={<VisualTestLayout />} />
+                            <Route path=":type/:cardQuantity" element={<VisualTestLayout />} />
+                            <Route path="rating" element={<VisualTestLayout />} />
                         </Route>
 
                         <Route path="test/language" element={<LanguageTestLayout />}>
-                            <Route
-                                path="instruction"
-                                element={<TestDispatcher testType="language" />}
-                            />
-                            {/* Language Test sử dụng params cho các loại câu hỏi */}
-                            <Route
-                                path=":type"
-                                element={<TestDispatcher testType="language" />}
-                            />
-                            <Route
-                                path="rating"
-                                element={<TestDispatcher testType="language" />}
-                            />
+                            <Route path="instruction" element={<LanguageTestLayout />} />
+                            <Route path=":type" element={<LanguageTestLayout />} />
+                            <Route path="rating" element={<LanguageTestLayout />} />
                         </Route>
-                        
-                        {/* 🚀 ROUTE CHO MINIGAME 2 🚀 */}
-                        {/* Sử dụng Minigame2Layout để cung cấp TestStepProvider và steps */}
-                        <Route path="test/minigame2" element={<MiniGame2Layout />}>
-                            <Route
-                                path="instruction"
-                                element={<TestDispatcher testType="minigame2" />}
-                            />
-                            <Route
-                                path="start" // Game chính
-                                element={<TestDispatcher testType="minigame2" />}
-                            />
-                            <Route
-                                path="rating"
-                                element={<TestDispatcher testType="minigame2" />}
-                            />
-                        </Route>
-                        {/* ------------------------------------- */}
+
+                        {/* --- 2. THÊM ROUTE CHO GAME TẠI ĐÂY --- */}
+                        {/* Đường dẫn sẽ là: http://localhost:3000/test/writing */}
+                        <Route 
+                            path="test/writing" 
+                            element={
+                                <SpaceRescueGame 
+                                    studentName="Bé Bi" 
+                                    onExit={() => window.location.href = "/dashboard"} 
+                                />
+                            } 
+                        />
 
                         {/* 404 */}
                         <Route path="*" element={<NotFound />} />
