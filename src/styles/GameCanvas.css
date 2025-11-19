@@ -52,9 +52,9 @@
 }
 .image-container img {
     max-width: 350px;
-    max-height: 280px;
-    height: 280px;
+    max-height: 320px;
     width: 350px;
+    height: 320px;
     object-fit: cover;
     border-radius: 10px;
 }

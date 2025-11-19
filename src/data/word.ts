@@ -12,7 +12,7 @@ export const allWords: WordData[] = [
     { full: "con dê", puzzle: "con d_", answer: "ê", img: "con-de.png" },
     { full: "con gà", puzzle: "con _à", answer: "g", img: "con-ga.png" },
     { full: "con hổ", puzzle: "con _ổ", answer: "h", img: "con-ho.png" },
-    { full: "con voi", puzzle: "con vo_", answer: "i", img: "con-voi-i.png" },
+    { full: "con voi", puzzle: "con vo_", answer: "i", img: "con-voi.png" },
     { full: "cây kim", puzzle: "cây _im", answer: "k", img: "cay-kim.png" },
     { full: "xanh lá", puzzle: "xanh _á", answer: "l", img: "xanh-la.png" },
     { full: "con mèo", puzzle: "con _èo", answer: "m", img: "con-meo.png" },
@@ -27,7 +27,7 @@ export const allWords: WordData[] = [
     { full: "cái tủ", puzzle: "cái _ủ", answer: "t", img: "cai-tu.png" },
     { full: "con cua", puzzle: "con c_a", answer: "u", img: "con-cua.png" },
     { full: "con hươu", puzzle: "con h_ơu", answer: "ư", img: "con-huou.png" },
-    { full: "con voi", puzzle: "con _oi", answer: "v", img: "con-voi-v.png" },
+    { full: "con voi", puzzle: "con _oi", answer: "v", img: "con-voi.png" },
     { full: "xe hơi", puzzle: "_e hơi", answer: "x", img: "xe-hoi.png" },
     { full: "yêu thương", puzzle: "_êu thương", answer: "y", img: "yeu-thuong.png" },
 ];
