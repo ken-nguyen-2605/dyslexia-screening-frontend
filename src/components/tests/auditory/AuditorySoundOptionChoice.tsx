@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import SpeakerIcon from "./icon/SpeakerIcon";
-import type { TestComponentProps } from "../pages/AuditoryTest";
+import SpeakerIcon from "./SpeakerIcon";
+
+export interface TestComponentProps {
+  updateScore: (isCorrect: boolean) => void;
+  showFeedback: boolean;
+  setShowFeedback: (show: boolean) => void;
+}
 
 export type Option = {
 	text: string;

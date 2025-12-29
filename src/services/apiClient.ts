@@ -36,10 +36,26 @@ apiClient.interceptors.response.use(
 	(response: AxiosResponse): AxiosResponse => response.data,
 	(error: any) => {
 		if (error.response && error.response.status === 401) {
-			console.error("UNAUTHORIZED, REDIRECTING...");
-			// Optionally clear storage, redirect, or dispatch a global logout event.
-			// localStorage.clear();
-			// window.location.href = '/login';
+			console.error("UNAUTHORIZED: 401 detected, initiating logout...");
+
+			// 1. Clear all tokens from localStorage
+			localStorage.removeItem('access_token');
+			localStorage.removeItem('profile_token');
+			localStorage.removeItem('selected_profile');
+			localStorage.removeItem('dyslexia_test_progress');
+
+			// 2. Show toast notification (dynamic import to avoid circular dependencies)
+			import('../utils/toast').then(({ toastError }) => {
+				toastError('Session expired. Please login again.');
+			}).catch(err => {
+				console.error('Failed to show toast:', err);
+			});
+
+			// 3. Dispatch custom event for AuthContext to update React state
+			window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+
+			// 4. Redirect to login page
+			window.location.href = '/login';
 		}
 		return Promise.reject(error);
 	}

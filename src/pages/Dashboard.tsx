@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useTestProgress } from "../hooks/useTestProgress";
 import {testSessionService} from "../services/testSessionService";
 
 const Dashboard = () => {
@@ -9,6 +10,7 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { progress, getNextIncompleteTest, isAllTestsComplete } = useTestProgress();
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -37,6 +39,10 @@ const Dashboard = () => {
     return "text-gray-500 font-semibold";
   };
 
+  const getTestStatusIcon = (completed: boolean) => {
+    return completed ? "✅" : "⏳";
+  };
+
   return (
     <div className="min-h-screen bg-gradient-cyan rounded-2xl flex flex-col items-center py-10 px-4">
       <div className="bg-white rounded-2xl p-8 shadow-lg max-w-3xl w-full">
@@ -48,6 +54,54 @@ const Dashboard = () => {
           >
             Start New Test
           </button>
+        </div>
+
+        {/* Test Progress Overview */}
+        <div className="mb-6 p-4 bg-pink-50 rounded-lg border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-600 mb-3">Test Progress</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="flex flex-col items-center">
+              <span className="text-2xl mb-1">{getTestStatusIcon(progress.auditory.completed)}</span>
+              <span className="text-sm font-medium text-gray-700">Auditory Test</span>
+              <span className="text-xs text-gray-500">
+                {progress.auditory.completed ? "Completed" : "Pending"}
+              </span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl mb-1">{getTestStatusIcon(progress.visual.completed)}</span>
+              <span className="text-sm font-medium text-gray-700">Visual Test</span>
+              <span className="text-xs text-gray-500">
+                {progress.visual.completed ? "Completed" : "Pending"}
+              </span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl mb-1">{getTestStatusIcon(progress.language.completed)}</span>
+              <span className="text-sm font-medium text-gray-700">Language Test</span>
+              <span className="text-xs text-gray-500">
+                {progress.language.completed ? "Completed" : "Pending"}
+              </span>
+            </div>
+          </div>
+
+          {!isAllTestsComplete && (
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => {
+                  const nextTest = getNextIncompleteTest();
+                  if (nextTest) navigate(`/test/${nextTest}/instruction`);
+                }}
+                className="text-pink-600 hover:underline font-medium"
+              >
+                Continue with {getNextIncompleteTest()} test →
+              </button>
+            </div>
+          )}
+
+          {isAllTestsComplete && (
+            <div className="mt-4 text-center text-green-600 font-semibold">
+              🎉 All tests completed!
+            </div>
+          )}
         </div>
         {loading ? (
           <div className="text-center text-gray-600 py-10">Loading...</div>

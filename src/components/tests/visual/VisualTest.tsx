@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTestStep } from "../contexts/TestStepContext";
+import { useTestStep } from "../../../contexts/TestStepContext";
 
 
-import { ChevronIcon, ZIcon, RectangleIcon, FaceIcon } from "./icon/VisualTestIcon";
-import { ClockFace, TestStats } from "./ClockAndStats"; 
-import type { Direction, Variant, RectangleVariant } from "./icon/VisualTestIcon";
+import { ChevronIcon, ZIcon, RectangleIcon, FaceIcon } from "./icons";
+import { ClockFace, TestStats } from "../shared/ClockAndStats";
+import type { Direction, Variant, RectangleVariant } from "./icons";
 
 
 /* ---------------- TYPES & LOGIC HELPERS ---------------- */

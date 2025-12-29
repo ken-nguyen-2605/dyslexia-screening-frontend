@@ -104,6 +104,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [token, profileToken]);
 
+	// Listen for unauthorized events from API interceptor
+	useEffect(() => {
+		const handleUnauthorized = () => {
+			console.log("Received auth:unauthorized event, logging out...");
+			handleLogout();
+		};
+
+		window.addEventListener('auth:unauthorized', handleUnauthorized);
+
+		return () => {
+			window.removeEventListener('auth:unauthorized', handleUnauthorized);
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	// Fetch user and profiles
 	const fetchUserProfile = async () => {
 		try {

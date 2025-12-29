@@ -1,4 +1,4 @@
-import type { Profile } from "../contexts/AuthProvider";
+import type { Profile } from "../../../contexts/AuthProvider";
 
 interface ProfileSelectItemProps {
   profile: Profile;

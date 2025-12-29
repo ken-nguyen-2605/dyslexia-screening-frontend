@@ -1,6 +1,6 @@
 import { useState } from "react";
 import _ from "lodash";
-import type { TestType } from "../enum";
+import type { TestType } from "../../../enum";
 
 const DEFAULT_LABELS = {
 	1: "Very Easy",

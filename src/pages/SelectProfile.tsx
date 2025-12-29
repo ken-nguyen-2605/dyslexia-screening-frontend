@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import ProfileSelectItem from "../components/ProfileSelectItem";
+import ProfileSelectItem from "../components/common/ui/ProfileSelectItem";
 
 const SelectProfile = () => {
 	const navigate = useNavigate();

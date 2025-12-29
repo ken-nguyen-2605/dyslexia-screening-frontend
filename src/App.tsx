@@ -11,12 +11,33 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import HumanFeaturesForm from "./pages/HumanFeaturesForm";
-import AuditoryTest from "./pages/AuditoryTest";
-import TestDispatcher from "./components/TestDispatcher";
+import SelectProfile from "./pages/SelectProfile";
+
+// Layouts
+import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import VisualTestLayout from "./pages/VisualTestLayout";
 import LanguageTestLayout from "./pages/LanguageTestLayout";
-import SelectProfile from "./pages/SelectProfile";
 import MiniGame2Layout from "./pages/Minigame2Layout.tsx";
+
+// Auditory Test Pages
+import AuditoryTestInstructionPage from "./pages/tests/auditory/AuditoryTestInstructionPage";
+import AuditoryTestPage from "./pages/tests/auditory/AuditoryTestPage";
+import AuditoryTestRatingPage from "./pages/tests/auditory/AuditoryTestRatingPage";
+
+// Visual Test Pages
+import VisualTestInstructionPage from "./pages/tests/visual/VisualTestInstructionPage";
+import VisualTestPage from "./pages/tests/visual/VisualTestPage";
+import VisualTestRatingPage from "./pages/tests/visual/VisualTestRatingPage";
+
+// Language Test Pages
+import LanguageTestInstructionPage from "./pages/tests/language/LanguageTestInstructionPage";
+import LanguageTestPage from "./pages/tests/language/LanguageTestPage";
+import LanguageTestRatingPage from "./pages/tests/language/LanguageTestRatingPage";
+
+// MiniGame2 Pages
+import MiniGame2InstructionPage from "./pages/tests/minigame2/MiniGame2InstructionPage";
+import MiniGame2Page from "./pages/tests/minigame2/MiniGame2Page";
+import MiniGame2RatingPage from "./pages/tests/minigame2/MiniGame2RatingPage";
 
 function App() {
   return (
@@ -29,64 +50,41 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
 
-          {/* 👉 Cho chạy thẳng không cần đăng nhập: */}
+          {/* Profile Selection */}
           <Route path="profile/select" element={<SelectProfile />} />
 
-          {/* Protected Routes (Sử dụng tạm thời cho chạy thẳng) */}
+          {/* Protected Routes */}
           <Route path="me" element={<Profile />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="human" element={<HumanFeaturesForm />} />
-          <Route path="test/auditory" element={<AuditoryTest />} />
 
+          {/* AUDITORY TEST */}
+          <Route path="test/auditory" element={<AuditoryTestLayout />}>
+            <Route path="instruction" element={<AuditoryTestInstructionPage />} />
+            <Route path="questions" element={<AuditoryTestPage />} />
+            <Route path="rating" element={<AuditoryTestRatingPage />} />
+          </Route>
+
+          {/* VISUAL TEST */}
           <Route path="test/visual" element={<VisualTestLayout />}>
-            <Route
-              path="instruction"
-              element={<TestDispatcher testType="visual" />}
-            />
-            {/* Visual Test sử dụng params cho các bước */}
-            <Route
-              path=":type/:cardQuantity"
-              element={<TestDispatcher testType="visual" />}
-            />
-            <Route
-              path="rating"
-              element={<TestDispatcher testType="visual" />}
-            />
+            <Route path="instruction" element={<VisualTestInstructionPage />} />
+            <Route path=":type/:cardQuantity" element={<VisualTestPage />} />
+            <Route path="rating" element={<VisualTestRatingPage />} />
           </Route>
 
+          {/* LANGUAGE TEST */}
           <Route path="test/language" element={<LanguageTestLayout />}>
-            <Route
-              path="instruction"
-              element={<TestDispatcher testType="language" />}
-            />
-            {/* Language Test sử dụng params cho các loại câu hỏi */}
-            <Route
-              path=":type"
-              element={<TestDispatcher testType="language" />}
-            />
-            <Route
-              path="rating"
-              element={<TestDispatcher testType="language" />}
-            />
+            <Route path="instruction" element={<LanguageTestInstructionPage />} />
+            <Route path="test" element={<LanguageTestPage />} />
+            <Route path="rating" element={<LanguageTestRatingPage />} />
           </Route>
 
-          {/* 🚀 ROUTE CHO MINIGAME 2 🚀 */}
-          {/* Sử dụng Minigame2Layout để cung cấp TestStepProvider và steps */}
+          {/* MINIGAME 2 */}
           <Route path="test/minigame2" element={<MiniGame2Layout />}>
-            <Route
-              path="instruction"
-              element={<TestDispatcher testType="minigame2" />}
-            />
-            <Route
-              path="start" // Game chính
-              element={<TestDispatcher testType="minigame2" />}
-            />
-            <Route
-              path="rating"
-              element={<TestDispatcher testType="minigame2" />}
-            />
+            <Route path="instruction" element={<MiniGame2InstructionPage />} />
+            <Route path="start" element={<MiniGame2Page />} />
+            <Route path="rating" element={<MiniGame2RatingPage />} />
           </Route>
-          {/* ------------------------------------- */}
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
