@@ -2,15 +2,16 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useTestProgress } from "../hooks/useTestProgress";
-import {testSessionService} from "../services/testSessionService";
+import { testSessionService } from "../services/testSessionService";
+import type { TestSession } from "../types/testSession";
 
 const Dashboard = () => {
-  const [sessions, setSessions] = useState([]);
+  const [sessions, setSessions] = useState<TestSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { progress, getNextIncompleteTest, isAllTestsComplete } = useTestProgress();
+  const { progress, getNextIncompleteTest, isAllTestsComplete, syncWithBackendSession, resetProgress } = useTestProgress();
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -28,31 +29,66 @@ const Dashboard = () => {
     fetchSessions();
   }, [isAuthenticated, navigate]);
 
-  // Update once you have real data!
-  const getScore = () => "--";
-  const getResult = () => "Pending";
-  const getResultColor = (result: string) => {
-    if (result === "Safe") return "text-pink-600 font-bold";
-    if (result === "Risk") return "text-yellow-500 font-bold";
-    if (result === "Dyslexic") return "text-red-500 font-bold";
-    // for pending/unknown
-    return "text-gray-500 font-semibold";
+  const getResultText = (result: string | null) => {
+    switch (result) {
+      case "NON_DYSLEXIC":
+        return "Không có dấu hiệu";
+      case "MAYBE_DYSLEXIC":
+        return "Có thể có dấu hiệu";
+      case "DYSLEXIC":
+        return "Có dấu hiệu";
+      default:
+        return "Đang chờ";
+    }
+  };
+
+  const getResultColor = (result: string | null) => {
+    switch (result) {
+      case "NON_DYSLEXIC":
+        return "text-green-600 font-bold";
+      case "MAYBE_DYSLEXIC":
+        return "text-yellow-600 font-bold";
+      case "DYSLEXIC":
+        return "text-red-600 font-bold";
+      default:
+        return "text-gray-500 font-semibold";
+    }
   };
 
   const getTestStatusIcon = (completed: boolean) => {
     return completed ? "✅" : "⏳";
   };
 
+  const handleContinueSession = (session: TestSession) => {
+    // Sync context with this session's state
+    syncWithBackendSession(session);
+    
+    // Find the next test to continue
+    if (!session.taken_auditory_test) {
+      navigate("/test/auditory/instruction");
+    } else if (!session.taken_visual_test) {
+      navigate("/test/visual/instruction");
+    } else if (!session.taken_language_test) {
+      navigate("/test/language/instruction");
+    } else {
+      // All tests done, go to results
+      navigate(`/results/${session.id}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-cyan rounded-2xl flex flex-col items-center py-10 px-4">
       <div className="bg-white rounded-2xl p-8 shadow-lg max-w-3xl w-full">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-pink-600">My Tests</h2>
+          <h2 className="text-2xl font-bold text-pink-600">Bài test của tôi</h2>
           <button
             className="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition"
-            onClick={() => navigate("/human/")}
+            onClick={() => {
+              resetProgress();
+              navigate("/human/");
+            }}
           >
-            Start New Test
+            Bắt đầu bài test mới
           </button>
         </div>
 
@@ -113,39 +149,57 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
+            <h3 className="text-lg font-semibold text-pink-600 mb-3">Lịch sử bài test</h3>
             <table className="min-w-full border-collapse">
               <thead>
                 <tr className="bg-pink-50">
                   <th className="py-2 px-4 text-left font-semibold">#</th>
-                  <th className="py-2 px-4 text-left font-semibold">Date</th>
-                  <th className="py-2 px-4 text-left font-semibold">Score</th>
-                  <th className="py-2 px-4 text-left font-semibold">Result</th>
-                  <th className="py-2 px-4 text-left font-semibold">Actions</th>
+                  <th className="py-2 px-4 text-left font-semibold">Ngày</th>
+                  <th className="py-2 px-4 text-left font-semibold">Trạng thái</th>
+                  <th className="py-2 px-4 text-left font-semibold">Điểm</th>
+                  <th className="py-2 px-4 text-left font-semibold">Kết quả</th>
+                  <th className="py-2 px-4 text-left font-semibold">Hành động</th>
                 </tr>
               </thead>
               <tbody>
-                {sessions.map((session, idx) => {
-                  const score = getScore();
-                  const result = getResult();
-                  return (
-                    <tr key={session.id} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                      <td className="py-2 px-4 font-bold">{idx + 1}</td>
-                      <td className="py-2 px-4">
-                        {new Date(session.start_time).toLocaleDateString("en-GB")}
-                      </td>
-                      <td className="py-2 px-4">{score}</td>
-                      <td className={`py-2 px-4 ${getResultColor(result)}`}>{result}</td>
-                      <td className="py-2 px-4">
+                {sessions.map((session, idx) => (
+                  <tr key={session.id} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                    <td className="py-2 px-4 font-bold">{idx + 1}</td>
+                    <td className="py-2 px-4">
+                      {new Date(session.start_time).toLocaleDateString("vi-VN")}
+                    </td>
+                    <td className="py-2 px-4">
+                      {session.completed ? (
+                        <span className="text-green-600">✅ Hoàn thành</span>
+                      ) : (
+                        <span className="text-yellow-600">⏳ Đang làm</span>
+                      )}
+                    </td>
+                    <td className="py-2 px-4">
+                      {session.total_score !== null ? `${session.total_score.toFixed(1)}/100` : "--"}
+                    </td>
+                    <td className={`py-2 px-4 ${getResultColor(session.result)}`}>
+                      {getResultText(session.result)}
+                    </td>
+                    <td className="py-2 px-4">
+                      {session.completed ? (
                         <button
                           className="text-pink-600 hover:underline hover:text-pink-800 font-medium"
-                          onClick={() => navigate(`/test-session/${session.id}`)}
+                          onClick={() => navigate(`/results/${session.id}`)}
                         >
-                          View
+                          Xem kết quả
                         </button>
-                      </td>
-                    </tr>
-                  )
-                })}
+                      ) : (
+                        <button
+                          className="text-blue-600 hover:underline hover:text-blue-800 font-medium"
+                          onClick={() => handleContinueSession(session)}
+                        >
+                          Tiếp tục
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -28,7 +28,7 @@ const HumanFeaturesForm = () => {
 		setFormError(null); // clear error on any change
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		// Validation (expand as needed)
@@ -48,20 +48,29 @@ const HumanFeaturesForm = () => {
 			return;
 		}
 
-		console.log("User before update:", selectedProfile);
-		accountService.updateProfile(selectedProfile!.id, {
-			name: form.name,
-			year_of_birth: Number(form.age),
-			email: form.email,
-			gender: form.gender,
-			mother_tongue: form.native_language,
-			official_dyslexia_diagnosis: form.rl_dyslexia.toUpperCase(),
-		});
+		try {
+			console.log("User before update:", selectedProfile);
+			// Convert age to year of birth
+			const currentYear = new Date().getFullYear();
+			const yearOfBirth = currentYear - Number(form.age);
+			
+			await accountService.updateProfile(selectedProfile!.id, {
+				name: form.name,
+				year_of_birth: yearOfBirth,
+				email: form.email,
+				gender: form.gender,
+				mother_tongue: form.native_language,
+				official_dyslexia_diagnosis: form.rl_dyslexia.toUpperCase(),
+			});
 
-		// Simulate next step, or API call etc.
-		setFormError(null);
-		console.log("Form submitted:", form);
-		navigate("/test/auditory/");
+			// Simulate next step, or API call etc.
+			setFormError(null);
+			console.log("Form submitted:", form);
+			navigate("/test/auditory/");
+		} catch (error: any) {
+			console.error("Failed to update profile:", error);
+			setFormError(error.response?.data?.detail || "Cập nhật thông tin thất bại. Vui lòng thử lại.");
+		}
 	};
 
 	return (

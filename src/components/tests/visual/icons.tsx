@@ -1,5 +1,3 @@
-import React from 'react';
-
 /* ---------------- TYPES ---------------- */
 export type Direction = "up" | "down" | "left" | "right";
 export type RectangleVariant = "tl" | "tr" | "bl" | "br";

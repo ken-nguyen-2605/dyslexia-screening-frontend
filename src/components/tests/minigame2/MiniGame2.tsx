@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 const ROBOT_FULL_IMAGE_PATH = "/mascot.jpg"; 

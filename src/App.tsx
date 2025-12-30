@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import SelectProfile from "./pages/SelectProfile";
+import TestResults from "./pages/TestResults";
 
 // Layouts
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
@@ -57,6 +58,8 @@ function App() {
           <Route path="me" element={<Profile />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="human" element={<HumanFeaturesForm />} />
+          <Route path="results" element={<TestResults />} />
+          <Route path="results/:sessionId" element={<TestResults />} />
 
           {/* AUDITORY TEST */}
           <Route path="test/auditory" element={<AuditoryTestLayout />}>

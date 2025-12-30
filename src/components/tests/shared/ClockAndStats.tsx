@@ -1,5 +1,3 @@
-import React from 'react';
-
 /* ---------------- CLOCK ICON ---------------- */
 export const ClockFace = ({ timeLeft, totalTime }: { timeLeft: number; totalTime: number }) => {
   const degreesPerSec = 360 / totalTime;

@@ -1,8 +1,5 @@
 import apiClient from "./apiClient";
-import type {
-	StartSpecificTestSessionParams,
-	SubmitSpecificTestSessionParams,
-} from "../types/testSession";
+import type { SubmitSpecificTestSessionParams } from "../types/testSession";
 
 // interface SubmitAuditoryFeatureParams {
 //   question_type: string;
@@ -52,46 +49,41 @@ import type {
 // }
 
 export const testSessionService = {
-	/**
-	 * Fetches all test sessions.
-	 */
-	getAllTestSessions: async () => {
-		return await apiClient.get("/test-session/");
-	},
+  /**
+   * Fetches all test sessions.
+   */
+  getAllTestSessions: async () => {
+    const response = await apiClient.get("/test-session/");
+    return response.data;
+  },
 
-	/**
-	 * Starts a new test session.
-	 */
-	startTestSession: async () => {
-		return await apiClient.post("/test-session");
-	},
+  /**
+   * Starts a new test session.
+   */
+  startTestSession: async () => {
+    const response = await apiClient.post("/test-session");
+    return response.data;
+  },
 
-	/**
-	 * Fetches a test session by ID.
-	 */
-	getTestSessionById: async (testSessionId: number) => {
-		return await apiClient.get(`/test-session/${testSessionId}`);
-	},
+  /**
+   * Fetches a test session by ID.
+   */
+  getTestSessionById: async (testSessionId: number) => {
+    const response = await apiClient.get(`/test-session/${testSessionId}`);
+    return response.data;
+  },
 
-	/**
-	 * Starts a specific type of test session.
-	 */
-	startSpecificTestSession: async (
-		params: StartSpecificTestSessionParams
-	) => {
-		return await apiClient.post("/test-session/start", params);
-	},
-
-	/**
-	 * Submits a specific test session.
-	 */
-	submitTestSection: async (
-		testSessionId: number,
-		submitTestParams: SubmitSpecificTestSessionParams
-	) => {
-		return await apiClient.post(
-			`/test-session/${testSessionId}/submit`,
-			submitTestParams
-		);
-	},
+  /**
+   * Submits a specific test session.
+   */
+  submitTestSection: async (
+    testSessionId: number,
+    submitTestParams: SubmitSpecificTestSessionParams
+  ) => {
+    const response = await apiClient.post(
+      `/test-session/${testSessionId}/submit`,
+      submitTestParams
+    );
+    return response.data;
+  },
 };

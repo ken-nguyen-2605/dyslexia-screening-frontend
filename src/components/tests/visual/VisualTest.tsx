@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useTestStep } from "../../../contexts/TestStepContext";
 
 
@@ -105,8 +104,7 @@ const buildCards = (roundNum: number): { target: CardType; cards: CardType[] } =
 
 /* ---------------- MAIN COMPONENT ---------------- */
 const VisualTest = () => {
-  const { currentStep, steps, goToNextStep: contextGoToNextStep } = useTestStep();
-  const navigate = useNavigate();
+  const { currentStep, goToNextStep: contextGoToNextStep } = useTestStep();
 
   const [targetCard, setTargetCard] = useState<CardType | null>(null);
   const [cards, setCards] = useState<CardType[]>([]);

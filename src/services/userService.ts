@@ -1,26 +1,27 @@
 import apiClient from "./apiClient";
+import type { Profile } from "../types/account";
 
-interface UserUpdateInfo {
-  name?: string;
-  year_of_birth?: number;
-  email?: string;
-  gender?: string;
-  mother_tongue?: string;
-  official_dyslexia_diagnosis?: string;
+interface ProfileUpdateInfo {
+  name: string;
+  year_of_birth: number;
+  email: string;
+  gender: string;
+  mother_tongue: string;
+  official_dyslexia_diagnosis: string;
 }
 
 const userService = {
   /**
-   * Updates user profile information.
-   * @param userInfo - The user information to update.
+   * Updates profile information via /account/profiles/{profile_id}.
+   * @param profileId - The profile ID to update.
+   * @param profileInfo - The profile information to update.
    */
-  updateUserProfile: async (userInfo: UserUpdateInfo) => {
-    const response = await apiClient.put("/user/profile", userInfo);
-    if (response.status !== 200) {
-      throw new Error("Failed to update user profile");
-    }
-    return response.data;
-  }
+  updateProfile: async (
+    profileId: number,
+    profileInfo: Partial<ProfileUpdateInfo>
+  ): Promise<Profile> => {
+    return await apiClient.put(`/account/profiles/${profileId}`, profileInfo);
+  },
 };
 
 export default userService;

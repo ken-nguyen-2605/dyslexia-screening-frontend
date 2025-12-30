@@ -14,12 +14,16 @@ interface User {
 
 export interface Profile {
 	id: number;
+	account_id?: number;
 	profile_type: string;
 	created_at: string;
 
 	name?: string;
 	year_of_birth?: number;
+	email?: string;
+	mother_tongue?: string;
 	gender?: string;
+	official_dyslexia_diagnosis?: string;
 	hobbies?: string;
 }
 

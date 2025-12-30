@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import type { TestSession } from "../types/testSession";
 
 type MainTestType = "auditory" | "visual" | "language";
 
@@ -13,6 +14,8 @@ interface TestProgressState {
   auditory: TestStatus;
   visual: TestStatus;
   language: TestStatus;
+  currentSessionId: number | null;
+  currentSession: TestSession | null;
 }
 
 interface TestCompletionData {
@@ -26,6 +29,9 @@ interface TestProgressContextType {
   getNextIncompleteTest: () => MainTestType | null;
   resetProgress: () => void;
   isAllTestsComplete: boolean;
+  setCurrentSession: (session: TestSession | null) => void;
+  setCurrentSessionId: (id: number | null) => void;
+  syncWithBackendSession: (session: TestSession) => void;
 }
 
 const TestProgressContext = createContext<TestProgressContextType | undefined>(undefined);
@@ -36,6 +42,8 @@ const initialState: TestProgressState = {
   auditory: { completed: false },
   visual: { completed: false },
   language: { completed: false },
+  currentSessionId: null,
+  currentSession: null,
 };
 
 export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -55,7 +63,7 @@ export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ childr
         if (parsed.language?.completedAt) {
           parsed.language.completedAt = new Date(parsed.language.completedAt);
         }
-        return parsed;
+        return { ...initialState, ...parsed };
       }
     } catch (error) {
       console.error("Failed to load test progress from localStorage:", error);
@@ -103,6 +111,42 @@ export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
+  const setCurrentSession = (session: TestSession | null) => {
+    setProgress((prev) => ({
+      ...prev,
+      currentSession: session,
+      currentSessionId: session?.id || null,
+    }));
+  };
+
+  const setCurrentSessionId = (id: number | null) => {
+    setProgress((prev) => ({
+      ...prev,
+      currentSessionId: id,
+    }));
+  };
+
+  // Sync local progress with backend session data
+  const syncWithBackendSession = (session: TestSession) => {
+    setProgress((prev) => ({
+      ...prev,
+      currentSessionId: session.id,
+      currentSession: session,
+      auditory: {
+        ...prev.auditory,
+        completed: session.taken_auditory_test,
+      },
+      visual: {
+        ...prev.visual,
+        completed: session.taken_visual_test,
+      },
+      language: {
+        ...prev.language,
+        completed: session.taken_language_test,
+      },
+    }));
+  };
+
   const isAllTestsComplete =
     progress.auditory.completed && progress.visual.completed && progress.language.completed;
 
@@ -114,6 +158,9 @@ export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ childr
         getNextIncompleteTest,
         resetProgress,
         isAllTestsComplete,
+        setCurrentSession,
+        setCurrentSessionId,
+        syncWithBackendSession,
       }}
     >
       {children}
