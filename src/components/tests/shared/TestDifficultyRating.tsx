@@ -125,7 +125,7 @@ const TestDifficultyRating = ({
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		alert(`You rated the ${testType} test as: ${rating}`);
+		// alert(`You rated the ${testType} test as: ${rating}`);
 		onSubmit(rating);
 	};
 

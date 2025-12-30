@@ -164,6 +164,64 @@ const Dashboard = () => {
             </div>
           )}
         </div>
+
+        {/* Training Zone Section */}
+        <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold text-yellow-600">
+              🎮 Khu vực luyện tập
+            </h3>
+            <button
+              onClick={() => navigate("/training")}
+              className="text-pink-600 hover:underline font-medium text-sm"
+            >
+              Xem tất cả →
+            </button>
+          </div>
+          <p className="text-gray-600 text-sm mb-4">
+            Luyện tập với các trò chơi để cải thiện kỹ năng đọc và nghe!
+          </p>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+            {[
+              { id: 1, icon: "🎮", name: "Trò chơi 1", available: false },
+              {
+                id: 2,
+                icon: "📖",
+                name: "Trò chơi 2",
+                available: true,
+                path: "/test/minigame2/instruction",
+              },
+              { id: 3, icon: "🧩", name: "Trò chơi 3", available: false },
+              { id: 4, icon: "🎯", name: "Trò chơi 4", available: false },
+              { id: 5, icon: "🌟", name: "Trò chơi 5", available: false },
+            ].map((game) => (
+              <button
+                key={game.id}
+                onClick={() =>
+                  game.available && game.path && navigate(game.path)
+                }
+                className={`
+                  flex flex-col items-center p-3 rounded-xl transition-all
+                  ${
+                    game.available
+                      ? "bg-pink-100 hover:bg-pink-200 cursor-pointer"
+                      : "bg-gray-100 opacity-50 cursor-not-allowed"
+                  }
+                `}
+                disabled={!game.available}
+              >
+                <span className="text-2xl mb-1">{game.icon}</span>
+                <span className="text-xs font-medium text-gray-700 text-center">
+                  {game.name}
+                </span>
+                {!game.available && (
+                  <span className="text-[10px] text-gray-500">Sắp có</span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {loading ? (
           <div className="text-center text-gray-600 py-10">Loading...</div>
         ) : error ? (

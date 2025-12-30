@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import HumanFeaturesForm from "./pages/HumanFeaturesForm";
 import SelectProfile from "./pages/SelectProfile";
 import TestResults from "./pages/TestResults";
+import Training from "./pages/Training";
 
 // Layouts
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
@@ -53,6 +54,9 @@ function App() {
 
           {/* Profile Selection */}
           <Route path="profile/select" element={<SelectProfile />} />
+
+          {/* Training / Minigames */}
+          <Route path="training" element={<Training />} />
 
           {/* Protected Routes */}
           <Route path="me" element={<Profile />} />
