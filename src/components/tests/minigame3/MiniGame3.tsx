@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { allWords, vietnameseAlphabet } from "../../../data/word";
+import { allWords, vietnameseAlphabet } from "../../../data/minigame3";
 import "../../../styles/GameCanvas.css";
 import "../../../styles/Tree.css";
 

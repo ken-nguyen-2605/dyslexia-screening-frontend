@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MG1_ITEMS } from "../../../data/mg1Data";
+import { MG1_ITEMS } from "../../../data/minigame1";
 import SpeakerIcon from "../auditory/SpeakerIcon";
 
 type State = {
