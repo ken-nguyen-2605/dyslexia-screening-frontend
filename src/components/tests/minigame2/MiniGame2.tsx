@@ -1,26 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { QUESTIONS } from "../../../data/minigame2";
 
 const ROBOT_FULL_IMAGE_PATH = "/mascot.jpg";
-
-/* ---------------- DATA CÂU HỎI ---------------- */
-interface Question {
-  id: number;
-  sentence: string;
-  correctAnswer: boolean;
-}
-
-const QUESTIONS: Question[] = [
-  { id: 1, sentence: "Con cá biết bay.", correctAnswer: false },
-  {
-    id: 2,
-    sentence: "Hoàng Sa Trường Sa là của Việt Nam.",
-    correctAnswer: true,
-  },
-  { id: 3, sentence: "Con mèo kêu meo meo.", correctAnswer: true },
-  { id: 4, sentence: "1 + 1 = 2", correctAnswer: true },
-  { id: 5, sentence: "Mặt trời mọc ở hướng Tây", correctAnswer: false },
-];
 
 const TOTAL_QUESTIONS = QUESTIONS.length;
 const REVEAL_INCREMENT = 100 / TOTAL_QUESTIONS;
