@@ -3,18 +3,24 @@
  * - Export gọn tất cả module minigame4
  */
 
-import MiniGame4 from './MiniGame4';
-import MinigameCanvas from './MiniGame4Canvas';
-import { useMinigameLogic } from './MiniGame4Logic';
-import { speakLetter } from './audio';
-import * as animations from './animations';
-import { rewardCorrectAnswer, resetRewards, loadRewardState } from './rewardSystem';
-import { LETTERS, getRandomLetter } from './letters';
+// Export SpaceRescueGame từ thư mục minigame4 mới
+export { default as SpaceRescueGame } from "../minigame4";
+
+// Export các component từ minigame4/components
+export { default as MiniGame4Instruction } from "./tests/minigame4/MiniGame4Instruction";
+export { default as MiniGame4 } from "./tests/minigame4/MiniGame4";
+
+// Export các utility functions
+import { speakLetter } from "./audio";
+import * as animations from "./animations";
+import {
+  rewardCorrectAnswer,
+  resetRewards,
+  loadRewardState,
+} from "./rewardSystem";
+import { LETTERS, getRandomLetter } from "./letters";
 
 export {
-  MiniGame4,
-  MinigameCanvas,
-  useMinigameLogic,
   speakLetter,
   animations,
   rewardCorrectAnswer,

@@ -42,11 +42,11 @@ const minigames: Minigame[] = [
   {
     id: 4,
     name: "Trò chơi 4",
-    description: "Sắp ra mắt",
-    icon: "🎯",
-    path: "/training/minigame4/instruction",
-    color: "from-yellow-400 to-yellow-500",
-    available: false,
+    description: "Cứu Hộ Vũ Trụ - Viết chữ cái",
+    icon: "🚀",
+    path: "/test/minigame4/instruction",
+    color: "from-indigo-400 to-purple-500",
+    available: true,
   },
   {
     id: 5,

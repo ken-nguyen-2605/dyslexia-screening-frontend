@@ -50,6 +50,13 @@ import MiniGame2RatingPage from "./pages/tests/minigame2/MiniGame2RatingPage";
 // MiniGame3 Page
 import MiniGame3Page from "./pages/tests/minigame3/MiniGame3Page";
 
+// MiniGame4 Pages
+import MiniGame4Layout from "./pages/MiniGame4Layout";
+import MiniGame4InstructionPage from "./pages/tests/minigame4/MiniGame4InstructionPage";
+import MiniGame4Page from "./pages/tests/minigame4/MiniGame4Page";
+import MiniGame4RatingPage from "./pages/tests/minigame4/MiniGame4RatingPage";
+import SpaceRescueGame from "./minigame4/SpaceRescueGame.tsx";
+
 function App() {
   return (
     <BrowserRouter>
@@ -121,6 +128,15 @@ function App() {
 
         {/* MINIGAME 3 - Standalone (outside Layout) */}
         <Route path="test/minigame3" element={<MiniGame3Page />} />
+
+        {/* MINIGAME 4 - Space Rescue (outside Layout) */}
+        <Route path="test/minigame4" element={<MiniGame4Layout />}>
+          <Route path="instruction" element={<MiniGame4InstructionPage />} />
+          <Route path="start" element={<MiniGame4Page />} />
+          <Route path="rating" element={<MiniGame4RatingPage />} />
+        </Route>
+
+        <Route path="test/minigame5" element={<SpaceRescueGame />} />
       </Routes>
     </BrowserRouter>
   );
