@@ -1,5 +1,5 @@
 export interface StartSpecificTestSessionParams {
-	test_type: "AUDITORY" | "VISUAL" | "LANGUAGE";
+  test_type: "AUDITORY" | "VISUAL" | "LANGUAGE";
 }
 
 export interface SubmitSpecificTestSessionParams {

@@ -7,7 +7,12 @@ import { testSessionService } from "../../../services/testSessionService";
 
 const AuditoryTestRatingPage = () => {
   const navigate = useNavigate();
-  const { markTestComplete, getNextIncompleteTest, progress, setCurrentSessionId } = useTestProgress();
+  const {
+    markTestComplete,
+    getNextIncompleteTest,
+    progress,
+    setCurrentSessionId,
+  } = useTestProgress();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (rating: number) => {
@@ -55,7 +60,11 @@ const AuditoryTestRatingPage = () => {
 
       if (nextTest) {
         toastSuccess("Hoàn thành bài test thính giác!");
-        toastInfo(`Tiếp tục với bài test ${nextTest === 'visual' ? 'thị giác' : 'ngôn ngữ'}...`);
+        toastInfo(
+          `Tiếp tục với bài test ${
+            nextTest === "visual" ? "thị giác" : "ngôn ngữ"
+          }...`
+        );
         navigate(`/test/${nextTest}/instruction`);
       } else {
         toastSuccess("Hoàn thành tất cả bài test!");

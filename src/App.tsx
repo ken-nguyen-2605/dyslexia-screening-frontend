@@ -63,7 +63,10 @@ function App() {
 
           {/* AUDITORY TEST */}
           <Route path="test/auditory" element={<AuditoryTestLayout />}>
-            <Route path="instruction" element={<AuditoryTestInstructionPage />} />
+            <Route
+              path="instruction"
+              element={<AuditoryTestInstructionPage />}
+            />
             <Route path="questions" element={<AuditoryTestPage />} />
             <Route path="rating" element={<AuditoryTestRatingPage />} />
           </Route>
@@ -77,7 +80,10 @@ function App() {
 
           {/* LANGUAGE TEST */}
           <Route path="test/language" element={<LanguageTestLayout />}>
-            <Route path="instruction" element={<LanguageTestInstructionPage />} />
+            <Route
+              path="instruction"
+              element={<LanguageTestInstructionPage />}
+            />
             <Route path="test" element={<LanguageTestPage />} />
             <Route path="rating" element={<LanguageTestRatingPage />} />
           </Route>

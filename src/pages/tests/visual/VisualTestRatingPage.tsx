@@ -7,7 +7,12 @@ import { testSessionService } from "../../../services/testSessionService";
 
 const VisualTestRatingPage = () => {
   const navigate = useNavigate();
-  const { markTestComplete, getNextIncompleteTest, progress, setCurrentSessionId } = useTestProgress();
+  const {
+    markTestComplete,
+    getNextIncompleteTest,
+    progress,
+    setCurrentSessionId,
+  } = useTestProgress();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (rating: number) => {

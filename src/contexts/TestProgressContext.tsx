@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 import type { TestSession } from "../types/testSession";
 
 type MainTestType = "auditory" | "visual" | "language";
@@ -34,7 +40,9 @@ interface TestProgressContextType {
   syncWithBackendSession: (session: TestSession) => void;
 }
 
-const TestProgressContext = createContext<TestProgressContextType | undefined>(undefined);
+const TestProgressContext = createContext<TestProgressContextType | undefined>(
+  undefined
+);
 
 const STORAGE_KEY = "dyslexia_test_progress";
 
@@ -46,7 +54,9 @@ const initialState: TestProgressState = {
   currentSession: null,
 };
 
-export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [progress, setProgress] = useState<TestProgressState>(() => {
     // Load from localStorage on init
     try {
@@ -80,7 +90,10 @@ export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   }, [progress]);
 
-  const markTestComplete = (testType: MainTestType, data: TestCompletionData) => {
+  const markTestComplete = (
+    testType: MainTestType,
+    data: TestCompletionData
+  ) => {
     setProgress((prev) => ({
       ...prev,
       [testType]: {
@@ -148,7 +161,9 @@ export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ childr
   };
 
   const isAllTestsComplete =
-    progress.auditory.completed && progress.visual.completed && progress.language.completed;
+    progress.auditory.completed &&
+    progress.visual.completed &&
+    progress.language.completed;
 
   return (
     <TestProgressContext.Provider
@@ -171,7 +186,9 @@ export const TestProgressProvider: React.FC<{ children: ReactNode }> = ({ childr
 export const useTestProgress = () => {
   const context = useContext(TestProgressContext);
   if (!context) {
-    throw new Error("useTestProgress must be used within a TestProgressProvider");
+    throw new Error(
+      "useTestProgress must be used within a TestProgressProvider"
+    );
   }
   return context;
 };

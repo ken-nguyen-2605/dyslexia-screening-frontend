@@ -10,7 +10,7 @@ const MiniGame2RatingPage = () => {
   const handleSubmit = () => {
     // MiniGame2 is NOT tracked in TestProgressContext (it's a bonus game)
     toastSuccess("Hoàn thành minigame! Tuyệt vời!");
-    
+
     // Navigate to results page with the current session
     if (progress.currentSessionId) {
       navigate(`/results/${progress.currentSessionId}`);

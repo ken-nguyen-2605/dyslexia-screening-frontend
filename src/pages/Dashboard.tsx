@@ -11,7 +11,13 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { progress, getNextIncompleteTest, isAllTestsComplete, syncWithBackendSession, resetProgress } = useTestProgress();
+  const {
+    progress,
+    getNextIncompleteTest,
+    isAllTestsComplete,
+    syncWithBackendSession,
+    resetProgress,
+  } = useTestProgress();
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -62,7 +68,7 @@ const Dashboard = () => {
   const handleContinueSession = (session: TestSession) => {
     // Sync context with this session's state
     syncWithBackendSession(session);
-    
+
     // Find the next test to continue
     if (!session.taken_auditory_test) {
       navigate("/test/auditory/instruction");
@@ -94,25 +100,39 @@ const Dashboard = () => {
 
         {/* Test Progress Overview */}
         <div className="mb-6 p-4 bg-pink-50 rounded-lg border border-pink-200">
-          <h3 className="text-lg font-semibold text-pink-600 mb-3">Test Progress</h3>
+          <h3 className="text-lg font-semibold text-pink-600 mb-3">
+            Test Progress
+          </h3>
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col items-center">
-              <span className="text-2xl mb-1">{getTestStatusIcon(progress.auditory.completed)}</span>
-              <span className="text-sm font-medium text-gray-700">Auditory Test</span>
+              <span className="text-2xl mb-1">
+                {getTestStatusIcon(progress.auditory.completed)}
+              </span>
+              <span className="text-sm font-medium text-gray-700">
+                Auditory Test
+              </span>
               <span className="text-xs text-gray-500">
                 {progress.auditory.completed ? "Completed" : "Pending"}
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-2xl mb-1">{getTestStatusIcon(progress.visual.completed)}</span>
-              <span className="text-sm font-medium text-gray-700">Visual Test</span>
+              <span className="text-2xl mb-1">
+                {getTestStatusIcon(progress.visual.completed)}
+              </span>
+              <span className="text-sm font-medium text-gray-700">
+                Visual Test
+              </span>
               <span className="text-xs text-gray-500">
                 {progress.visual.completed ? "Completed" : "Pending"}
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-2xl mb-1">{getTestStatusIcon(progress.language.completed)}</span>
-              <span className="text-sm font-medium text-gray-700">Language Test</span>
+              <span className="text-2xl mb-1">
+                {getTestStatusIcon(progress.language.completed)}
+              </span>
+              <span className="text-sm font-medium text-gray-700">
+                Language Test
+              </span>
               <span className="text-xs text-gray-500">
                 {progress.language.completed ? "Completed" : "Pending"}
               </span>
@@ -149,21 +169,30 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <h3 className="text-lg font-semibold text-pink-600 mb-3">Lịch sử bài test</h3>
+            <h3 className="text-lg font-semibold text-pink-600 mb-3">
+              Lịch sử bài test
+            </h3>
             <table className="min-w-full border-collapse">
               <thead>
                 <tr className="bg-pink-50">
                   <th className="py-2 px-4 text-left font-semibold">#</th>
                   <th className="py-2 px-4 text-left font-semibold">Ngày</th>
-                  <th className="py-2 px-4 text-left font-semibold">Trạng thái</th>
+                  <th className="py-2 px-4 text-left font-semibold">
+                    Trạng thái
+                  </th>
                   <th className="py-2 px-4 text-left font-semibold">Điểm</th>
                   <th className="py-2 px-4 text-left font-semibold">Kết quả</th>
-                  <th className="py-2 px-4 text-left font-semibold">Hành động</th>
+                  <th className="py-2 px-4 text-left font-semibold">
+                    Hành động
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {sessions.map((session, idx) => (
-                  <tr key={session.id} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                  <tr
+                    key={session.id}
+                    className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                  >
                     <td className="py-2 px-4 font-bold">{idx + 1}</td>
                     <td className="py-2 px-4">
                       {new Date(session.start_time).toLocaleDateString("vi-VN")}
@@ -176,9 +205,13 @@ const Dashboard = () => {
                       )}
                     </td>
                     <td className="py-2 px-4">
-                      {session.total_score !== null ? `${session.total_score.toFixed(1)}/100` : "--"}
+                      {session.total_score !== null
+                        ? `${session.total_score.toFixed(1)}/100`
+                        : "--"}
                     </td>
-                    <td className={`py-2 px-4 ${getResultColor(session.result)}`}>
+                    <td
+                      className={`py-2 px-4 ${getResultColor(session.result)}`}
+                    >
                       {getResultText(session.result)}
                     </td>
                     <td className="py-2 px-4">
