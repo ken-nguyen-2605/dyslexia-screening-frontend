@@ -41,6 +41,9 @@ import MiniGame2InstructionPage from "./pages/tests/minigame2/MiniGame2Instructi
 import MiniGame2Page from "./pages/tests/minigame2/MiniGame2Page";
 import MiniGame2RatingPage from "./pages/tests/minigame2/MiniGame2RatingPage";
 
+// MiniGame3 Page
+import MiniGame3Page from "./pages/tests/minigame3/MiniGame3Page";
+
 function App() {
   return (
     <BrowserRouter>
@@ -102,6 +105,9 @@ function App() {
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Route>
+        
+        {/* MINIGAME 3 */}
+        <Route path="test/minigame3" element={<MiniGame3Page />} />
       </Routes>
     </BrowserRouter>
   );

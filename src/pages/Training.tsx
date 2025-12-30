@@ -33,11 +33,11 @@ const minigames: Minigame[] = [
   {
     id: 3,
     name: "Trò chơi 3",
-    description: "Sắp ra mắt",
-    icon: "🧩",
-    path: "/training/minigame3/instruction",
+    description: "Cây Thần Kỳ - Điền chữ cái",
+    icon: "🌳",
+    path: "/test/minigame3",
     color: "from-green-400 to-green-500",
-    available: false,
+    available: true,
   },
   {
     id: 4,
