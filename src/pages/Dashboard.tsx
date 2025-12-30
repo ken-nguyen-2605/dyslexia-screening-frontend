@@ -27,21 +27,21 @@ const Dashboard = () => {
     navigate("/test/auditory/instruction");
   };
 
-  useEffect(() => {
-    const fetchSessions = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await testSessionService.getAllTestSessions();
-        setSessions(data);
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSessions();
-  }, [isAuthenticated, navigate]);
+	useEffect(() => {
+		const fetchSessions = async () => {
+			setLoading(true);
+			setError(null);
+			try {
+				const data = await testSessionService.getAllTestSessions();
+				setSessions(data);
+			} catch (err: any) {
+				setError(err.message || "Unknown error");
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchSessions();
+	}, [hasSelectedProfile, navigate]);
 
   const getResultText = (result: string | null) => {
     switch (result) {
