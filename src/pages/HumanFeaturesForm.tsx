@@ -63,10 +63,10 @@ const HumanFeaturesForm = () => {
         official_dyslexia_diagnosis: form.rl_dyslexia.toUpperCase(),
       });
 
-      // Simulate next step, or API call etc.
+      // Navigate to home after saving info
       setFormError(null);
       console.log("Form submitted:", form);
-      navigate("/test/auditory/");
+      navigate("/");
     } catch (error: any) {
       console.error("Failed to update profile:", error);
       setFormError(

@@ -17,7 +17,15 @@ const Dashboard = () => {
     isAllTestsComplete,
     syncWithBackendSession,
     resetProgress,
+    setCurrentSessionId,
   } = useTestProgress();
+
+  const handleStartNewTest = async () => {
+    resetProgress();
+    const newSession = await testSessionService.startTestSession();
+    setCurrentSessionId(newSession.id);
+    navigate("/test/auditory/instruction");
+  };
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -89,10 +97,7 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold text-pink-600">Bài test của tôi</h2>
           <button
             className="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition"
-            onClick={() => {
-              resetProgress();
-              navigate("/human/");
-            }}
+            onClick={handleStartNewTest}
           >
             Bắt đầu bài test mới
           </button>
@@ -177,6 +182,7 @@ const Dashboard = () => {
                 <tr className="bg-pink-50">
                   <th className="py-2 px-4 text-left font-semibold">#</th>
                   <th className="py-2 px-4 text-left font-semibold">Ngày</th>
+                  <th className="py-2 px-4 text-left font-semibold">Giờ</th>
                   <th className="py-2 px-4 text-left font-semibold">
                     Trạng thái
                   </th>
@@ -196,6 +202,15 @@ const Dashboard = () => {
                     <td className="py-2 px-4 font-bold">{idx + 1}</td>
                     <td className="py-2 px-4">
                       {new Date(session.start_time).toLocaleDateString("vi-VN")}
+                    </td>
+                    <td className="py-2 px-4">
+                      {new Date(session.start_time).toLocaleTimeString(
+                        "vi-VN",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )}
                     </td>
                     <td className="py-2 px-4">
                       {session.completed ? (

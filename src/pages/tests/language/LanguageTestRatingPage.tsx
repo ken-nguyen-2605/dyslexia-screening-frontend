@@ -4,16 +4,26 @@ import { useTestProgress } from "../../../hooks/useTestProgress";
 import TestDifficultyRating from "../../../components/tests/shared/TestDifficultyRating";
 import { toastSuccess, toastInfo, toastError } from "../../../utils/toast";
 import { testSessionService } from "../../../services/testSessionService";
+import type { TestSession } from "../../../types/testSession";
 
 const LanguageTestRatingPage = () => {
   const navigate = useNavigate();
   const {
     markTestComplete,
-    getNextIncompleteTest,
     progress,
     setCurrentSessionId,
+    syncWithBackendSession,
   } = useTestProgress();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to determine next test based on backend session state
+  const getNextTestFromSession = (session: TestSession): string | null => {
+    // Order: auditory > visual > language
+    if (!session.taken_auditory_test) return "auditory";
+    if (!session.taken_visual_test) return "visual";
+    if (!session.taken_language_test) return "language";
+    return null; // All tests completed
+  };
 
   const handleSubmit = async (rating: number) => {
     if (isSubmitting) return;
@@ -24,8 +34,11 @@ const LanguageTestRatingPage = () => {
       let testSessionId: number | null = progress.currentSessionId;
 
       if (!testSessionId) {
+        // Try to find an incomplete session or create a new one
         const sessions = await testSessionService.getAllTestSessions();
-        const incompleteSession = sessions.find((s: any) => !s.completed);
+        const incompleteSession = Array.isArray(sessions)
+          ? sessions.find((s: any) => !s.completed)
+          : null;
         if (incompleteSession) {
           testSessionId = incompleteSession.id;
         } else {
@@ -53,17 +66,28 @@ const LanguageTestRatingPage = () => {
       // Mark language test as complete
       markTestComplete("language", { difficultyRating: rating, score });
 
-      // Get next incomplete test - should be null at this point
-      const nextTest = getNextIncompleteTest();
+      // Fetch updated session from backend to get accurate state
+      const updatedSession = await testSessionService.getTestSessionById(
+        testSessionId
+      );
+      syncWithBackendSession(updatedSession);
+
+      // Determine next test based on backend session state
+      const nextTest = getNextTestFromSession(updatedSession);
 
       if (nextTest) {
-        // This shouldn't happen if language is the last test
         toastSuccess("Hoàn thành bài test ngôn ngữ!");
+        const testNames: Record<string, string> = {
+          auditory: "thính giác",
+          visual: "thị giác",
+          language: "ngôn ngữ",
+        };
+        toastInfo(`Tiếp tục với bài test ${testNames[nextTest]}...`);
         navigate(`/test/${nextTest}/instruction`);
       } else {
-        toastSuccess("Hoàn thành tất cả bài test chính!");
-        toastInfo("Cùng chơi minigame nhé!");
-        navigate("/test/minigame2/instruction");
+        // All tests completed - navigate to results
+        toastSuccess("Hoàn thành tất cả bài test!");
+        navigate(`/results/${testSessionId}`);
       }
     } catch (error: any) {
       console.error("Failed to submit test:", error);

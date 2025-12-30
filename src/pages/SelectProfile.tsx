@@ -38,7 +38,7 @@ const SelectProfile = () => {
                     // Check if profile info is complete
                     if (isProfileComplete(profile)) {
                       // Profile info complete, go directly to auditory test
-                      navigate("/test/auditory/instruction");
+                      navigate("/");
                     } else {
                       // Profile info incomplete, go to human features form
                       navigate("/human");

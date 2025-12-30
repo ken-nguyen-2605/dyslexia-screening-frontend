@@ -19,4 +19,7 @@ export interface TestSession {
   taken_language_test: boolean;
   result: string | null;
   total_score: number | null;
+  auditory_score: number | null;
+  visual_score: number | null;
+  language_score: number | null;
 }

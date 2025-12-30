@@ -1,5 +1,8 @@
 import apiClient from "./apiClient";
-import type { SubmitSpecificTestSessionParams } from "../types/testSession";
+import type {
+  SubmitSpecificTestSessionParams,
+  TestSession,
+} from "../types/testSession";
 
 // interface SubmitAuditoryFeatureParams {
 //   question_type: string;
@@ -52,25 +55,25 @@ export const testSessionService = {
   /**
    * Fetches all test sessions.
    */
-  getAllTestSessions: async () => {
+  getAllTestSessions: async (): Promise<TestSession[]> => {
     const response = await apiClient.get("/test-session/");
-    return response.data;
+    return response as unknown as TestSession[];
   },
 
   /**
    * Starts a new test session.
    */
-  startTestSession: async () => {
-    const response = await apiClient.post("/test-session");
-    return response.data;
+  startTestSession: async (): Promise<TestSession> => {
+    const response = await apiClient.post("/test-session/");
+    return response as unknown as TestSession;
   },
 
   /**
    * Fetches a test session by ID.
    */
-  getTestSessionById: async (testSessionId: number) => {
+  getTestSessionById: async (testSessionId: number): Promise<TestSession> => {
     const response = await apiClient.get(`/test-session/${testSessionId}`);
-    return response.data;
+    return response as unknown as TestSession;
   },
 
   /**
@@ -84,6 +87,6 @@ export const testSessionService = {
       `/test-session/${testSessionId}/submit`,
       submitTestParams
     );
-    return response.data;
+    return response;
   },
 };

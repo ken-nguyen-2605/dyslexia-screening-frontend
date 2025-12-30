@@ -4,16 +4,26 @@ import { useTestProgress } from "../../../hooks/useTestProgress";
 import TestDifficultyRating from "../../../components/tests/shared/TestDifficultyRating";
 import { toastSuccess, toastInfo, toastError } from "../../../utils/toast";
 import { testSessionService } from "../../../services/testSessionService";
+import type { TestSession } from "../../../types/testSession";
 
 const AuditoryTestRatingPage = () => {
   const navigate = useNavigate();
   const {
     markTestComplete,
-    getNextIncompleteTest,
     progress,
     setCurrentSessionId,
+    syncWithBackendSession,
   } = useTestProgress();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to determine next test based on backend session state
+  const getNextTestFromSession = (session: TestSession): string | null => {
+    // Order: auditory > visual > language
+    if (!session.taken_auditory_test) return "auditory";
+    if (!session.taken_visual_test) return "visual";
+    if (!session.taken_language_test) return "language";
+    return null; // All tests completed
+  };
 
   const handleSubmit = async (rating: number) => {
     if (isSubmitting) return;
@@ -24,8 +34,11 @@ const AuditoryTestRatingPage = () => {
       let testSessionId: number | null = progress.currentSessionId;
 
       if (!testSessionId) {
+        // Try to find an incomplete session or create a new one
         const sessions = await testSessionService.getAllTestSessions();
-        const incompleteSession = sessions.find((s: any) => !s.completed);
+        const incompleteSession = Array.isArray(sessions)
+          ? sessions.find((s: any) => !s.completed)
+          : null;
         if (incompleteSession) {
           testSessionId = incompleteSession.id;
         } else {
@@ -55,8 +68,14 @@ const AuditoryTestRatingPage = () => {
       // Mark auditory test as complete locally
       markTestComplete("auditory", { difficultyRating: rating, score });
 
-      // Get next incomplete test
-      const nextTest = getNextIncompleteTest();
+      // Fetch updated session from backend to get accurate state
+      const updatedSession = await testSessionService.getTestSessionById(
+        testSessionId
+      );
+      syncWithBackendSession(updatedSession);
+
+      // Determine next test based on backend session state
+      const nextTest = getNextTestFromSession(updatedSession);
 
       if (nextTest) {
         toastSuccess("Hoàn thành bài test thính giác!");
@@ -67,8 +86,9 @@ const AuditoryTestRatingPage = () => {
         );
         navigate(`/test/${nextTest}/instruction`);
       } else {
+        // All tests completed - navigate to results
         toastSuccess("Hoàn thành tất cả bài test!");
-        navigate("/test/minigame2/instruction");
+        navigate(`/results/${testSessionId}`);
       }
     } catch (error: any) {
       console.error("Failed to submit test:", error);

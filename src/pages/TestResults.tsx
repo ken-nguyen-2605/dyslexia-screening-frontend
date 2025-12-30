@@ -172,41 +172,50 @@ const TestResults = () => {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
             <div className="text-3xl mb-2">👂</div>
             <h3 className="font-semibold text-blue-700">Thính giác</h3>
-            <p
-              className={`text-sm ${
-                session.taken_auditory_test ? "text-green-600" : "text-gray-400"
-              }`}
-            >
-              {session.taken_auditory_test
-                ? "✅ Hoàn thành"
-                : "⏳ Chưa hoàn thành"}
-            </p>
+            {session.taken_auditory_test ? (
+              <>
+                <p className="text-sm text-green-600 mb-1">✅ Hoàn thành</p>
+                {session.auditory_score !== null && (
+                  <p className="text-2xl font-bold text-blue-600">
+                    {session.auditory_score.toFixed(1)}/100
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-gray-400">⏳ Chưa hoàn thành</p>
+            )}
           </div>
           <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
             <div className="text-3xl mb-2">👁️</div>
             <h3 className="font-semibold text-purple-700">Thị giác</h3>
-            <p
-              className={`text-sm ${
-                session.taken_visual_test ? "text-green-600" : "text-gray-400"
-              }`}
-            >
-              {session.taken_visual_test
-                ? "✅ Hoàn thành"
-                : "⏳ Chưa hoàn thành"}
-            </p>
+            {session.taken_visual_test ? (
+              <>
+                <p className="text-sm text-green-600 mb-1">✅ Hoàn thành</p>
+                {session.visual_score !== null && (
+                  <p className="text-2xl font-bold text-purple-600">
+                    {session.visual_score.toFixed(1)}/100
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-gray-400">⏳ Chưa hoàn thành</p>
+            )}
           </div>
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
             <div className="text-3xl mb-2">📖</div>
             <h3 className="font-semibold text-orange-700">Ngôn ngữ</h3>
-            <p
-              className={`text-sm ${
-                session.taken_language_test ? "text-green-600" : "text-gray-400"
-              }`}
-            >
-              {session.taken_language_test
-                ? "✅ Hoàn thành"
-                : "⏳ Chưa hoàn thành"}
-            </p>
+            {session.taken_language_test ? (
+              <>
+                <p className="text-sm text-green-600 mb-1">✅ Hoàn thành</p>
+                {session.language_score !== null && (
+                  <p className="text-2xl font-bold text-orange-600">
+                    {session.language_score.toFixed(1)}/100
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-gray-400">⏳ Chưa hoàn thành</p>
+            )}
           </div>
         </div>
 
