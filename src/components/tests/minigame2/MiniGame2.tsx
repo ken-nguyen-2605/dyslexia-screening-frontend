@@ -67,60 +67,6 @@ const MiniGame2 = () => {
   };
 
   /* ---------------- RENDERING LOGIC ---------------- */
-  const renderRobotImage = () => {
-    const finalImageSrc = ROBOT_FULL_IMAGE_PATH;
-
-    return (
-      <div className="relative w-80 h-80 rounded-lg overflow-hidden shadow-xl">
-        <style>
-          {`
-                    @keyframes laserPulse {
-                        0%, 100% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.7); }
-                        50% { box-shadow: 0 0 10px 3px rgba(255, 0, 0, 1); }
-                    }
-                    .laser-pulse {
-                        animation: laserPulse 0.5s infinite alternate;
-                    }
-                    `}
-        </style>
-
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-pink-100 via-cyan-100 to-yellow-100 border-4 border-pink-300 flex flex-col items-center justify-center">
-          {imageRevealPercent === 0 && (
-            <span className="text-xl text-pink-700 font-bold">
-              Trả lời đúng để lắp ráp robot!
-            </span>
-          )}
-        </div>
-
-        {/* 2. (Layer được cắt và hiện ra) */}
-        <div
-          className="absolute inset-0 transition-all duration-700 ease-out"
-          style={{ clipPath: `inset(0 0 ${100 - imageRevealPercent}% 0)` }}
-        >
-          <img
-            src={finalImageSrc}
-            alt="Robot Revealed"
-            className="w-full h-full object-cover"
-          />
-
-          {/* 3. Thanh laser */}
-          {imageRevealPercent < 100 &&
-            imageRevealPercent > 0 &&
-            feedbackVisible &&
-            isCorrect && (
-              <div
-                className="absolute left-0 right-0 h-1 bg-red-500 laser-pulse"
-                style={{
-                  top: `${imageRevealPercent}%`,
-                  transform: "translateY(-50%)",
-                }}
-              />
-            )}
-        </div>
-      </div>
-    );
-  };
-
   if (testFinished) {
     return (
       <div className="text-center p-10 bg-white rounded-xl shadow-2xl max-w-lg mx-auto">
@@ -139,55 +85,105 @@ const MiniGame2 = () => {
   }
 
   return (
-    <div className="flex flex-col items-center bg-white/90 border-4 border-pink-200 p-10 rounded-[2em] items-center space-y-7 shadow-xl max-w-lg w-full mx-auto">
-      <h2 className="text-3xl text-pink-600 font-bold text-center drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
-        Minigame 2: Lắp Ráp Robot
-      </h2>
-      <div className="text-pink-500 font-semibold text-center text-lg font-[Comic Sans MS,cursive,sans-serif]">
-        Câu hỏi số {currentQuestionIndex + 1} / {TOTAL_QUESTIONS}
-      </div>
+    <div className="w-[1280px] max-w-[98vw] mx-auto">
+      {/* ====== CONTAINER BAO QUANH 2 KHỐI ====== */}
+      <div
+        className="
+          rounded-3xl p-4 md:p-6
+          bg-gradient-to-br from-pink-50 via-white to-cyan-100
+          border border-pink-100 shadow-[0_25px_80px_-30px_rgba(236,72,153,0.20)]
+        "
+      >
+        {/* ====== GRID 2 KHỐI ====== */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* ========== KHỐI TRÁI: ROBOT + TIẾN ĐỘ ========== */}
+          <div className="relative rounded-2xl bg-pink-50 border border-pink-100 shadow-[0_20px_60px_-20px_rgba(236,72,153,0.18)] overflow-hidden min-h-[520px] md:min-h-[600px]">
+            {/* Nền radial dịu */}
+            <div className="absolute inset-0 bg-[radial-gradient(720px_720px_at_35%_48%,rgba(236,72,153,0.22),rgba(6,182,212,0.12)_45%,transparent_75%)]" />
 
-      {renderRobotImage()}
+            {/* Robot – cân đối với vòng */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-[300px] h-[300px] md:w-[440px] md:h-[440px] rounded-full overflow-hidden">
+                <img
+                  src={ROBOT_FULL_IMAGE_PATH}
+                  alt="robot"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{
+                    clipPath: `inset(${100 - imageRevealPercent}% 0 0 0)`,
+                  }}
+                />
+                <div className="absolute inset-0 bg-pink-400/30 mix-blend-multiply" />
+              </div>
+            </div>
 
-      <div className="w-full h-2 bg-pink-100 rounded-full">
-        <div
-          className="bg-pink-400 h-2 rounded-full transition-all duration-700"
-          style={{ width: `${imageRevealPercent}%` }}
-        />
-      </div>
+            {/* Thanh tiến độ */}
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-4 w-[66%] md:w-[62%]">
+              <div className="w-full h-3 bg-pink-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-pink-500 transition-all duration-500"
+                  style={{ width: `${imageRevealPercent}%` }}
+                />
+              </div>
+              <div className="mt-1 text-center text-sm text-pink-600">
+                {Math.round(imageRevealPercent)}%
+              </div>
+            </div>
+          </div>
 
-      <div className="w-full p-4 bg-gray-50 border-l-4 border-pink-400 rounded-lg shadow-inner">
-        <p className="text-lg font-medium text-gray-700 text-center">
-          {currentQ.sentence}
-        </p>
-      </div>
+          {/* ========== KHỐI PHẢI: PANEL CÂU HỎI ========== */}
+          <div className="rounded-2xl bg-white/95 border border-pink-100 shadow-[0_10px_40px_-15px_rgba(236,72,153,0.18)] p-6 flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="font-semibold text-pink-600 text-xl">
+                Lắp Ráp Robot
+              </div>
+              <div className="text-pink-500 font-medium">
+                Câu {currentQuestionIndex + 1}/{TOTAL_QUESTIONS}
+              </div>
+            </div>
 
-      <div className="flex space-x-4 w-full">
-        <button
-          onClick={() => handleAnswer(true)}
-          disabled={feedbackVisible}
-          className="flex-1 py-3 text-white font-semibold rounded-lg transition-colors bg-green-500 hover:bg-green-600 disabled:opacity-50"
-        >
-          ĐÚNG
-        </button>
-        <button
-          onClick={() => handleAnswer(false)}
-          disabled={feedbackVisible}
-          className="flex-1 py-3 text-white font-semibold rounded-lg transition-colors bg-red-500 hover:bg-red-600 disabled:opacity-50"
-        >
-          SAI
-        </button>
-      </div>
+            {/* Câu hỏi */}
+            <div className="flex-1 flex items-center justify-center">
+              <div className="w-full p-6 bg-pink-50 border border-pink-200 rounded-xl">
+                <p className="text-xl font-medium text-slate-800 text-center">
+                  {currentQ.sentence}
+                </p>
+              </div>
+            </div>
 
-      {feedbackVisible && (
-        <div
-          className={`text-2xl font-extrabold ${
-            isCorrect ? "text-green-600" : "text-red-600"
-          } transition-opacity duration-300`}
-        >
-          {isCorrect ? "✅ CORRECT! (+1)" : "❌ WRONG!"}
+            {/* Buttons */}
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={() => handleAnswer(true)}
+                disabled={feedbackVisible}
+                className="flex-1 py-4 text-white text-lg font-semibold rounded-xl transition-all bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 shadow-lg"
+              >
+                ✓ ĐÚNG
+              </button>
+              <button
+                onClick={() => handleAnswer(false)}
+                disabled={feedbackVisible}
+                className="flex-1 py-4 text-white text-lg font-semibold rounded-xl transition-all bg-red-500 hover:bg-red-600 disabled:opacity-50 shadow-lg"
+              >
+                ✗ SAI
+              </button>
+            </div>
+
+            {/* Feedback */}
+            {feedbackVisible && (
+              <div
+                className={`mt-4 text-center text-lg font-semibold ${
+                  isCorrect ? "text-emerald-600" : "text-red-600"
+                }`}
+              >
+                {isCorrect
+                  ? "Chính xác! Bộ phận robot đã được lắp."
+                  : "Chưa đúng, thử lại câu tiếp nhé!"}
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -19,6 +19,7 @@ import Training from "./pages/Training";
 import AuditoryTestLayout from "./pages/AuditoryTestLayout";
 import VisualTestLayout from "./pages/VisualTestLayout";
 import LanguageTestLayout from "./pages/LanguageTestLayout";
+import MiniGame1Layout from "./pages/MiniGame1Layout";
 import MiniGame2Layout from "./pages/Minigame2Layout.tsx";
 
 // Auditory Test Pages
@@ -35,6 +36,11 @@ import VisualTestRatingPage from "./pages/tests/visual/VisualTestRatingPage";
 import LanguageTestInstructionPage from "./pages/tests/language/LanguageTestInstructionPage";
 import LanguageTestPage from "./pages/tests/language/LanguageTestPage";
 import LanguageTestRatingPage from "./pages/tests/language/LanguageTestRatingPage";
+
+// MiniGame1 Pages
+import MiniGame1InstructionPage from "./pages/tests/minigame1/MiniGame1InstructionPage";
+import MiniGame1Page from "./pages/tests/minigame1/MiniGame1Page";
+import MiniGame1RatingPage from "./pages/tests/minigame1/MiniGame1RatingPage";
 
 // MiniGame2 Pages
 import MiniGame2InstructionPage from "./pages/tests/minigame2/MiniGame2InstructionPage";
@@ -95,18 +101,25 @@ function App() {
             <Route path="rating" element={<LanguageTestRatingPage />} />
           </Route>
 
-          {/* MINIGAME 2 */}
-          <Route path="test/minigame2" element={<MiniGame2Layout />}>
-            <Route path="instruction" element={<MiniGame2InstructionPage />} />
-            <Route path="start" element={<MiniGame2Page />} />
-            <Route path="rating" element={<MiniGame2RatingPage />} />
-          </Route>
-
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Route>
-        
-        {/* MINIGAME 3 */}
+
+        {/* MINIGAME 1 - Standalone (outside Layout) */}
+        <Route path="test/minigame1" element={<MiniGame1Layout />}>
+          <Route path="instruction" element={<MiniGame1InstructionPage />} />
+          <Route path="start" element={<MiniGame1Page />} />
+          <Route path="rating" element={<MiniGame1RatingPage />} />
+        </Route>
+
+        {/* MINIGAME 2 - Standalone (outside Layout) */}
+        <Route path="test/minigame2" element={<MiniGame2Layout />}>
+          <Route path="instruction" element={<MiniGame2InstructionPage />} />
+          <Route path="start" element={<MiniGame2Page />} />
+          <Route path="rating" element={<MiniGame2RatingPage />} />
+        </Route>
+
+        {/* MINIGAME 3 - Standalone (outside Layout) */}
         <Route path="test/minigame3" element={<MiniGame3Page />} />
       </Routes>
     </BrowserRouter>

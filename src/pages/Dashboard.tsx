@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useTestProgress } from "../hooks/useTestProgress";
 import { testSessionService } from "../services/testSessionService";
@@ -10,7 +9,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+
   const {
     progress,
     getNextIncompleteTest,
@@ -27,21 +26,21 @@ const Dashboard = () => {
     navigate("/test/auditory/instruction");
   };
 
-	useEffect(() => {
-		const fetchSessions = async () => {
-			setLoading(true);
-			setError(null);
-			try {
-				const data = await testSessionService.getAllTestSessions();
-				setSessions(data);
-			} catch (err: any) {
-				setError(err.message || "Unknown error");
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchSessions();
-	}, [hasSelectedProfile, navigate]);
+  useEffect(() => {
+    const fetchSessions = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await testSessionService.getAllTestSessions();
+        setSessions(data);
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSessions();
+  }, [navigate]);
 
   const getResultText = (result: string | null) => {
     switch (result) {
@@ -183,7 +182,13 @@ const Dashboard = () => {
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
             {[
-              { id: 1, icon: "🎮", name: "Trò chơi 1", available: false },
+              {
+                id: 1,
+                icon: "🎮",
+                name: "Trò chơi 1",
+                available: true,
+                path: "/test/minigame1/instruction",
+              },
               {
                 id: 2,
                 icon: "📖",
@@ -191,7 +196,13 @@ const Dashboard = () => {
                 available: true,
                 path: "/test/minigame2/instruction",
               },
-              { id: 3, icon: "🧩", name: "Trò chơi 3", available: false },
+              {
+                id: 3,
+                icon: "🧩",
+                name: "Trò chơi 3",
+                available: true,
+                path: "/test/minigame3",
+              },
               { id: 4, icon: "🎯", name: "Trò chơi 4", available: false },
               { id: 5, icon: "🌟", name: "Trò chơi 5", available: false },
             ].map((game) => (

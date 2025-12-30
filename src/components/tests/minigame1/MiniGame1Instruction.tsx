@@ -1,7 +1,7 @@
-import { useTestStep } from "../../contexts/TestStepContext";
-import SpeakerIcon from "../icon/SpeakerIcon";
+import { useTestStep } from "../../../contexts/TestStepContext";
+import SpeakerIcon from "../auditory/SpeakerIcon";
 
-export default function MG1Instruction() {
+export default function MiniGame1Instruction() {
   const { goToNextStep } = useTestStep();
 
   return (

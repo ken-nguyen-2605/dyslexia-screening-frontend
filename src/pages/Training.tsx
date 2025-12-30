@@ -15,11 +15,11 @@ const minigames: Minigame[] = [
   {
     id: 1,
     name: "Trò chơi 1",
-    description: "Sắp ra mắt",
-    icon: "🎮",
-    path: "/training/minigame1/instruction",
-    color: "from-blue-400 to-blue-500",
-    available: false,
+    description: "Spelling Bee - Ghép vần",
+    icon: "🤖",
+    path: "/test/minigame1/instruction",
+    color: "from-rose-400 to-rose-500",
+    available: true,
   },
   {
     id: 2,
