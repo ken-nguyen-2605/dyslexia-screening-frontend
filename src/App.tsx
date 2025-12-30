@@ -55,7 +55,7 @@ import MiniGame4Layout from "./pages/MiniGame4Layout";
 import MiniGame4InstructionPage from "./pages/tests/minigame4/MiniGame4InstructionPage";
 import MiniGame4Page from "./pages/tests/minigame4/MiniGame4Page";
 import MiniGame4RatingPage from "./pages/tests/minigame4/MiniGame4RatingPage";
-import SpaceRescueGame from "./minigame4/SpaceRescueGame.tsx";
+import SpaceRescueGame from "./components/tests/minigame4/uncheck/SpaceRescueGame.tsx";
 
 function App() {
   return (

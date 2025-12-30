@@ -4,7 +4,7 @@
  */
 
 // Export SpaceRescueGame từ thư mục minigame4 mới
-export { default as SpaceRescueGame } from "../minigame4";
+export { default as SpaceRescueGame } from "./tests/minigame4/uncheck";
 
 // Export các component từ minigame4/components
 export { default as MiniGame4Instruction } from "./tests/minigame4/MiniGame4Instruction";

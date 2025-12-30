@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import SpaceRescueGame from "../../../minigame4";
+import SpaceRescueGame from "./uncheck";
 
 export default function MiniGame4() {
   const navigate = useNavigate();
