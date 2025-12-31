@@ -55,7 +55,12 @@ import MiniGame4Layout from "./pages/MiniGame4Layout";
 import MiniGame4InstructionPage from "./pages/tests/minigame4/MiniGame4InstructionPage";
 import MiniGame4Page from "./pages/tests/minigame4/MiniGame4Page";
 import MiniGame4RatingPage from "./pages/tests/minigame4/MiniGame4RatingPage";
-import SpaceRescueGame from "./components/tests/minigame4/uncheck/SpaceRescueGame.tsx";
+
+// MiniGame5 Pages
+import MiniGame5Layout from "./pages/MiniGame5Layout";
+import MiniGame5InstructionPage from "./pages/tests/minigame5/MiniGame5InstructionPage";
+import MiniGame5Page from "./pages/tests/minigame5/MiniGame5Page";
+import MiniGame5RatingPage from "./pages/tests/minigame5/MiniGame5RatingPage";
 
 function App() {
   return (
@@ -136,7 +141,12 @@ function App() {
           <Route path="rating" element={<MiniGame4RatingPage />} />
         </Route>
 
-        <Route path="test/minigame5" element={<SpaceRescueGame />} />
+        {/* MINIGAME 5 - Find Matching Letters (outside Layout) */}
+        <Route path="test/minigame5" element={<MiniGame5Layout />}>
+          <Route path="instruction" element={<MiniGame5InstructionPage />} />
+          <Route path="start" element={<MiniGame5Page />} />
+          <Route path="rating" element={<MiniGame5RatingPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

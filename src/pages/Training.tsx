@@ -51,11 +51,11 @@ const minigames: Minigame[] = [
   {
     id: 5,
     name: "Trò chơi 5",
-    description: "Sắp ra mắt",
-    icon: "🌟",
-    path: "/training/minigame5/instruction",
-    color: "from-purple-400 to-purple-500",
-    available: false,
+    description: "Tìm chữ giống nhau - Phân biệt chữ",
+    icon: "🔤",
+    path: "/test/minigame5/instruction",
+    color: "from-purple-400 to-pink-500",
+    available: true,
   },
 ];
 

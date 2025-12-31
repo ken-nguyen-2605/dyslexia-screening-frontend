@@ -1,1 +1,7 @@
-export type TestType = "auditory" | "visual" | "language"| "minigame2" |  "minigame1";
+export type TestType =
+  | "auditory"
+  | "visual"
+  | "language"
+  | "minigame1"
+  | "minigame2"
+  | "minigame5";

@@ -134,6 +134,30 @@ export function calculateLanguageScoreWeighted(
   return Math.round(Math.min(100, Math.max(0, totalWeightedScore)));
 }
 
+// ============ MINIGAME 5 - Letter Matching ============
+// Accuracy-based scoring similar to visual test
+// Score = correct / (correct + wrong) * 100
+export interface MiniGame5Result {
+  totalCorrect: number;
+  totalWrong: number;
+  levelsCompleted: number;
+}
+
+export function calculateMiniGame5Score(result: MiniGame5Result): number {
+  const { totalCorrect, totalWrong } = result;
+
+  // If no clicks at all, return 0
+  if (totalCorrect + totalWrong === 0) {
+    return 0;
+  }
+
+  // Accuracy-based score: correct / (correct + wrong) * 100
+  // This penalizes wrong clicks but rewards correct ones
+  const accuracyScore = (totalCorrect / (totalCorrect + totalWrong)) * 100;
+
+  return Math.round(Math.min(100, Math.max(0, accuracyScore)));
+}
+
 // ============ OVERALL RESULT ============
 export type DyslexiaResult = "NON_DYSLEXIC" | "MAYBE_DYSLEXIC" | "DYSLEXIC";
 

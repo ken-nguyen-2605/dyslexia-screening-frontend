@@ -193,15 +193,6 @@ const LanguageTest: React.FC = () => {
     } else {
       setFeedback("❌ Incorrect");
       speakText("Incorrect");
-      // Move to next question even on wrong answer (after delay)
-      setTimeout(() => {
-        if (currentIndex < shuffledQuestions.length - 1) {
-          setCurrentIndex((prev) => prev + 1);
-        } else {
-          goNextTest();
-        }
-        setFeedback(null);
-      }, 1000);
     }
   };
 
