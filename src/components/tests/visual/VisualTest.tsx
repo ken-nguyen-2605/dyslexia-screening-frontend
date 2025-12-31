@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTestStep } from "../../../contexts/TestStepContext";
+import { useNavigate } from "react-router-dom";
 
 import { ChevronIcon, ZIcon, RectangleIcon, FaceIcon } from "./icons";
 import { ClockFace, TestStats } from "../shared/ClockAndStats";
@@ -154,6 +155,7 @@ const buildCards = (
 /* ---------------- MAIN COMPONENT ---------------- */
 const VisualTest = () => {
   const { currentStep, goToNextStep: contextGoToNextStep } = useTestStep();
+  const navigate = useNavigate();
 
   const [targetCard, setTargetCard] = useState<CardType | null>(null);
   const [cards, setCards] = useState<CardType[]>([]);
@@ -167,6 +169,10 @@ const VisualTest = () => {
     wrongId: null,
   });
 
+  // Cumulative tracking across ALL rounds (never reset)
+  const totalCorrectRef = useRef(0);
+  const totalWrongRef = useRef(0);
+
   // get current round number (1..8)
   const getCurrentRound = () =>
     currentStep >= 1 && currentStep <= 8 ? currentStep : 1;
@@ -175,8 +181,37 @@ const VisualTest = () => {
   const totalTargetsInRound = isOddRound ? 1 : 2;
 
   const goToNextStep = () => {
-    // Sử dụng contextGoToNextStep thay vì logic điều hướng cục bộ
-    contextGoToNextStep();
+    // Check if this is the last round (round 8)
+    if (round === 8) {
+      // Calculate final score: accuracy-based (correct / (correct + wrong)) * 100
+      const totalCorrect = totalCorrectRef.current;
+      const totalWrong = totalWrongRef.current;
+
+      console.log(
+        "Visual Test Final - Correct:",
+        totalCorrect,
+        "Wrong:",
+        totalWrong
+      );
+
+      const finalScore =
+        totalCorrect + totalWrong > 0
+          ? Math.round((totalCorrect / (totalCorrect + totalWrong)) * 100)
+          : 0;
+
+      // Navigate to rating with score data
+      navigate("/test/visual/rating", {
+        state: {
+          score: finalScore,
+          totalCorrect,
+          totalWrong,
+          totalRounds: 8,
+        },
+      });
+    } else {
+      // Not last round, continue to next
+      contextGoToNextStep();
+    }
   };
 
   /* --- EFFECTS --- */
@@ -256,8 +291,10 @@ const VisualTest = () => {
       if (card.isTarget) {
         setScore((s) => s + 1);
         setCorrectCount((c) => c + 1);
+        totalCorrectRef.current += 1; // Track in ref immediately
       } else {
         setWrongCount((w) => w + 1);
+        totalWrongRef.current += 1; // Track in ref immediately
       }
       setCards((prev) => shuffle(prev));
       return;
@@ -281,6 +318,7 @@ const VisualTest = () => {
         if (totalTargetsFound >= totalTargetsInRound) {
           // Nếu tìm thấy hết (2 target): Xáo trộn và reset 'found'
           setCorrectCount((c) => c + 1); // Cập nhật tổng số lần đúng
+          totalCorrectRef.current += 1; // Track in ref immediately
           return shuffle(newCards.map((c) => ({ ...c, found: false })));
         }
 
@@ -289,6 +327,7 @@ const VisualTest = () => {
     } else {
       // Chọn sai
       setWrongCount((w) => w + 1);
+      totalWrongRef.current += 1; // Track in ref immediately
       setFeedback({ wrongId: card.id });
     }
   };

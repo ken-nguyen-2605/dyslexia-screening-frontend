@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Shuffle helper
@@ -83,7 +83,8 @@ const LanguageTest: React.FC = () => {
       ],
     },
     {
-      title: "Test 6: Replace 1 letter with the given letters to fix the spelling",
+      title:
+        "Test 6: Replace 1 letter with the given letters to fix the spelling",
       type: "replaceLetter",
       questions: [
         { wrong: "planit", correct: "planet" },
@@ -104,6 +105,26 @@ const LanguageTest: React.FC = () => {
   const [showTransition, setShowTransition] = useState(false);
   const [inputLetter, setInputLetter] = useState("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  // Score tracking for each test
+  const scoreRef = useRef({
+    test1: 0, // Vowels (5 questions)
+    test2: 0, // Consonants (4 questions)
+    test3: 0, // Alphabet (26 questions)
+    test4: 0, // Remove letter (4 questions)
+    test5: 0, // Add letter (4 questions)
+    test6: 0, // Replace letter (4 questions)
+  });
+
+  // Total questions per test
+  const totalQuestionsPerTest = {
+    test1: 5,
+    test2: 4,
+    test3: 26,
+    test4: 4,
+    test5: 4,
+    test6: 4,
+  };
 
   const currentTest = tests[testIndex] as Test;
   const currentQuestion =
@@ -153,6 +174,11 @@ const LanguageTest: React.FC = () => {
     if (choice === correctAnswer) {
       setFeedback("✅ Correct");
       speakText("Correct");
+
+      // Track score for current test
+      const testKey = `test${testIndex + 1}` as keyof typeof scoreRef.current;
+      scoreRef.current[testKey]++;
+
       if (currentIndex < shuffledQuestions.length - 1) {
         setTimeout(() => {
           setCurrentIndex((prev) => prev + 1);
@@ -167,6 +193,15 @@ const LanguageTest: React.FC = () => {
     } else {
       setFeedback("❌ Incorrect");
       speakText("Incorrect");
+      // Move to next question even on wrong answer (after delay)
+      setTimeout(() => {
+        if (currentIndex < shuffledQuestions.length - 1) {
+          setCurrentIndex((prev) => prev + 1);
+        } else {
+          goNextTest();
+        }
+        setFeedback(null);
+      }, 1000);
     }
   };
 
@@ -180,6 +215,7 @@ const LanguageTest: React.FC = () => {
     if (newWord.toLowerCase() === currentQuestion.correct.toLowerCase()) {
       setFeedback(`✅ Correct! ${currentQuestion.correct}`);
       speakText("Correct");
+      scoreRef.current.test4++; // Track score
       setTimeout(() => {
         if (currentIndex < (currentTest as RemoveTest).questions.length - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -240,6 +276,7 @@ const LanguageTest: React.FC = () => {
     if (newWord.toLowerCase() === info.correct.toLowerCase()) {
       setFeedback(`✅ Correct! ${info.correct}`);
       speakText("Correct");
+      scoreRef.current.test5++; // Track score
       setTimeout(() => {
         if (currentIndex < (currentTest as AddTest).questions.length - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -276,6 +313,7 @@ const LanguageTest: React.FC = () => {
     if (newWord.toLowerCase() === currentQuestion.correct.toLowerCase()) {
       setFeedback(`✅ Correct! ${currentQuestion.correct}`);
       speakText("Correct");
+      scoreRef.current.test6++; // Track score
       setTimeout(() => {
         if (currentIndex < (currentTest as ReplaceTest).questions.length - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -308,8 +346,85 @@ const LanguageTest: React.FC = () => {
 
   // All finished
   if (finished) {
-    // Navigate to rating page
-    navigate("/test/language/rating");
+    // Calculate final score with weighted scoring (20-20-20-15-15-10 = 100 total)
+    const scores = scoreRef.current;
+    const weights = {
+      test1: 20, // Vowels
+      test2: 20, // Consonants
+      test3: 20, // Alphabet
+      test4: 15, // Remove letter
+      test5: 15, // Add letter
+      test6: 10, // Replace letter
+    };
+
+    // Each test: if completed successfully, award full weight points
+    // Score = (correct/total) * weight for each test
+    const test1Score =
+      (scores.test1 / totalQuestionsPerTest.test1) * weights.test1;
+    const test2Score =
+      (scores.test2 / totalQuestionsPerTest.test2) * weights.test2;
+    const test3Score =
+      (scores.test3 / totalQuestionsPerTest.test3) * weights.test3;
+    const test4Score =
+      (scores.test4 / totalQuestionsPerTest.test4) * weights.test4;
+    const test5Score =
+      (scores.test5 / totalQuestionsPerTest.test5) * weights.test5;
+    const test6Score =
+      (scores.test6 / totalQuestionsPerTest.test6) * weights.test6;
+
+    const finalScore = Math.round(
+      test1Score +
+        test2Score +
+        test3Score +
+        test4Score +
+        test5Score +
+        test6Score
+    );
+
+    // Navigate to rating page with score data
+    navigate("/test/language/rating", {
+      state: {
+        score: finalScore,
+        testDetails: {
+          test1_vowels: {
+            correct: scores.test1,
+            total: totalQuestionsPerTest.test1,
+            weight: weights.test1,
+            earned: test1Score,
+          },
+          test2_consonants: {
+            correct: scores.test2,
+            total: totalQuestionsPerTest.test2,
+            weight: weights.test2,
+            earned: test2Score,
+          },
+          test3_alphabet: {
+            correct: scores.test3,
+            total: totalQuestionsPerTest.test3,
+            weight: weights.test3,
+            earned: test3Score,
+          },
+          test4_removeLetter: {
+            correct: scores.test4,
+            total: totalQuestionsPerTest.test4,
+            weight: weights.test4,
+            earned: test4Score,
+          },
+          test5_addLetter: {
+            correct: scores.test5,
+            total: totalQuestionsPerTest.test5,
+            weight: weights.test5,
+            earned: test5Score,
+          },
+          test6_replaceLetter: {
+            correct: scores.test6,
+            total: totalQuestionsPerTest.test6,
+            weight: weights.test6,
+            earned: test6Score,
+          },
+        },
+      },
+    });
     return null;
   }
 
@@ -401,7 +516,9 @@ const LanguageTest: React.FC = () => {
         <div className="flex flex-col items-center gap-4 w-full max-w-lg">
           <p className="text-2xl font-semibold">
             Wrong spelling:{" "}
-            <span className="text-red-600 font-bold">{addInfo.displayWithBlank}</span>
+            <span className="text-red-600 font-bold">
+              {addInfo.displayWithBlank}
+            </span>
           </p>
 
           <input
@@ -421,9 +538,7 @@ const LanguageTest: React.FC = () => {
             Submit
           </button>
 
-          {feedback && (
-            <p className="text-lg font-medium mt-4">{feedback}</p>
-          )}
+          {feedback && <p className="text-lg font-medium mt-4">{feedback}</p>}
         </div>
       )}
 
@@ -432,7 +547,9 @@ const LanguageTest: React.FC = () => {
         <div className="flex flex-col items-center gap-4 w-full max-w-lg">
           <p className="text-2xl font-semibold">
             Wrong spelling:{" "}
-            <span className="text-red-600 font-bold">{currentQuestion.wrong}</span>
+            <span className="text-red-600 font-bold">
+              {currentQuestion.wrong}
+            </span>
           </p>
 
           <div className="flex gap-4 flex-wrap justify-center">
@@ -441,7 +558,11 @@ const LanguageTest: React.FC = () => {
                 key={idx}
                 onClick={() => setSelectedIndex(idx)}
                 className={`px-6 py-3 text-xl font-bold rounded-lg shadow
-                  ${selectedIndex === idx ? "bg-yellow-500 text-white" : "bg-pink-500 text-white hover:bg-pink-600"}`}
+                  ${
+                    selectedIndex === idx
+                      ? "bg-yellow-500 text-white"
+                      : "bg-pink-500 text-white hover:bg-pink-600"
+                  }`}
               >
                 {ch.toUpperCase()}
               </button>
@@ -480,9 +601,7 @@ const LanguageTest: React.FC = () => {
             </button>
           )}
 
-          {feedback && (
-            <p className="text-lg font-medium mt-4">{feedback}</p>
-          )}
+          {feedback && <p className="text-lg font-medium mt-4">{feedback}</p>}
         </div>
       )}
 

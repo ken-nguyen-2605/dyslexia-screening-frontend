@@ -203,8 +203,20 @@ const Dashboard = () => {
                 available: true,
                 path: "/test/minigame3",
               },
-              { id: 4, icon: "🎯", name: "Trò chơi 4", available: false },
-              { id: 5, icon: "🌟", name: "Trò chơi 5", available: false },
+              {
+                id: 4,
+                icon: "🎯",
+                name: "Trò chơi 4",
+                available: true,
+                path: "/test/minigame4/instruction",
+              },
+              {
+                id: 5,
+                icon: "🌟",
+                name: "Trò chơi 5",
+                available: true,
+                path: "/test/minigame5/instruction",
+              },
             ].map((game) => (
               <button
                 key={game.id}

@@ -1,13 +1,22 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTestProgress } from "../../../hooks/useTestProgress";
 import TestDifficultyRating from "../../../components/tests/shared/TestDifficultyRating";
 import { toastSuccess, toastInfo, toastError } from "../../../utils/toast";
 import { testSessionService } from "../../../services/testSessionService";
 import type { TestSession } from "../../../types/testSession";
 
+interface AuditoryTestState {
+  score: number;
+  correctAnswers: number;
+  totalQuestions: number;
+}
+
 const AuditoryTestRatingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const testState = location.state as AuditoryTestState | null;
+
   const {
     markTestComplete,
     progress,
@@ -15,6 +24,9 @@ const AuditoryTestRatingPage = () => {
     syncWithBackendSession,
   } = useTestProgress();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get score from navigation state or use default
+  const calculatedScore = testState?.score ?? 80;
 
   // Helper function to determine next test based on backend session state
   const getNextTestFromSession = (session: TestSession): string | null => {
@@ -52,8 +64,8 @@ const AuditoryTestRatingPage = () => {
         throw new Error("Could not get or create test session");
       }
 
-      // Calculate score (you may want to store actual score from test)
-      const score = progress.auditory.score || 80; // Default or from context
+      // Use score calculated from test performance
+      const score = calculatedScore;
 
       // Submit test results to backend
       await testSessionService.submitTestSection(testSessionId, {
@@ -61,6 +73,8 @@ const AuditoryTestRatingPage = () => {
         test_details: {
           difficultyRating: rating,
           completedAt: new Date().toISOString(),
+          correctAnswers: testState?.correctAnswers,
+          totalQuestions: testState?.totalQuestions,
         },
         test_type: "AUDITORY",
       });

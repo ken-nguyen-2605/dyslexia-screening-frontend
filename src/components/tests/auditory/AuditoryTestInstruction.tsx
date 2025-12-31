@@ -1,36 +1,14 @@
-import { useLocation } from "react-router-dom";
-import { testSessionService } from "../../../services/testSessionService";
-
 interface AuditoryTestInstructionProps {
   goToNextStep: () => void;
 }
 
-const AuditoryTestInstruction = ({
-  goToNextStep,
-}: AuditoryTestInstructionProps) => {
-  const location = useLocation();
+const AuditoryTestInstruction = ({ goToNextStep }: AuditoryTestInstructionProps) => {
 
-  const onStartTest = async () => {
-    const params = new URLSearchParams(location.search);
-    let sessionId = params.get("sessionId");
-    let specificTestId = params.get("specificTestId");
-
-    if (!sessionId) {
-      const data = await testSessionService.startTestSession();
-      if (!data) return;
-      sessionId = data.id.toString();
-    }
-
-    if (!specificTestId) {
-      const specificTestSession =
-        await testSessionService.startSpecificTestSession(Number(sessionId), {
-          test_type: "AUDITORY",
-        });
-      specificTestId = specificTestSession.id.toString();
-    }
-
+  const onStartTest = () => {
     goToNextStep();
+    console.log("Call API to start test session");
   };
+
   return (
     <div className="flex flex-col bg-white/90 border-4 border-pink-200 p-10 rounded-3xl items-center space-y-7 shadow-xl max-w-2xl w-full mx-auto">
       <h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow">

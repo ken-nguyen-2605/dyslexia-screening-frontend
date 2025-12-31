@@ -1,13 +1,23 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTestProgress } from "../../../hooks/useTestProgress";
 import TestDifficultyRating from "../../../components/tests/shared/TestDifficultyRating";
 import { toastSuccess, toastInfo, toastError } from "../../../utils/toast";
 import { testSessionService } from "../../../services/testSessionService";
 import type { TestSession } from "../../../types/testSession";
 
+interface VisualTestState {
+  score: number;
+  totalCorrect: number;
+  totalWrong: number;
+  totalRounds: number;
+}
+
 const VisualTestRatingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const testState = location.state as VisualTestState | null;
+
   const {
     markTestComplete,
     progress,
@@ -15,6 +25,9 @@ const VisualTestRatingPage = () => {
     syncWithBackendSession,
   } = useTestProgress();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get score from navigation state or use default
+  const calculatedScore = testState?.score ?? 80;
 
   // Helper function to determine next test based on backend session state
   const getNextTestFromSession = (session: TestSession): string | null => {
@@ -52,13 +65,17 @@ const VisualTestRatingPage = () => {
         throw new Error("Could not get or create test session");
       }
 
-      const score = progress.visual.score || 80;
+      // Use score calculated from test performance
+      const score = calculatedScore;
 
       await testSessionService.submitTestSection(testSessionId, {
         score,
         test_details: {
           difficultyRating: rating,
           completedAt: new Date().toISOString(),
+          totalCorrect: testState?.totalCorrect,
+          totalWrong: testState?.totalWrong,
+          totalRounds: testState?.totalRounds,
         },
         test_type: "VISUAL",
       });

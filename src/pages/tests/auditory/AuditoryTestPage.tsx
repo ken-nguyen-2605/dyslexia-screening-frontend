@@ -2,7 +2,7 @@
 // For now, we'll use the existing AuditoryTest component
 // TODO: Extract the question handling logic from AuditoryTest.tsx
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AuditorySoundOptionChoice, {
   type AuditorySoundOptionChoiceQuestion,
@@ -203,24 +203,23 @@ const PAIAS_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
 ];
 
 const QUESTIONS_INFO = [
-	{ module: "PHONOLOGICAL_AWARENESS/1", text: "Nhận thức âm vị" },
-	{ module: "PHONOLOGICAL_AWARENESS/2", text: "Nhận thức âm vị" },
-	{ module: "DECODING/1", text: "Nhận diện chữ & giải mã" },
-	{ module: "DECODING/2", text: "Nhận diện chữ & giải mã" },
-	{ module: "UNDERSTANDING_FLUENCY/1", text: "Tốc độ hiểu" },
-	{ module: "UNDERSTANDING_FLUENCY/2", text: "Tốc độ hiểu" },
-	{ module: "LANGUAGE_COMPREHENSION/1", text: "Hiểu và nhận dạng ngôn ngữ" },
-	{ module: "LANGUAGE_COMPREHENSION/2", text: "Hiểu và nhận dạng ngôn ngữ" },
-	{
-		module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/1",
-		text: "Nhận thức âm vị trong câu",
-	},
-	{
-		module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/2",
-		text: "Nhận thức âm vị trong câu",
-	},
+  { module: "PHONOLOGICAL_AWARENESS/1", text: "Nhận thức âm vị" },
+  { module: "PHONOLOGICAL_AWARENESS/2", text: "Nhận thức âm vị" },
+  { module: "DECODING/1", text: "Nhận diện chữ & giải mã" },
+  { module: "DECODING/2", text: "Nhận diện chữ & giải mã" },
+  { module: "UNDERSTANDING_FLUENCY/1", text: "Tốc độ hiểu" },
+  { module: "UNDERSTANDING_FLUENCY/2", text: "Tốc độ hiểu" },
+  { module: "LANGUAGE_COMPREHENSION/1", text: "Hiểu và nhận dạng ngôn ngữ" },
+  { module: "LANGUAGE_COMPREHENSION/2", text: "Hiểu và nhận dạng ngôn ngữ" },
+  {
+    module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/1",
+    text: "Nhận thức âm vị trong câu",
+  },
+  {
+    module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/2",
+    text: "Nhận thức âm vị trong câu",
+  },
 ];
-
 
 const getRandomQuestions = () => {
   const pa_shuffled = PA_QUESTION_BANK.sort(() => 0.5 - Math.random());
@@ -257,15 +256,31 @@ const AuditoryTestPage = () => {
   const [questions] = useState(getRandomQuestions());
   const [score, setScore] = useState(0);
 
+  // Use ref to track score accurately (state updates are async)
+  const scoreRef = useRef(0);
+
   const updateScore = (isCorrect: boolean) => {
-    setScore((s) => s + (isCorrect ? 1 : 0));
+    if (isCorrect) {
+      scoreRef.current += 1;
+    }
+    setScore(scoreRef.current);
   };
 
   const goToNextQuestion = () => {
     setShowFeedback(false);
     if (currentQuestionIndex === QUESTIONS_INFO.length - 1) {
-      // Last question, go to rating
-      navigate("/test/auditory/rating");
+      // Last question, calculate final score and navigate to rating with state
+      // Use scoreRef for accurate value (10 questions -> scale to 100)
+      const finalScore = Math.round(
+        (scoreRef.current / QUESTIONS_INFO.length) * 100
+      );
+      navigate("/test/auditory/rating", {
+        state: {
+          score: finalScore,
+          correctAnswers: scoreRef.current,
+          totalQuestions: QUESTIONS_INFO.length,
+        },
+      });
     } else {
       setCurrentQuestionIndex((i) => i + 1);
     }

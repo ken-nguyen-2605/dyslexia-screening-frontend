@@ -1,13 +1,35 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTestProgress } from "../../../hooks/useTestProgress";
 import TestDifficultyRating from "../../../components/tests/shared/TestDifficultyRating";
 import { toastSuccess, toastInfo, toastError } from "../../../utils/toast";
 import { testSessionService } from "../../../services/testSessionService";
 import type { TestSession } from "../../../types/testSession";
 
+interface TestDetailItem {
+  correct: number;
+  total: number;
+  weight: number;
+  earned: number;
+}
+
+interface LanguageTestState {
+  score: number;
+  testDetails: {
+    test1_vowels: TestDetailItem;
+    test2_consonants: TestDetailItem;
+    test3_alphabet: TestDetailItem;
+    test4_removeLetter: TestDetailItem;
+    test5_addLetter: TestDetailItem;
+    test6_replaceLetter: TestDetailItem;
+  };
+}
+
 const LanguageTestRatingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const testState = location.state as LanguageTestState | null;
+
   const {
     markTestComplete,
     progress,
@@ -15,6 +37,9 @@ const LanguageTestRatingPage = () => {
     syncWithBackendSession,
   } = useTestProgress();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get score from navigation state or use default
+  const calculatedScore = testState?.score ?? 80;
 
   // Helper function to determine next test based on backend session state
   const getNextTestFromSession = (session: TestSession): string | null => {
@@ -52,13 +77,16 @@ const LanguageTestRatingPage = () => {
         throw new Error("Could not get or create test session");
       }
 
-      const score = progress.language.score || 80;
+      // Use score calculated from test performance (weighted: 20-20-20-15-15-10)
+      const score = calculatedScore;
 
       await testSessionService.submitTestSection(testSessionId, {
         score,
         test_details: {
           difficultyRating: rating,
           completedAt: new Date().toISOString(),
+          weightedScoring: "20-20-20-15-15-10",
+          testDetails: testState?.testDetails,
         },
         test_type: "LANGUAGE",
       });
