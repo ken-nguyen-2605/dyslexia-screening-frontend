@@ -1,6 +1,10 @@
 // Danh sách các chữ cái sẽ xuất hiện trong đề bài
-export const LETTERS_POOL = ['a', 'b', 'c', 'd', 'e', 'g', 'h', 'm', 'n', 'p', 'q'];
-
+export const LETTERS_POOL = [
+  'a', 'ă', 'â', 'b', 'c', 'd', 'đ', 
+  'e', 'ê', 'g', 'h', 'i', 'k', 'l', 
+  'm', 'n', 'o', 'ô', 'ơ', 'p', 'q', 
+  'r', 's', 't', 'u', 'ư', 'v', 'x', 'y'
+];
 // Cấu hình điểm số
 export const GAME_CONFIG = {
   POINTS_PER_CORRECT: 20,    // Đúng 1 câu được 20% năng lượng
