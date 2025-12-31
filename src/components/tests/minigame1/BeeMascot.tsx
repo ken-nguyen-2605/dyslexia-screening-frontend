@@ -1,6 +1,4 @@
 import React from "react";
-
-// Component vẽ con ong bằng CSS
 export default function BeeMascot({
   progress,
   className,
