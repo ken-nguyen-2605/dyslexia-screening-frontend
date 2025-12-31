@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { allWords, vietnameseAlphabet } from "../../../data/minigame3";
+import { minigameService } from "../../../services/minigameService";
 import "../../../styles/GameCanvas.css";
 import "../../../styles/Tree.css";
 
@@ -161,6 +162,7 @@ const MiniGame3: React.FC = () => {
   const [gameCompleted, setGameCompleted] = useState<boolean>(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasSubmittedScore = useRef(false);
 
   const currentWord = useMemo(
     () => currentWords[currentWordIndex],
@@ -312,6 +314,7 @@ const MiniGame3: React.FC = () => {
     setCurrentWordIndex(0);
     setGameCompleted(false);
     setTotalCorrectBlanks(0);
+    hasSubmittedScore.current = false;
   };
 
   const handleStartGame = () => {
@@ -320,6 +323,39 @@ const MiniGame3: React.FC = () => {
 
   const progressPercentage =
     totalBlanksInGame > 0 ? (totalCorrectBlanks / totalBlanksInGame) * 100 : 0;
+
+  // Submit score when game is completed
+  useEffect(() => {
+    const submitScore = async () => {
+      if (!gameCompleted || hasSubmittedScore.current) return;
+      hasSubmittedScore.current = true;
+
+      const finalScore = Math.round(progressPercentage);
+      try {
+        await minigameService.submitMinigame({
+          minigame_number: "three",
+          score: finalScore,
+          minigame_details: {
+            correct_blanks: totalCorrectBlanks,
+            total_blanks: totalBlanksInGame,
+            words_count: currentWords.length,
+          },
+          attempted_at: new Date().toISOString(),
+        });
+        console.log("MiniGame3 score submitted successfully:", finalScore);
+      } catch (error) {
+        console.error("Failed to submit MiniGame3 score:", error);
+      }
+    };
+
+    submitScore();
+  }, [
+    gameCompleted,
+    progressPercentage,
+    totalCorrectBlanks,
+    totalBlanksInGame,
+    currentWords.length,
+  ]);
 
   const imagePath = `/minigame3/images/${
     currentWord?.img || "placeholder.jpg"

@@ -36,6 +36,7 @@ const MiniGame2 = () => {
     }
 
     const nextIndex = currentQuestionIndex + 1;
+    const newScore = isCorrectAnswer ? score + 1 : score;
     setTimeout(() => {
       setFeedbackVisible(false);
       if (nextIndex < TOTAL_QUESTIONS) {
@@ -43,7 +44,14 @@ const MiniGame2 = () => {
       } else {
         setTestActive(false);
         setTestFinished(true);
-        navigate("/test/minigame2/rating");
+        const finalScore = Math.round((newScore / TOTAL_QUESTIONS) * 100);
+        navigate("/test/minigame2/rating", {
+          state: {
+            score: finalScore,
+            correct: newScore,
+            total: TOTAL_QUESTIONS,
+          },
+        });
       }
     }, 1200);
   };

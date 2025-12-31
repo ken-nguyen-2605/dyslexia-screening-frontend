@@ -53,12 +53,20 @@ export default function MiniGame1() {
 
     setTimeout(() => {
       const next = st.index + 1;
+      const newCorrect = isRight ? st.correct + 1 : st.correct;
       if (next >= MG1_ITEMS.length) {
-        navigate("/test/minigame1/rating");
+        const finalScore = Math.round((newCorrect / MG1_ITEMS.length) * 100);
+        navigate("/test/minigame1/rating", {
+          state: {
+            score: finalScore,
+            correct: newCorrect,
+            total: MG1_ITEMS.length,
+          },
+        });
       } else {
         setSt({
           index: next,
-          correct: isRight ? st.correct + 1 : st.correct,
+          correct: newCorrect,
           input: "",
           feedback: "idle",
         });
